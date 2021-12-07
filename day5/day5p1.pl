@@ -46,9 +46,9 @@ while (@points) {
     next unless ($startx == $endx || $starty == $endy);
 
     if ($startx == $endx) {
-        $grid->($startx, $starty:$endy) += 1
+        $grid($startx, $starty:$endy) += 1
     } else {
-        $grid->($startx:$endx, $starty) += 1
+        $grid($startx:$endx, $starty) += 1
     }
 }
 

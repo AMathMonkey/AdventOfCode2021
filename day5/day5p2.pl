@@ -44,9 +44,9 @@ while (@points) {
     my $endy = shift @points;
 
     if ($startx == $endx) {
-        $grid->($startx, $starty:$endy) += 1
+        $grid($startx, $starty:$endy) += 1
     } elsif ($starty == $endy) {
-        $grid->($startx:$endx, $starty) += 1
+        $grid($startx:$endx, $starty) += 1
     } else {
         my $i = $startx;
         my $j = $starty;
