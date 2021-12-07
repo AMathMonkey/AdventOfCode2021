@@ -16,11 +16,4 @@ my $positions = transpose sequence(int max $crabs);
 
 my $distances = abs($crabs - $positions);
 
-my ($rows, $cols) = dims $distances;
-for (my $i = 0; $i < $rows; ++$i) {
-    for (my $j = 0; $j < $cols; ++$j) {
-        $distances($i, $j) .= sum sequence(int $distances(($i), ($j)) + 1)
-    }
-}
-
-print min sumover $distances
+print min sumover ($distances * ($distances + 1) / 2);
