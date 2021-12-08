@@ -2,8 +2,7 @@ use strict;
 use warnings;
 use Data::Dumper;
 use v5.30.0;
-use List::Util qw(first any all none sum);
-use List::MoreUtils qw(uniq);
+use List::Util qw(first sum);
 
 my $inputfile = IO::File->new('./input.txt');
 
@@ -25,7 +24,6 @@ my %decoder = (
 
 my @patterns;
 my @displays;
-
 foreach my $line (@input) {
 	my ($digits, $output) = split ' \| ', $line;
 
@@ -86,16 +84,12 @@ for (my $i = 0; $i < @patterns; ++$i) {
         (grep {$_ eq $char} values %segments) == 0
     } ('a' .. 'g');
 
-    say "Problem" unless uniq(values %segments) == values %segments;
-
     my $str = join '', @segments{'a' .. 'g'};
 
     my @digits;
     foreach my $digit ($displays[$i]->@*) {
         eval "\$digit =~ tr/$str/a-g/";
         $digit = join '', sort split '', $digit;
-
-        Carp::croak "$digit is not a valid number" if not defined $decoder{$digit};
         push @digits, $decoder{$digit} 
     }
     $result += join '', @digits
