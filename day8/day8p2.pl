@@ -67,17 +67,11 @@ for (my $i = 0; $i < @patterns; ++$i) {
         length == 5 && ($_ =~ /$segments{a}/) && ($_ =~ /$segments{f}/) && ($_ !~ /$segments{c}/)
     } @row;
 
-    $segments{b} = first {
-        $three !~ /$_/
-    } split '', $five;
+    $segments{b} = first {$three !~ /$_/} split '', $five;
 
-    $segments{e} = first {
-        $three !~ /$_/
-    } split '', $two;
+    $segments{e} = first {$three !~ /$_/} split '', $two;
 
-    $segments{d} = first {
-        (join '', values %segments) !~ /$_/
-    } split '', $four;
+    $segments{d} = first {(join '', values %segments) !~ /$_/} split '', $four;
     
     $segments{g} = first {
         my $char = $_;
