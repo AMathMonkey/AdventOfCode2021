@@ -30,12 +30,12 @@ my $finalWinner;
 my $finalNum;
 my %finalCalled;
 while (defined(my $num = shift @nums)) {
-    $called{$num} = 1;
+    $called{$num} = undef;
     BOARD: foreach my $board (@boards) {
-        next BOARD if defined($winners{$board});
+        next BOARD if exists($winners{$board});
         for my $i (0 .. $#$board) {
-            if (all {defined $called{$_}} $board->[$i]->@*) {
-                $winners{$board} = 1;
+            if (all {exists $called{$_}} $board->[$i]->@*) {
+                $winners{$board} = undef;
                 $finalWinner = $board;
                 $finalNum = $num;
                 %finalCalled = %called;
@@ -47,8 +47,8 @@ while (defined(my $num = shift @nums)) {
             for my $i (0 .. $#$board) {
                 push(@col, $board->[$i][$j])
             }
-            if (all {defined $called{$_}} @col) {
-                $winners{$board} = 1;
+            if (all {exists $called{$_}} @col) {
+                $winners{$board} = undef;
                 $finalWinner = $board;
                 $finalNum = $num;
                 %finalCalled = %called;
@@ -68,7 +68,7 @@ sub win {
     my @uncalled;
 
     foreach my $row (@board) {
-        push(@uncalled, grep {not defined($called{$_})} $row->@*)
+        push(@uncalled, grep {not exists($called{$_})} $row->@*)
     }
     say sum(@uncalled) * $num;
 }

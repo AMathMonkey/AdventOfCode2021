@@ -26,10 +26,10 @@ while (@input) {
 
 my %called;
 while (defined(my $num = shift @nums)) {
-    $called{$num} = 1;
+    $called{$num} = undef;
     foreach my $board (@boards) {
         for my $i (0 .. $#$board) {
-            if (all {defined $called{$_}} $board->[$i]->@*) {
+            if (all {exists $called{$_}} $board->[$i]->@*) {
                 win($board, \%called, $num);
                 exit;
             }
@@ -39,7 +39,7 @@ while (defined(my $num = shift @nums)) {
             for my $i (0 .. $#$board) {
                 push(@col, $board->[$i][$j])
             }
-            if (all {defined $called{$_}} @col) {
+            if (all {exists $called{$_}} @col) {
                 win($board, \%called, $num);
                 exit;
             }
@@ -55,7 +55,7 @@ sub win {
     my @uncalled;
 
     foreach my $row (@board) {
-        push(@uncalled, grep {not defined($called{$_})} $row->@*)
+        push(@uncalled, grep {not exists($called{$_})} $row->@*)
     }
     say sum(@uncalled) * $num;
 }
