@@ -16,18 +16,18 @@ $grid->whereND($grid == 0) .= -1;
 
 $grid = $grid->range(ndcoords($grid) - 1, 3, 'truncate');
 
-$grid->whereND($grid == 0) .= 9;
-$grid->whereND($grid == -1) .= 0;
+$grid->where($grid == 0) .= 9;
+$grid->where($grid == -1) .= 0;
 
 my ($rows, $cols, $gridrows, $gridcols) = dims $grid;
 
 my $result = zeroes $rows, $cols;
 
-for (my $i = 0; $i < $rows; $i++) {
-    for (my $j = 0; $j < $cols; $j++) {
+for (my $i = 0; $i < $rows; ++$i) {
+    for (my $j = 0; $j < $cols; ++$j) {
         my $min = 9;
-        for (my $gi = 0; $gi < $gridrows; $gi++) {
-            for (my $gj = 0; $gj < $gridcols; $gj++) {
+        for (my $gi = 0; $gi < $gridrows; ++$gi) {
+            for (my $gj = 0; $gj < $gridcols; ++$gj) {
                 my $elem = $grid(($i), ($j), ($gi), ($gj));
                 $min = $elem if $elem < $min
             }
