@@ -23,6 +23,7 @@ my %values = (
 );
 
 my @validLines;
+my @stacks;
 
 LINE: foreach my $line (@input) {
     my @stack;
@@ -33,17 +34,14 @@ LINE: foreach my $line (@input) {
             next LINE if $pairs{$last} ne $char
         }
     }
-    push @validLines, $line
+    push @validLines, $line;
+    push @stacks, \@stack
 } 
 
 my @scores;
 
-foreach my $line (@validLines) {
-    my @stack;
-    foreach my $char (split '', $line) {
-        if ('{([<' =~ /\Q$char/) {push @stack, $char} 
-        else {pop @stack}
-    }
+foreach my $i (0 .. $#validLines) {
+    my @stack = $stacks[$i]->@*;
     my $score = 0;
     foreach my $char (reverse @stack) {
         $score *= 5;
