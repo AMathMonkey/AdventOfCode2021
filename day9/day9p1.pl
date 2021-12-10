@@ -1,3 +1,4 @@
+use strict;
 use warnings;
 use Data::Dumper;
 use v5.30.0;
@@ -28,11 +29,11 @@ for (my $i = 0; $i < $rows; ++$i) {
         my $min = 9;
         for (my $gi = 0; $gi < $gridrows; ++$gi) {
             for (my $gj = 0; $gj < $gridcols; ++$gj) {
-                my $elem = $grid(($i), ($j), ($gi), ($gj));
+                my $elem = sclr $grid($i, $j, $gi, $gj);
                 $min = $elem if $elem < $min
             }
         }
-        my $middle = $grid(($i), ($j), (1), (1));
+        my $middle = sclr $grid($i, $j, 1, 1);
         $result($i, $j) .= $middle + 1 if $middle == $min;
     }
 }
