@@ -27,9 +27,8 @@ my $score = 0;
 LINE: foreach my $line (@input) {
     my @stack;
     foreach my $char (split '', $line) {
-        if ('{([<' =~ /\Q$char/) {
-            push @stack, $char
-        } else {
+        if ('{([<' =~ /\Q$char/) {push @stack, $char}
+        else {
             my $last = pop @stack;
             if ($pairs{$last} ne $char) {
                 $score += $values{$char};
