@@ -28,14 +28,11 @@ sub recursive {
     my $twoAllowed = shift;
     my $pathString = shift;
 
-    if ($current eq 'end') {
-        $pathStrings{$pathString} = undef if $pathString;
-        return
-    };
+    do {$pathStrings{$pathString} = undef; return} if $current eq 'end';
 
     foreach my $node (keys $connections{$current}->%*) {
         my $timesNodeTraversed = $traversed{$node} // 0;
-        
+
         recursive($node, {%traversed, $node => $timesNodeTraversed + 1}, $twoAllowed, $pathString . '-' . $node)
             unless $node eq 'start' ||
                 $node ne 'end' && isLower($node) && $timesNodeTraversed >= 1 && $node ne $twoAllowed ||
