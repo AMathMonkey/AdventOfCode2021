@@ -67,14 +67,13 @@ sub parse { my $packet = shift;
             while (@subpackets) {
                 push @numbers, parse(\@subpackets)
             }
-            return applyOp($ops{$typeID}, @numbers)
         } else {
             my $numSubpackets = oct '0b' . join '', splice @$packet, 0, 11;
             for (1 .. $numSubpackets) {
                 push @numbers, parse($packet)
             }
-            return applyOp($ops{$typeID}, @numbers)
         }
+        return applyOp($ops{$typeID}, @numbers)
     }
 };
 
