@@ -16,30 +16,20 @@ while (defined(my $hex = shift @hex)) {
     push @bits, split '', sprintf('%04b', hex $hex)
 }
 
-my %ops = (
-    0 => '+',
-    1 => '*',
-    2 => 'min',
-    3 => 'max',
-    5 => '>',
-    6 => '<',
-    7 => '=',
-);
-
 sub applyOp { my ($op, @numbers) = @_;
-    if ($op eq '+') {
+    if ($op == 0) {
         sum @numbers
-    } elsif ($op eq '*') {
+    } elsif ($op eq 1) {
         product @numbers
-    } elsif ($op eq 'min') {
+    } elsif ($op eq 2) {
         min @numbers
-    } elsif ($op eq 'max') {
+    } elsif ($op eq 3) {
         max @numbers
-    } elsif ($op eq '>') {
+    } elsif ($op eq 5) {
         ($numbers[0] > $numbers[1]) || 0
-    } elsif ($op eq '<') {
+    } elsif ($op eq 6) {
         ($numbers[0] < $numbers[1]) || 0
-    } elsif ($op eq '=') {
+    } elsif ($op eq 7) {
         ($numbers[0] == $numbers[1]) || 0
     }
 }
@@ -73,7 +63,7 @@ sub parse { my $packet = shift;
                 push @numbers, parse($packet)
             }
         }
-        return applyOp($ops{$typeID}, @numbers)
+        return applyOp($typeID, @numbers)
     }
 };
 
