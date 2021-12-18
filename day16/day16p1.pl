@@ -63,16 +63,17 @@ my $parse = recursive {
                 my $lengthOfAllSubpackets = oct '0b' . join '', splice @bits, 0, 15;
                 $bitsParsed += 15;
                 say "Limit: $lengthOfAllSubpackets bits\n";
-                $REC->(0, $lengthOfAllSubpackets);
+                $bitsParsed += $REC->(0, $lengthOfAllSubpackets);
             } else {
                 my $numSubpackets = oct '0b' . join '', splice @bits, 0, 11;
                 $bitsParsed += 11;
                 say "Limit: $numSubpackets packets\n";
-                $REC->(1, $numSubpackets)
+                $bitsParsed += $REC->(1, $numSubpackets)
             }
         }
     } continue {++$packetsParsed}
     say "Recursion path ended\n";
+    $bitsParsed
 };
 
 $parse->();
