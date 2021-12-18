@@ -7,8 +7,7 @@ use bigint;
 
 my $inputfile = IO::File->new('./input.txt');
 
-my $input = <$inputfile>;
-chomp $input;
+chomp(my $input = <$inputfile>);
 
 my @hex = split '', $input;
 my @bits;
@@ -19,17 +18,17 @@ while (defined(my $hex = shift @hex)) {
 sub applyOp { my ($op, @numbers) = @_;
     if ($op == 0) {
         sum @numbers
-    } elsif ($op eq 1) {
+    } elsif ($op == 1) {
         product @numbers
-    } elsif ($op eq 2) {
+    } elsif ($op == 2) {
         min @numbers
-    } elsif ($op eq 3) {
+    } elsif ($op == 3) {
         max @numbers
-    } elsif ($op eq 5) {
+    } elsif ($op == 5) {
         ($numbers[0] > $numbers[1]) || 0
-    } elsif ($op eq 6) {
+    } elsif ($op == 6) {
         ($numbers[0] < $numbers[1]) || 0
-    } elsif ($op eq 7) {
+    } elsif ($op == 7) {
         ($numbers[0] == $numbers[1]) || 0
     }
 }

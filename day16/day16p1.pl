@@ -6,8 +6,7 @@ use Sub::Recursive;
 
 my $inputfile = IO::File->new('./input.txt');
 
-my $input = <$inputfile>;
-chomp $input;
+chomp(my $input = <$inputfile>);
 
 my @hex = split '', $input;
 
