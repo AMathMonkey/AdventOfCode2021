@@ -8,7 +8,7 @@ use Heap::MinMax;
 
 my $heap = Heap::MinMax->new(
     fcompare => sub { my ($s1, $s2) = @_;
-        (split ',', $s1)[2] <=> (split ',', $s2)[2]
+        $s1->[2] <=> $s2->[2]
     }
 );
 
@@ -52,7 +52,7 @@ while (1) {
             my $newval = $currentDistance + $risks($i1, $j1)->sclr;
             if ($distances($i1, $j1)->sclr > $newval) {
                 $distances($i1, $j1) .= $newval;
-                $heap->insert("$i1,$j1,$newval")
+                $heap->insert([$i1, $j1, $newval])
             };
         }
     };
@@ -67,7 +67,7 @@ while (1) {
 
     my ($mini, $minj, $min);
     do {
-        ($mini, $minj, $min) = split ',', $heap->pop_min;
+        ($mini, $minj, $min) = $heap->pop_min->@*;
     } while ($visited($mini, $minj)->sclr == 1);
 
     @current = ($mini, $minj)
