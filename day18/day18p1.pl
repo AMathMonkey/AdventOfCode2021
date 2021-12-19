@@ -41,7 +41,7 @@ sub explodeIfNeeded { my ($pair) = @_;
             last
         }
     }
-    return $pair unless defined($startRange) && defined($endRange);
+    goto &splitIfNeeded unless defined($startRange) && defined($endRange);
 
     my ($left, $right) = leftRight(substr($pair, $startRange, $endRange - $startRange + 1));
 
@@ -85,24 +85,21 @@ sub explodeIfNeeded { my ($pair) = @_;
 
     substr($pair, $startRange, $endRange - $startRange + 1) = '0';
 
-    splitIfNeeded(explodeIfNeeded($pair))
+    @_ = ($pair); goto &explodeIfNeeded
 }
 
 sub splitIfNeeded { my ($pair) = @_;
     if ($pair =~ /\d{2,}/) {
         my $div = substr($pair, $-[0], $+[0] - $-[0]) / 2;
         substr($pair, $-[0], $+[0] - $-[0]) = '[' . floor($div) . ',' . ceil($div) . ']';
-        return explodeIfNeeded($pair)
+
+        @_ = ($pair); goto &explodeIfNeeded
     }
     $pair
 }
 
-sub reduce { my ($pair) = @_;
-    explodeIfNeeded($pair)
-}
-
 sub add { my ($pair1, $pair2) = @_;
-    reduce("[$pair1,$pair2]")
+    explodeIfNeeded("[$pair1,$pair2]")
 }
 
 sub magnitude { my ($pair) = @_;
@@ -125,7 +122,5 @@ my $result = shift @input;
 while (defined(my $pair = shift @input)) {
     $result = add($result, $pair)
 }
-
-say $result;
 
 say magnitude($result)
