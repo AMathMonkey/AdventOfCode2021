@@ -2,7 +2,6 @@ use strict;
 use warnings;
 use Data::Dumper;
 use v5.30.0;
-use Sub::Recursive;
 use List::Util qw(min max sum product);
 use bigint;
 
@@ -36,7 +35,7 @@ while (defined (my $hex = shift @hex)) {
     push @bits, split '', sprintf('%04b', hex $hex)
 }
 
-my $parse = recursive {
+sub parse {
     my $limitType = shift;
     my $limit = shift;
 
@@ -74,11 +73,11 @@ my $parse = recursive {
             if ($lengthTypeID == 0) {
                 my $lengthOfAllSubpackets = oct '0b' . join '', splice @bits, 0, 15;
                 $bitsParsed += 15;
-                @recursiveResult = $REC->(0, $lengthOfAllSubpackets);
+                @recursiveResult = __SUB__->(0, $lengthOfAllSubpackets);
             } else {
                 my $numSubpackets = oct '0b' . join '', splice @bits, 0, 11;
                 $bitsParsed += 11;
-                @recursiveResult = $REC->(1, $numSubpackets);
+                @recursiveResult = __SUB__->(1, $numSubpackets);
             }
             $bitsParsed += pop @recursiveResult;
             push @numbers, applyOp($typeID, @recursiveResult);
@@ -87,4 +86,4 @@ my $parse = recursive {
     (@numbers, $bitsParsed)
 };
 
-say(($parse->())[0])
+say((parse)[0])

@@ -2,7 +2,6 @@ use strict;
 use warnings;
 use Data::Dumper;
 use v5.30.0;
-use Sub::Recursive;
 
 my $inputfile = IO::File->new('./input.txt');
 
@@ -18,7 +17,7 @@ while (defined (my $hex = shift @hex)) {
     push @bits, split '', sprintf('%04b', hex $hex)
 }
 
-my $parse = recursive {
+sub parse {
     my $limitType = shift;
     my $limit = shift;
 
@@ -62,12 +61,12 @@ my $parse = recursive {
                 my $lengthOfAllSubpackets = oct '0b' . join '', splice @bits, 0, 15;
                 $bitsParsed += 15;
                 say "Limit: $lengthOfAllSubpackets bits\n";
-                $bitsParsed += $REC->(0, $lengthOfAllSubpackets);
+                $bitsParsed += __SUB__->(0, $lengthOfAllSubpackets);
             } else {
                 my $numSubpackets = oct '0b' . join '', splice @bits, 0, 11;
                 $bitsParsed += 11;
                 say "Limit: $numSubpackets packets\n";
-                $bitsParsed += $REC->(1, $numSubpackets)
+                $bitsParsed += __SUB__->(1, $numSubpackets)
             }
         }
     } continue {++$packetsParsed}
@@ -75,5 +74,5 @@ my $parse = recursive {
     $bitsParsed
 };
 
-$parse->();
+parse;
 say $versionSum;
