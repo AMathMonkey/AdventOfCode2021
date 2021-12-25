@@ -21,8 +21,8 @@ foreach my $line (@input) {
 }
 
 sub findTranslation { my ($scanner1, $scanner2) = @_;
-    foreach my $beacon1 (@$scanner1) {
-        foreach my $beacon2 (@$scanner2) {
+    foreach my $beacon1 ($scanner1->@[0 .. $#$scanner1 - 11]) {
+        foreach my $beacon2 ($scanner2->@[0 .. $#$scanner2 - 11]) {
             my @offsets = offsets($beacon1, $beacon2);
             my $matches = beaconsInCommon($scanner1, translate($scanner2, @offsets));
             return @offsets if $matches >= 12;
