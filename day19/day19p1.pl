@@ -90,37 +90,30 @@ sub beaconsInCommon { my ($scanner1, $scanner2) = @_;
     } @$scanner1
 } 
 
+my @solved = (0);
 my %resultSet;
-my @scannerAndIndex;
-my $scanner = shift @scanners;
-my $index = 0;
-foreach my $beacon (@$scanner) {
+foreach my $beacon ($scanners[0]->@*) {
     $resultSet{beaconRepr($beacon)} = undef
 }
 
-while (any {defined $_} @scanners) {
-    say scalar(grep {defined $_} @scanners), ' scanners left';
-    SCANNER: for my $i (0 .. $#scanners) {
-        last if all {not defined $_} @scanners;
-        next if not defined $scanners[$i];
+foreach my $i (@solved) {
+    say @scanners - @solved, ' scanners left';
+    SCANNER: for my $j (0 .. $#scanners) {
+        next if $i == $j || any {$_ == $j} @solved;
         for my $rotNum (0 .. 23) {
-            my $rotated = rotate($scanners[$i], $rotNum);
-            my ($xOffset, $yOffset, $zOffset) = findTranslation($scanner, $rotated);
+            my $rotated = rotate($scanners[$j], $rotNum);
+            my ($xOffset, $yOffset, $zOffset) = findTranslation($scanners[$i], $rotated);
             if (defined $zOffset) {
-                say "scanner $i matches and is at $xOffset, $yOffset, $zOffset";
-                my $translated = translate($rotated, $xOffset, $yOffset, $zOffset);
-                push @scannerAndIndex, $translated, $i;
-                foreach my $beacon (@$translated) {
+                say "scanner $i overlaps with scanner $j and the latter is at $xOffset, $yOffset, $zOffset";
+                $scanners[$j] = translate($rotated, $xOffset, $yOffset, $zOffset);
+                push @solved, $j;
+                foreach my $beacon ($scanners[$j]->@*) {
                     $resultSet{beaconRepr($beacon)} = undef
                 }
                 next SCANNER
             }
         }
     }
-    ($scanner, $index) = splice @scannerAndIndex, $#scannerAndIndex - 1, 2;
-    die if not defined $scanner;
-    $scanners[$index] = undef;
 }
 
-# say for keys %resultSet;
 say scalar keys %resultSet;

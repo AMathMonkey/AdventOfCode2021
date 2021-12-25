@@ -96,39 +96,32 @@ sub manhattan { my ($pos1, $pos2) = @_;
     abs($x1 - $x2) + abs($y1 - $y2) + abs($z1 - $z2)
 }
 
-my %resultSet;
-my @scannerAndIndex;
-my $scanner = shift @scanners;
-my $index = 0;
-$resultSet{"0,0,0"} = undef;
+my @solved = (0);
+my %resultSet = ("0,0,0" => undef);
 
-while (any {defined $_} @scanners) {
-    say scalar(grep {defined $_} @scanners), ' scanners left';
-    SCANNER: for my $i (0 .. $#scanners) {
-        last if all {not defined $_} @scanners;
-        next if not defined $scanners[$i];
+foreach my $i (@solved) {
+    say @scanners - @solved, ' scanners left';
+    SCANNER: for my $j (0 .. $#scanners) {
+        next if $i == $j || any {$_ == $j} @solved;
         for my $rotNum (0 .. 23) {
-            my $rotated = rotate($scanners[$i], $rotNum);
-            my ($xOffset, $yOffset, $zOffset) = findTranslation($scanner, $rotated);
+            my $rotated = rotate($scanners[$j], $rotNum);
+            my ($xOffset, $yOffset, $zOffset) = findTranslation($scanners[$i], $rotated);
             if (defined $zOffset) {
-                say "scanner $i matches and is at $xOffset, $yOffset, $zOffset";
+                say "scanner $i overlaps with scanner $j and the latter is at $xOffset, $yOffset, $zOffset";
+                $scanners[$j] = translate($rotated, $xOffset, $yOffset, $zOffset);
+                push @solved, $j;
                 $resultSet{"$xOffset,$yOffset,$zOffset"} = undef;
-                my $translated = translate($rotated, $xOffset, $yOffset, $zOffset);
-                push @scannerAndIndex, $translated, $i;
                 next SCANNER
             }
         }
     }
-    ($scanner, $index) = splice @scannerAndIndex, $#scannerAndIndex - 1, 2;
-    die if not defined $scanner;
-    $scanners[$index] = undef;
 }
 
 my @scannerPositions = keys %resultSet;
 my $result = 0;
 
 for my $i (0 .. $#scannerPositions) {
-    for my $j (0 .. $#scannerPositions) {
+    for my $j ($i + 1 .. $#scannerPositions) {
         next if $i == $j;
         $result = max $result, manhattan($scannerPositions[$i], $scannerPositions[$j])
     }
