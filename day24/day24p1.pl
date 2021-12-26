@@ -11,22 +11,32 @@ sub run {
     my @instructions = shift->@*;
     my @inputs = shift->@*;
 
-    my ($w, $x, $y, $z) = (0, 0, 0, 0);
+    my %vars = (w => 0, x => 0, y => 0, z => 0);
 
     foreach (@instructions) {
         if (/inp (\D)/) {
-            ${$1} = shift @inputs;
-        } elsif (/add (\D) (\D)?(-?\d+)?/) {
-            ${$1} += defined($2) ? ${$2} : $3
-        } elsif (/mul (\D) (\D)?(-?\d+)?/) {
-            ${$1} *= defined($2) ? ${$2} : $3
-        } elsif (/div (\D) (\D)?(-?\d+)?/) {
-            ${$1} /= defined($2) ? ${$2} : $3;
-            ${$1} = int ${$1}
-        } elsif (/mod (\D) (\D)?(-?\d+)?/) {
-            ${$1} %= defined($2) ? ${$2} : $3
-        } elsif (/eql (\D) (\D)?(-?\d+)?/) {
-            ${$1} = (${$1} == (defined($2) ? ${$2} : $3)) ? 1 : 0
+            $vars{$1} = shift @inputs;
+        } elsif (/add (\D) ([^-\d])?(-?\d+)?/) {
+            $vars{$1} += defined($2) ? $vars{$2} : $3
+        } elsif (/mul (\D) ([^-\d])?(-?\d+)?/) {
+            $vars{$1} *= defined($2) ? $vars{$2} : $3;
+        } elsif (/div (\D) ([^-\d])?(-?\d+)?/) {
+            $vars{$1} /= defined($2) ? $vars{$2} : $3;
+            $vars{$1} = int $vars{$1}
+        } elsif (/mod (\D) ([^-\d])?(-?\d+)?/) {
+            $vars{$1} %= defined($2) ? $vars{$2} : $3
+        } elsif (/eql (\D) ([^-\d])?(-?\d+)?/) {
+            $vars{$1} = ($vars{$1} == (defined($2) ? $vars{$2} : $3)) ? 1 : 0
         } else {die "Invalid instruction $_\n"}
     }
+    $vars{z} == 0
 }
+
+for (my $i = 99999999999999; $i >= 11111111111111; do {$i--} while ($i =~ /0/)) {
+    if (run(\@input, [split '', $i])) {
+        say $i;
+        last;
+    }
+}
+
+# say run(\@input, [split '', 13579246899999])
