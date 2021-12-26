@@ -1,6 +1,6 @@
 use strict;
 use warnings;
-use v5.30.0;
+use v5.28.1;
 use List::Util qw(sum);
 
 my $input = IO::File->new('./input.txt');

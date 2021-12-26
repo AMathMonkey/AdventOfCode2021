@@ -1,7 +1,7 @@
 use strict;
 use warnings;
 use Data::Dumper;
-use v5.30.0;
+use v5.28.1;
 
 my $inputfile = IO::File->new('./input.txt');
 
@@ -29,4 +29,4 @@ foreach my $row (@displays) {
     }
 }
 
-print $result;
+say $result;

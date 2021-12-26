@@ -1,7 +1,7 @@
 use strict;
 use warnings;
 use Data::Dumper;
-use v5.30.0;
+use v5.28.1;
 use PDL;
 use PDL::NiceSlice;
 
@@ -14,4 +14,4 @@ my $crabs = pdl(split ',', $input);
 
 my $positions = transpose sequence(int max $crabs);
 
-print min sumover abs($crabs - $positions)
+say min sumover abs($crabs - $positions)

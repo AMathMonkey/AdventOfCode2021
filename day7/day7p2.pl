@@ -1,7 +1,7 @@
 use strict;
 use warnings;
 use Data::Dumper;
-use v5.30.0;
+use v5.28.1;
 use PDL;
 use PDL::NiceSlice;
 
@@ -16,4 +16,4 @@ my $positions = transpose sequence(int max $crabs);
 
 my $distances = abs($crabs - $positions);
 
-print min sumover ($distances * ($distances + 1) / 2);
+say min sumover ($distances * ($distances + 1) / 2);

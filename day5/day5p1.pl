@@ -1,7 +1,7 @@
 use strict;
 use warnings;
 use Data::Dumper;
-use v5.30.0;
+use v5.28.1;
 use PDL;
 use PDL::NiceSlice;
 
@@ -52,4 +52,4 @@ while (@points) {
     }
 }
 
-print sum($grid > 1)
+say sum($grid > 1)

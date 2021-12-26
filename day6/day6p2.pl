@@ -2,7 +2,7 @@ use strict;
 use warnings;
 use Data::Dumper;
 use List::Util qw(sum);
-use v5.30.0;
+use v5.28.1;
 
 my $inputfile = IO::File->new('./input.txt');
 

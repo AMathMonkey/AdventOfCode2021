@@ -1,7 +1,7 @@
 use strict;
 use warnings;
 use Data::Dumper;
-use v5.30.0;
+use v5.28.1;
 use PDL;
 use PDL::NiceSlice;
 use PDL::AutoLoader;
@@ -38,4 +38,4 @@ for (my $i = 0; $i < $rows; ++$i) {
     }
 }
 
-print sum $result;
+say sum $result;

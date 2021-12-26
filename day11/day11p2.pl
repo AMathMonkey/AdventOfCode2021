@@ -3,7 +3,7 @@ use warnings;
 use Data::Dumper;
 use PDL;
 use PDL::NiceSlice;
-use v5.30.0;
+use v5.28.1;
 
 my $inputfile = IO::File->new('./input.txt');
 

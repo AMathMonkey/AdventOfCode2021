@@ -1,7 +1,7 @@
 use strict;
 use warnings;
 use Data::Dumper;
-use v5.30.0;
+use v5.28.1;
 use List::Util qw(any all);
 
 my $inputfile = IO::File->new('./input.txt');
