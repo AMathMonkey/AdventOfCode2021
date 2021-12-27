@@ -13,57 +13,46 @@ my @input = <$inputfile>;
 chomp @input;
 
 my $grid = pdl map {[split '', $_]} @input;
-my $g = copy $grid;
+my $g = $grid->copy;
 
 $grid->where($grid == 0) .= -1;
 
-$grid = $grid->range(ndcoords($grid) - 1, 3, 'truncate');
+$grid = $grid->range(ndcoords($grid) - 1, 3, 'truncate')->reorder(2,3,0,1);
 
 $grid->where($grid == 0) .= 9;
 $grid->where($grid == -1) .= 0;
 
-my ($rows, $cols, $subrows, $subcols) = dims $grid;
+my ($rows, $cols) = (dims $grid)[2..3];
 
-my $lowpoints = zeroes $rows, $cols;
+my $lowpoints = zeroes($rows, $cols);
 
-for (my $i = 0; $i < $rows; ++$i) {
-	for (my $j = 0; $j < $cols; ++$j) {
-		my $min = 9;
-		for (my $gi = 0; $gi < $subrows; ++$gi) {
-			for (my $gj = 0; $gj < $subcols; ++$gj) {
-				my $elem = sclr $grid($i, $j, $gi, $gj);
-				$min = $elem if $elem < $min
-			}
-		}
-		my $middle = sclr $grid($i, $j, 1, 1);
-		$lowpoints($i, $j) .= 1 if $middle == $min;
-	}
-}
+my $mins = minimum minimum $grid;
+$lowpoints->where($mins == $g) .= 1;
 
 my $basinID = 2;
-foreach my $pair (unpdl(whichND $lowpoints == 1)->@*) {
+foreach my $pair (whichND($lowpoints == 1)->unpdl->@*) {
 	my ($i, $j) = $pair->@*;
 
 	$lowpoints($i, $j) .= $basinID;
 
-	my $oldlowpoints;
+	my $oldlowpoints = 0; # placeholder value that will fail comparison first time
 	until (all $oldlowpoints == $lowpoints) {
-		$oldlowpoints = copy $lowpoints;
-		foreach my $pair (unpdl(whichND $lowpoints == $basinID)->@*) {
+		$oldlowpoints = $lowpoints->copy;
+		foreach my $pair (whichND($lowpoints == $basinID)->unpdl->@*) {
 			my ($i, $j) = $pair->@*;
 
-			my $curval = sclr $g($i, $j);
+			my $curval = $g($i, $j)->sclr;
 
-			if ($i > 0 && sclr($g($i - 1, $j)) > $curval && sclr($g($i - 1, $j)) < 9) {
+			if ($i > 0 && $g($i - 1, $j)->sclr > $curval && $g($i - 1, $j)->sclr < 9) {
 				$lowpoints($i - 1, $j) .= $basinID;
 			}
-			if ($i < $rows - 1 && sclr($g($i + 1, $j)) > $curval && sclr($g($i + 1, $j)) < 9) {
+			if ($i < $rows - 1 && $g($i + 1, $j)->sclr > $curval && $g($i + 1, $j)->sclr < 9) {
 				$lowpoints($i + 1, $j) .= $basinID;
 			}
-			if ($j > 0 && sclr($g($i, $j - 1)) > $curval && sclr($g($i, $j - 1)) < 9) {
+			if ($j > 0 && $g($i, $j - 1)->sclr > $curval && $g($i, $j - 1)->sclr < 9) {
 				$lowpoints($i, $j - 1) .= $basinID;
 			}
-			if ($j < $cols - 1 && sclr($g($i, $j + 1)) > $curval && sclr($g($i, $j + 1)) < 9) {
+			if ($j < $cols - 1 && $g($i, $j + 1)->sclr > $curval && $g($i, $j + 1)->sclr < 9) {
 				$lowpoints($i, $j + 1) .= $basinID;
 			}
 		}
