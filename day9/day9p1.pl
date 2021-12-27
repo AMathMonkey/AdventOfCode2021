@@ -21,10 +21,6 @@ $grid = $grid->range(ndcoords($grid) - 1, 3, 'truncate')->reorder(2,3,0,1);
 $grid->where($grid == 0) .= 9;
 $grid->where($grid == -1) .= 0;
 
-my $result = zeroes((dims $grid)[2..3]);
-
 my $mins = minimum minimum $grid;
-$result->where($mins == $g) .= $mins->where($mins == $g) + 1;
 
-
-say sum $result;
+say sum $mins->where($mins == $g) + 1;
