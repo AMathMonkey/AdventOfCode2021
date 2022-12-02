@@ -11,14 +11,11 @@ while {[gets $input line] >= 0} {
 set points 0
 foreach round $rounds {
     lassign $round opponent outcome
-    if {$outcome eq {lose}} {
-        set me [dict get $winnerMapping $opponent] 
-    } elseif {$outcome eq {draw}} {
-        set me $opponent
-    } else {
-        lassign [dict filter $winnerMapping value $opponent] me
-    }
-    incr points [dict get $pointMapping $me]
-    incr points [dict get $pointMapping $outcome]
+    set me [switch $outcome {
+        win {lindex [dict filter $winnerMapping value $opponent] 0}
+        lose {dict get $winnerMapping $opponent}
+        draw {expr {$opponent}}
+    }]
+    incr points [expr {[dict get $pointMapping $me] + [dict get $pointMapping $outcome]}]
 }
 puts $points

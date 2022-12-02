@@ -14,7 +14,7 @@ foreach round $rounds {
     incr points [dict get $pointMapping $me]
     if {$me eq $opponent} {
         incr points [dict get $pointMapping draw]
-    } elseif {[dict get $winnerMapping $me] eq $opponent } {
+    } elseif {[dict get $winnerMapping $me] eq $opponent} {
         incr points [dict get $pointMapping win]
     }
 }
