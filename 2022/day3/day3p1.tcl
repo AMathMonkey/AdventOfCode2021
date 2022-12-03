@@ -9,8 +9,10 @@ set input [open input.txt]
 
 while {[gets $input line] >= 0} {
     set halfway [expr {[string length $line] / 2}]
-    set halves [list [string range $line 0 $halfway-1] [string range $line $halfway end]]
-    set halves [lmap half $halves {split $half {}}]
+    set halves [lmap half [list \
+        [string range $line 0 $halfway-1] \
+        [string range $line $halfway end] \
+    ] {split $half {}}]
     lappend letters [struct::set intersect {*}$halves]
 }
 

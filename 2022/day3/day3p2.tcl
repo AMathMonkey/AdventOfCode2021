@@ -10,8 +10,7 @@ set input [open input.txt]
 while {[gets $input line1] >= 0} {
     gets $input line2
     gets $input line3
-    set lines [list $line1 $line2 $line3]
-    set lines [lmap line $lines {split $line {}}]
+    set lines [lmap line [list $line1 $line2 $line3] {split $line {}}]
     lappend letters [struct::set intersect {*}$lines]
 }
 
