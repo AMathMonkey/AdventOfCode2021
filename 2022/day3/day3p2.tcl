@@ -5,13 +5,19 @@ proc score {letter} {
     expr {$val - ([string is upper $letter] ? 38 : 96)}
 }
 
+proc getNLines {n input} {
+    for {set i 0} {$i < $n} {incr i} {
+        gets $input line
+        lappend result $line
+    }
+    return $result
+}
+
 set input [open input.txt]
 
-while {[gets $input line1] >= 0} {
-    gets $input line2
-    gets $input line3
-    set lines [lmap line [list $line1 $line2 $line3] {split $line {}}]
-    lappend letters [struct::set intersect {*}$lines]
+while {![eof $input]} {
+    set splitLines [lmap line [getNLines 3 $input] {split $line {}}]
+    lappend letters [struct::set intersect {*}$splitLines]
 }
 
 set sum 0
