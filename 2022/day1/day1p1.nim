@@ -1,6 +1,5 @@
 import strutils
 import sequtils
-import sugar
 
 let lines = readFile("input.txt").splitLines
 
@@ -12,4 +11,4 @@ iterator getElves(lines: seq[string]): seq[int] =
       yield currentElf
       currentElf = @[]
 
-echo getElves(lines).toSeq.map(x => x.foldl(a + b)).max
+echo getElves(lines).toSeq.mapIt(it.foldl(a + b)).max
