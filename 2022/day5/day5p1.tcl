@@ -20,7 +20,7 @@ foreach line [lreverse [lrange $lines 0 $initLines-1]] {
 }
 
 foreach line [lrange $lines $initLines+2 end] {
-    regexp {move (\d+) from (\d+) to (\d+)} $line _ num src dest
+    regexp {move (\d+) from (\d+) to (\d+)} $line {} num src dest
     for {set i 0} {$i < $num} {incr i} {
         set srcStack [lindex $stacks $src-1]
         set destStack [lindex $stacks $dest-1]
