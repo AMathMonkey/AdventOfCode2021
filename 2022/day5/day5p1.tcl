@@ -6,7 +6,7 @@ foreach line $lines {
     break
 }
 
-for {set i 0} {$i < $numStacks} {incr i} {lappend stacks [list]}
+set stacks [lrepeat $numStacks [list]]
 
 foreach line [lreverse [lrange $lines 0 $initLines-1]] {
     set letters [list]
