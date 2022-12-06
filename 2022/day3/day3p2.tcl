@@ -15,11 +15,11 @@ proc getNLines {n input} {
 
 set input [open input.txt]
 
+set total 0
+
 while {![eof $input]} {
     set splitLines [lmap line [getNLines 3 $input] {split $line {}}]
-    lappend letters [struct::set intersect {*}$splitLines]
+    foreach letter [struct::set intersect {*}$splitLines] {incr total [score $letter]}
 }
 
-set sum 0
-foreach letter $letters {incr sum [score $letter]}
-puts $sum
+puts $total

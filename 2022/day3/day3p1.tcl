@@ -7,15 +7,15 @@ proc score {letter} {
 
 set input [open input.txt]
 
+set total 0
+
 while {[gets $input line] >= 0} {
     set halfway [expr {[string length $line] / 2}]
     set halves [lmap half [list \
         [string range $line 0 $halfway-1] \
         [string range $line $halfway end] \
     ] {split $half {}}]
-    lappend letters [struct::set intersect {*}$halves]
+    foreach letter [struct::set intersect {*}$halves] {incr total [score $letter]}
 }
 
-set sum 0
-foreach letter $letters {incr sum [score $letter]}
-puts $sum
+puts $total
