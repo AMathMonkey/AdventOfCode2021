@@ -12,10 +12,10 @@ for line in lines:
     range2Parsed = ranges[1].split('-').map(parseInt)
     range1 = (range1Parsed[0] .. range1Parsed[1])
     range2 = (range2Parsed[0] .. range2Parsed[1])
-  if range1Parsed[0] in range2 or
-  range1Parsed[1] in range2 or
-  range2Parsed[0] in range1 or
-  range2Parsed[1] in range1:
+  if range1.a in range2 or
+  range1.b in range2 or
+  range2.a in range1 or
+  range2.b in range1:
     inc count
 
 echo count
