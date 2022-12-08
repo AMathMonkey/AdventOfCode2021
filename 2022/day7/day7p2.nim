@@ -4,6 +4,10 @@ import strformat
 import sequtils
 import algorithm
 
+# My Tcl solution is much less bloated than this one
+# I should translate my Tcl solution back to Nim, rather than keeping this solution
+# But this one is still technically faster thanks to Nim making slow things fast
+
 const 
   fileSystemSize = 70000000
   requiredFreeSpace = 30000000

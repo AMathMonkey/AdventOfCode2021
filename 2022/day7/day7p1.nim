@@ -2,6 +2,10 @@ import strutils
 import tables
 import strformat
 
+# My Tcl solution is much less bloated than this one
+# I should translate my Tcl solution back to Nim, rather than keeping this solution
+# But this one is still technically faster thanks to Nim making slow things fast
+
 const threshold = 100000
 
 type FileSystemNode = ref object
