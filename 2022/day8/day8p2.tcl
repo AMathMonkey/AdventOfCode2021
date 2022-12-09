@@ -4,11 +4,10 @@ set grid [lmap row [split [read [open input.txt]] \n] {split $row {}}]
 set rows [llength $grid]
 set cols [llength [lindex $grid 0]]
 
-set resultGrid [lrepeat $rows [lrepeat $cols 0]]
+set max 0
 
 for {set i 1} {$i < ($rows - 1)} {incr i} {
     for {set j 1} {$j < ($cols - 1)} {incr j} {
-
         set val [lindex $grid $i $j]
 
         set downCounter $i
@@ -47,14 +46,9 @@ for {set i 1} {$i < ($rows - 1)} {incr i} {
             if {[lindex $grid $i $leftCounter] >= $val} {break}
         }
 
-        lset resultGrid $i $j [* $downwardScore $upwardScore $rightwardScore $leftwardScore]
+        set score [* $downwardScore $upwardScore $rightwardScore $leftwardScore]
+        if {$score > $max} {set max $score}
     }
 }
 
-set max 0
-foreach row $resultGrid {
-    foreach entry $row {
-        set max [max $max $entry]
-    }
-}
 puts $max
