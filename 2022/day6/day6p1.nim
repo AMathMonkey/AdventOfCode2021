@@ -1,18 +1,18 @@
-import strutils
+import deques
 
 const markerLength = 4
 
-func toCharSet(s: string): set[char] =
-  for c in s: result.incl(c)
+func toSet[T](c: openArray[T] or Deque[T]): set[T] =
+  for e in c: result.incl(e)
 
 let input = readFile("input.txt")
 
-var buffer = ""
+var buffer = initDeque[char]()
 
 for i, c in input:
-  buffer.add(c)
+  buffer.addLast(c)
   if buffer.len == markerLength:
-    if buffer.toCharSet.card == markerLength:
+    if buffer.toSet.card == markerLength:
       echo i + 1
       break
-    buffer.delete(0..0)
+    buffer.popFirst
