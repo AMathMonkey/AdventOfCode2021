@@ -3,7 +3,7 @@ set input [open input.txt]
 
 set x 0; set y 0
 set tails [lrepeat 9 [list 0 0]]
-set tailLocations [list [list 0 0]]
+set tailLocations([list 0 0]) {}
 
 proc moveHead {dir} {
     switch $dir {
@@ -39,7 +39,7 @@ while {[gets $input line] >= 0} {
             lassign [lindex $tails $tail-1] prevX prevY
             lset tails $tail [moveTail $prevX $prevY $tempX $tempY]
         }
-        lappend tailLocations [lindex $tails end]
+        set tailLocations([lindex $tails end]) {}
     }
 } 
-puts [llength [lsort -unique $tailLocations]]
+puts [array size tailLocations]
