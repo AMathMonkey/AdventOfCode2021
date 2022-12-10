@@ -32,12 +32,10 @@ while {[gets $input line] >= 0} {
     lassign $line dir num
     for {set times 0} {$times < $num} {incr times} {
         moveHead $dir
-        lassign [lindex $tails 0] tempX tempY
-        lset tails 0 [moveTail $x $y $tempX $tempY]
-        for {set tail 1} {$tail < [llength $tails]} {incr tail} {
-            lassign [lindex $tails $tail] tempX tempY
-            lassign [lindex $tails $tail-1] prevX prevY
-            lset tails $tail [moveTail $prevX $prevY $tempX $tempY]
+        for {set tailNum 0} {$tailNum < [llength $tails]} {incr tailNum} {
+            lassign [lindex $tails $tailNum] tempX tempY
+            lassign [expr {$tailNum == 0 ? [list $x $y] : [lindex $tails $tailNum-1]}] prevX prevY
+            lset tails $tailNum [moveTail $prevX $prevY $tempX $tempY]
         }
         set tailLocations([lindex $tails end]) {}
     }
