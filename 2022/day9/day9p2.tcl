@@ -34,7 +34,7 @@ while {[gets $input line] >= 0} {
         moveHead $dir
         for {set tailNum 0} {$tailNum < [llength $tails]} {incr tailNum} {
             lassign [lindex $tails $tailNum] tempX tempY
-            lassign [expr {$tailNum == 0 ? [list $x $y] : [lindex $tails $tailNum-1]}] prevX prevY
+            lassign [if {$tailNum == 0} {list $x $y} else {lindex $tails $tailNum-1}] prevX prevY
             lset tails $tailNum [moveTail $prevX $prevY $tempX $tempY]
         }
         set tailLocations([lindex $tails end]) {}
