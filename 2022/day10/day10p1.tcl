@@ -1,11 +1,8 @@
-set lines [split [read [open input.txt]] \n]
-
-set lineNum 0
+set input [open input.txt]
 
 proc readline {} {
-    global nextop operand lineNum lines
-    lassign [lindex $lines $lineNum] nextop operand
-    incr lineNum
+    global nextop operand input
+    lassign [gets $input] nextop operand
 }
 
 set cycle 1
