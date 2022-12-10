@@ -1,10 +1,5 @@
 set input [open input.txt]
 
-proc readline {} {
-    global nextop operand input
-    lassign [gets $input] nextop operand
-}
-
 set cycle 1
 set x 1
 set nextop readline
@@ -21,7 +16,7 @@ while {$cycle <= 220} {
             incr x $operand
             set nextop readline
         }
-        readline {readline}
+        readline {lassign [gets $input] nextop operand}
     }
 }
 

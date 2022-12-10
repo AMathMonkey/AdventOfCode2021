@@ -1,10 +1,5 @@
 set input [open input.txt]
 
-proc readline {} {
-    global nextop operand input
-    lassign [gets $input] nextop operand
-}
-
 set height 6
 set width 40
 set offset 20
@@ -27,7 +22,7 @@ while {$cycle <= $pixels} {
             incr x $operand
             set nextop readline
         }
-        readline {readline}
+        readline {lassign [gets $input] nextop operand}
     }
     if {abs(($cycle - 1) % $width - $x) <= 1} {lset screen $cycle-1 #}
 }
