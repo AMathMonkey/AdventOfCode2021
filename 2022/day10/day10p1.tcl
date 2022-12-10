@@ -4,13 +4,8 @@ set lineNum 0
 
 proc readline {} {
     global nextop operand lineNum lines
-    set line [lindex $lines $lineNum]
+    lassign [lindex $lines $lineNum] nextop operand
     incr lineNum
-    lassign [split $line { }] operator operand
-    set nextop [switch $operator {
-        noop {string cat noop}
-        addx {string cat addx1}
-    }]
 }
 
 set cycle 1
@@ -23,7 +18,7 @@ while {$cycle <= 220} {
     }
     switch $nextop {
         noop {incr cycle; set nextop readline}
-        addx1 {incr cycle; set nextop addx2}
+        addx {incr cycle; set nextop addx2}
         addx2 {
             incr cycle
             incr x $operand
