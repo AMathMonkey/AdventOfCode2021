@@ -7,15 +7,8 @@ while {[gets $input line] >= 0} {
         set m($monkeyNum,items) [split [string map [list {, } ,] $itemStr] ,]
         continue
     }
-    if {[regexp {Operation: new = old (.) (\d+|old)} $line {} opSym opNum]} {
-        set m($monkeyNum,opSym) $opSym
-        set m($monkeyNum,opNum) $opNum
-        continue
-    }
-    if {[regexp {divisible by (\d+)} $line {} testNum]} {
-        set m($monkeyNum,testNum) $testNum
-        continue
-    }
+    if {[regexp {Operation: new = old (.) (\d+|old)} $line {} m($monkeyNum,opSym) m($monkeyNum,opNum)]} {continue}
+    if {[regexp {divisible by (\d+)} $line {} m($monkeyNum,testNum)]} {continue}
     if {[regexp {If (true|false): throw to monkey (\d+)} $line {} trueFalse dest]} {
         set m($monkeyNum,${trueFalse}Dest) $dest
         continue
@@ -44,6 +37,5 @@ for {set round 1} {$round <= 10000} {incr round} {
         }
     }
 }
-
 
 puts [* {*}[lrange [lsort -integer [dict values [array get m *,inspections]]] end-1 end]]
