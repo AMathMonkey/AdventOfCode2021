@@ -22,16 +22,12 @@ for {set round 1} {$round <= 20} {incr round} {
             set m($i,items) [lassign $m($i,items) item]
             set opSym $m($i,opSym)
             set opNum $m($i,opNum)
-            if {$opNum eq "old"} {set opNum $item}
+            if {$opNum eq {old}} {set opNum $item}
             set item [expr {$item} $opSym {$opNum}]
             set item [expr {int($item / 3)}]
-            if {$item % $m($i,testNum) == 0} {
-                set trueDest $m($i,trueDest)
-                lset m($trueDest,items) end+1 $item
-            } else {
-                set falseDest $m($i,falseDest)
-                lset m($falseDest,items) end+1 $item
-            }
+            if {$item % $m($i,testNum) == 0} {set dest $m($i,trueDest)} \
+            else {set dest $m($i,falseDest)}
+            lset m($dest,items) end+1 $item
         }
     }
 }
