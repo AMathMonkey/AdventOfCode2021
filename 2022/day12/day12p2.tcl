@@ -19,11 +19,10 @@ while {$prevResultGrid ne $resultGrid} {
     set prevResultGrid $resultGrid
     for {set row 0} {$row < $rows} {incr row} {
         for {set col 0} {$col < $cols} {incr col} {
-            set rowCol [list $row $col]
-            set val [lindex $grid $rowCol]
-            set curDist [lindex $resultGrid $rowCol]
+            set val [lindex $grid $row $col]
+            set curDist [lindex $resultGrid $row $col]
             if {$val eq {E}} {
-                lset resultGrid $rowCol 0
+                lset resultGrid $row $col 0
                 set curDist 0
             }
 
@@ -52,7 +51,7 @@ while {$prevResultGrid ne $resultGrid} {
                 set curDist [expr {$distBelow + 1}]
             }
             
-            lset resultGrid $rowCol $curDist
+            lset resultGrid $row $col $curDist
         }
     }
 }
