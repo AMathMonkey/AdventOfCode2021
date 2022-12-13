@@ -6,13 +6,10 @@ func diff(src, dest: char): int =
     if chr == 'S': 'a' elif chr == 'E': 'z' else: chr
   dest.transform.ord - src.transform.ord
 
-let 
-  grid = readFile("input.txt").splitLines
-  rows = grid.len
-  cols = grid[0].len
+let grid = readFile("input.txt").splitLines
 
 var
-  resultGrid = newSeqWith(rows, newSeqWith(cols, int.high - 1))
+  resultGrid = newSeqWith(grid.len, newSeqWith(grid[0].len, int.high - 1))
   prevResultGrid: seq[seq[int]]
 
 while prevResultGrid != resultGrid:
