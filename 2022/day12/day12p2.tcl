@@ -58,9 +58,12 @@ while {$prevResultGrid ne $resultGrid} {
     }
 }
 
-for {set col 0} {$col < $cols} {incr col} {
-    set row [lsearch -exact -index $col $grid S]
-    if {$row > -1} {set startIndex [list $row $col]; break}
+set min Inf
+for {set i 0} {$i < $rows} {incr i} {
+    for {set j 0} {$j < $cols} {incr j} {
+        set val [lindex $resultGrid $i $j]
+        if {$val < $min && [string match {[aS]} [lindex $grid $i $j]]} {set min $val}
+    }
 }
 
-puts [lindex $resultGrid $startIndex]
+puts $min
