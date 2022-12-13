@@ -2,10 +2,10 @@ package require json
 
 set input [split [read [open input.txt]] \n]
 set input [lsearch -all -inline -exact -not $input {}]
+set input [lmap line $input {json::many-json2dict $line}]
 set divider1 [json::many-json2dict {[[2]]}]
 set divider2 [json::many-json2dict {[[6]]}]
 lappend input $divider1 $divider2
-set input [lmap line $input {json::many-json2dict $line}]
 
 proc compare {a b} {
     while {[llength $a] > 0 && [llength $b] > 0} {
