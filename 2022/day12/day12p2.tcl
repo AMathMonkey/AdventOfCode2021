@@ -1,4 +1,3 @@
-namespace path {::tcl::mathop ::tcl::mathfunc}
 proc diff {src dest} {
     set mapping [list S a E z]
     set src [string map $mapping $src]
