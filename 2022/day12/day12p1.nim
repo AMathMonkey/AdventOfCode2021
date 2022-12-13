@@ -14,46 +14,45 @@ var
 
 while prevResultGrid != resultGrid:
   prevResultGrid = resultGrid
-  for row in countup(grid.low, grid.high):
-    for col in countup(grid[row].low, grid[row].high):
-      let val = grid[row][col]
-      var curDist = resultGrid[row][col]
-      if val == 'E':
-        resultGrid[row][col] = 0
+  for rowNum, row in grid:
+    for colNum, elem in row:
+      var curDist = resultGrid[rowNum][colNum]
+      if elem == 'E':
+        resultGrid[rowNum][colNum] = 0
         curDist = 0
       
-      if col - 1 >= grid[row].low:
+      if colNum - 1 >= row.low:
         let 
-          valToLeft = grid[row][col - 1]
-          distToLeft = resultGrid[row][col - 1]
-        if distToLeft + 1 < curDist and diff(val, valToLeft) <= 1:
+          valToLeft = grid[rowNum][colNum - 1]
+          distToLeft = resultGrid[rowNum][colNum - 1]
+        if distToLeft + 1 < curDist and diff(elem, valToLeft) <= 1:
           curDist = distToLeft + 1
 
-      if col + 1 <= grid[row].high:
+      if colNum + 1 <= row.high:
         let 
-          valToRight = grid[row][col + 1]
-          distToRight = resultGrid[row][col + 1]
-        if distToRight + 1 < curDist and diff(val, valToRight) <= 1:
+          valToRight = grid[rowNum][colNum + 1]
+          distToRight = resultGrid[rowNum][colNum + 1]
+        if distToRight + 1 < curDist and diff(elem, valToRight) <= 1:
           curDist = distToRight + 1
 
-      if row - 1 >= grid.low:
+      if rowNum - 1 >= grid.low:
         let 
-          valAbove = grid[row - 1][col]
-          distAbove = resultGrid[row - 1][col]
-        if distAbove + 1 < curDist and diff(val, valAbove) <= 1:
+          valAbove = grid[rowNum - 1][colNum]
+          distAbove = resultGrid[rowNum - 1][colNum]
+        if distAbove + 1 < curDist and diff(elem, valAbove) <= 1:
           curDist = distAbove + 1
         
-      if row + 1 <= grid.high:
+      if rowNum + 1 <= grid.high:
         let
-          valBelow = grid[row + 1][col]
-          distBelow = resultGrid[row + 1][col]
-        if distBelow + 1 < curDist and diff(val, valBelow) <= 1:
+          valBelow = grid[rowNum + 1][colNum]
+          distBelow = resultGrid[rowNum + 1][colNum]
+        if distBelow + 1 < curDist and diff(elem, valBelow) <= 1:
           curDist = distBelow + 1
 
-      resultGrid[row][col] = curDist
+      resultGrid[rowNum][colNum] = curDist
 
-for i, row in grid:
-  for j, elem in row:
+for rowNum, row in grid:
+  for colNum, elem in row:
     if elem == 'S': 
-      echo resultGrid[i][j]
+      echo resultGrid[rowNum][colNum]
       quit 0
