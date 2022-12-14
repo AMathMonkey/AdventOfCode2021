@@ -1,7 +1,5 @@
 set input [open input.txt]
 
-set minRow 0
-
 set maxRow 0
 set minCol Inf
 set maxCol 0
@@ -16,24 +14,14 @@ while {[gets $input line] >= 0} {
 
         if {$prevRow ne {}} {
             if {$prevCol == $col} {
-                if {$row - $prevRow > 0} {
-                    set sign 1
-                    set op <=
-                } else {
-                    set sign -1
-                    set op >=
-                }
+                if {$row - $prevRow > 0} {set sign 1; set op <=} \
+                else {set sign -1; set op >=}
                 for {} "\$prevRow $op \$row" {incr prevRow $sign} {
                     set grid($prevRow,$col) #
                 }
             } else {
-                if {$col - $prevCol > 0} {
-                    set sign 1
-                    set op <=
-                } else {
-                    set sign -1
-                    set op >=
-                }
+                if {$col - $prevCol > 0} {set sign 1; set op <=} \
+                else {set sign -1; set op >=}
                 for {} "\$prevCol $op \$col" {incr prevCol $sign} {
                     set grid($row,$prevCol) #
                 }
@@ -44,10 +32,7 @@ while {[gets $input line] >= 0} {
     }
 }
 
-set oldGrid {}
-while {$oldGrid != [lsort [array get grid]]} {
-    set oldGrid [lsort [array get grid]]
-
+while {true} {
     set sandRow 0
     set sandCol 500
     
@@ -63,8 +48,8 @@ while {$oldGrid != [lsort [array get grid]]} {
             incr sandCol
         } else {break}
     }
-
-    if $cond {set grid($sandRow,$sandCol) o; incr result}
+    if $cond {set grid($sandRow,$sandCol) o; incr result} \
+    else {break}
 }
 
 puts $result
