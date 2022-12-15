@@ -11,13 +11,12 @@ while {[gets $input line] >= 0} {
 }
 
 for {set row $minRow} {$row <= $maxRow} {incr row} {
-    for {set col $minCol} {$col <= $maxCol} {} {
+    for {set col $minCol} {$col <= $maxCol} {incr col} {
         set fail false
         foreach {sensorRow sensorCol manhattan} $sensors {
-            set pointDistance [expr {abs($sensorRow - $row) + abs($sensorCol - $col)}]
-            if {$pointDistance <= $manhattan} {
+            if {abs($sensorRow - $row) + abs($sensorCol - $col) <= $manhattan} {
                 set fail true
-                incr col [expr {$pointDistance - abs($sensorRow - $row) + 2}]
+                set col [expr {$sensorCol + $manhattan - abs($sensorRow - $row)}]
                 break
             }
         }
