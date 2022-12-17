@@ -42,9 +42,8 @@ proc getMax {valve openValves timeElapsed} {
             if {$val > $max} {set max $val}
         }
     }
-
-    set cache($cacheIndex) $max
-    return $max
+    
+    return [set cache($cacheIndex) $max]
 }
 
 puts [getMax AA [list] 0]
