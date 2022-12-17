@@ -32,7 +32,7 @@ proc getMax {valve openValves timeElapsed} {
     }
 
     if {$valves($valve,rate) > 0 && $timeElapsed < $timeLimit && $valve ni $openValves} {
-        incr pressureReleased $pressureReleased
+        set pressureReleased [expr {$pressureReleased * 2 + $valves($valve,rate)}]
         set openValves [lsort [concat $openValves $valve]]
         incr timeElapsed
 
