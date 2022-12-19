@@ -2,8 +2,11 @@ import deques
 
 const markerLength = 4
 
-func toSet[T](c: openArray[T] or Deque[T]): set[T] =
-  for e in c: result.incl(e)
+template toSet[T](it: iterable[T]): set[T] =
+  block:
+    var result: set[T]
+    for c in it: result.incl(c)
+    result
 
 let input = readFile("input.txt")
 
@@ -12,7 +15,7 @@ var buffer = initDeque[char]()
 for i, c in input:
   buffer.addLast(c)
   if buffer.len == markerLength:
-    if buffer.toSet.card == markerLength:
+    if buffer.items.toSet.card == markerLength:
       echo i + 1
       break
     buffer.popFirst
