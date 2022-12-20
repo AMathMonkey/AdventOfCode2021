@@ -3,10 +3,9 @@ import deques
 const markerLength = 14
 
 template toSet[T](it: iterable[T]): set[T] =
-  block:
-    var result: set[T]
-    for c in it: result.incl(c)
-    result
+  var result: set[T]
+  for c in it: result.incl(c)
+  result
 
 let input = readFile("input.txt")
 

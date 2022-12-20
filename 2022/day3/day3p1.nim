@@ -1,10 +1,9 @@
 import strutils
 
 template toSet[T](it: iterable[T]): set[T] =
-  block:
-    var result: set[T]
-    for c in it: result.incl(c)
-    result
+  var result: set[T]
+  for c in it: result.incl(c)
+  result
 
 func score(letter: char): int =
   letter.ord - (if letter.isUpperAscii: 38 else: 96)
