@@ -1,6 +1,6 @@
 set input [open input.txt]
 
-set timeLimit 30
+set timeLimit 26
 
 while {[gets $input line] >= 0} {
     regexp {Valve (\w+) has flow rate=(\d+); tunnels? leads? to valves? (.*)} $line {} valve rate tunnels
@@ -8,13 +8,17 @@ while {[gets $input line] >= 0} {
     set valves($valve,tunnels) [split [string map [list {, } ,] $tunnels] ,]
 }
 
-proc getMax {valve openValves timeRemaining} {
-    global valves cache
+proc getMax {valve openValves timeRemaining who} {
+    global valves cache timeLimit
 
-    if {$timeRemaining == 0} {return 0}
+    if {$timeRemaining == 0} {
+        if {$who eq {me}} {
+            return [getMax AA $openValves $timeLimit elephant]
+        } else {return 0}
+    }
 
     set openValves [lsort $openValves]
-    set cacheIndex "$valve,$openValves,$timeRemaining"
+    set cacheIndex "$valve,$openValves,$timeRemaining,$who"
 
     if {[info exists cache($cacheIndex)]} {return $cache($cacheIndex)}
 
@@ -23,12 +27,12 @@ proc getMax {valve openValves timeRemaining} {
     set max 0
 
     foreach destValve $valves($valve,tunnels) {
-        set val [getMax $destValve $openValves $timeRemaining]
+        set val [getMax $destValve $openValves $timeRemaining $who]
         if {$val > $max} {set max $val}
     }
 
     if {$valves($valve,rate) > 0 && $valve ni $openValves} {
-        set val [getMax $valve [concat $openValves $valve] $timeRemaining]
+        set val [getMax $valve [concat $openValves $valve] $timeRemaining $who]
         incr val [expr {$timeRemaining * $valves($valve,rate)}]
         if {$val > $max} {set max $val}
     }
@@ -36,4 +40,4 @@ proc getMax {valve openValves timeRemaining} {
     return [set cache($cacheIndex) $max]
 }
 
-puts [getMax AA [list] $timeLimit]
+puts [getMax AA [list] $timeLimit me]
