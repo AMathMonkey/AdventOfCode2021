@@ -1,7 +1,7 @@
 import strutils
 import sequtils
 
-template toSet(it: string): set[char] =
+template toSet(it: string): untyped =
   var result: set[char]
   for c in it: result.incl(c)
   result
