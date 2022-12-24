@@ -1,6 +1,6 @@
 import strutils
 
-template toSet(it: untyped): untyped =
+template toSet(it): untyped =
   var result: set[typeof(it.items)]
   for c in it: result.incl(c)
   result
