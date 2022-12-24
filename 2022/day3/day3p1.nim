@@ -1,7 +1,7 @@
 import strutils
 
-template toSet[T](it: iterable[T]): set[T] =
-  var result: set[T]
+template toSet(it: string): set[char] =
+  var result: set[char]
   for c in it: result.incl(c)
   result
 
@@ -14,7 +14,7 @@ var total = 0
 
 for line in lines:
   let halfway = line.len div 2
-  for letter in (line[0 ..< halfway].items.toSet) * (line[halfway .. ^1].items.toSet):
+  for letter in (line[0 ..< halfway].toSet) * (line[halfway .. ^1].toSet):
     total.inc(letter.score)
 
 echo total

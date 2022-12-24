@@ -2,8 +2,8 @@ import deques
 
 const markerLength = 14
 
-template toSet[T](it: iterable[T]): set[T] =
-  var result: set[T]
+template toSet(it): untyped =
+  var result: set[it.T]
   for c in it: result.incl(c)
   result
 
@@ -14,7 +14,7 @@ var buffer = initDeque[char]()
 for i, c in input:
   buffer.addLast(c)
   if buffer.len == markerLength:
-    if buffer.items.toSet.card == markerLength:
+    if buffer.toSet.card == markerLength:
       echo i + 1
       break
     buffer.popFirst
