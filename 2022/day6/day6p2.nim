@@ -2,8 +2,8 @@ import deques
 
 const markerLength = 14
 
-template toSet(it): untyped =
-  var result: set[it.T]
+template toSet(it: untyped): untyped =
+  var result: set[typeof(it.items)]
   for c in it: result.incl(c)
   result
 

@@ -1,8 +1,8 @@
 import strutils
 import sequtils
 
-template toSet(it: string): untyped =
-  var result: set[char]
+template toSet(it: untyped): untyped =
+  var result: set[typeof(it.items)]
   for c in it: result.incl(c)
   result
 
