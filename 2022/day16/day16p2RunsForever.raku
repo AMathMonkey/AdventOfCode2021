@@ -1,42 +1,52 @@
+# Raku is nightmarishly slow; this port of day6p2.tcl (which runs in ~2.5 minutes)
+# takes (TBD but over an hour, maybe two) to run in Raku. That's just awful.
+# The program only uses 11% of my CPU and the memory usage grows and shrinks;
+# I think the garbage collector is too eager and it's wasting time. Unsure though.
+
 my \timeLimit := 26;
 
 my %valves;
 my %cache;
 
-for 'input.txt'.IO.lines -> $line {
-    $line ~~ m:s/Valve (\w+) has flow rate\=(\d+)\; tunnels? leads? to valves? (.*)/;
-    my ($valve, $rate, $tunnels) = $/.list;
-    %valves{"$valve,rate"} = $rate.Int;
-    %valves{"$valve,tunnels"} = $tunnels.split: ', '
+class Valve {
+    has $.name;
+    has $.rate;
+    has @.tunnels;
 }
 
-sub getMax ($valve, @openValves is copy, $timeRemaining is copy, $who) {
-    if $timeRemaining == 0 {
-        return $who eq 'me' ?? getMax('AA', @openValves, timeLimit, 'elephant') !! 0
-    }
+for 'input.txt'.IO.lines {
+    my ($name, $rate, $tunnels) := 
+        m:s/Valve (\w+) has flow rate\=(\d+)\; tunnels? leads? to valves? (.*)/;
+    %valves{$name} = Valve.new(
+        :$name,
+        :rate($rate.Int),
+        :tunnels($tunnels.split: ', '),
+    );
+}
 
-    @openValves .= sort;
-    
+sub getMax($valve, @openValves, $timeRemaining is copy, $who) {
+    return $who eq 'me' ?? getMax(%valves<AA>, @openValves, timeLimit, 'elephant') !! 0 unless $timeRemaining;
+
     my $cacheIndex = "$valve,@openValves<>,$timeRemaining,$who";
+    .return with %cache{$cacheIndex};
 
-    if %cache{$cacheIndex}:exists {return %cache{$cacheIndex}}
-
-    $timeRemaining -= 1;
+    --$timeRemaining;
 
     my $max = 0;
 
-    for @(%valves{"$valve,tunnels"}) -> $destValve {
-        $max = ($max, getMax($destValve, @openValves, $timeRemaining, $who)).max;
+    for $valve.tunnels -> $destValve {
+        given getMax(%valves{$destValve}, @openValves, $timeRemaining, $who) {
+            $max = $_ when $_ > $max
+        }
     }
 
-    if %valves{"$valve,rate"} > 0 && $valve !(elem) @openValves {
-        $max = (
-            $max,
-            $timeRemaining * %valves{"$valve,rate"} + getMax($valve, [|@openValves, $valve], $timeRemaining, $who) 
-        ).max;
+    if $valve.rate && $valve.name !(elem) @openValves {
+        given $timeRemaining * $valve.rate + getMax($valve, [|@openValves, $valve.name].sort, $timeRemaining, $who) {
+            $max = $_ when $_ > $max;
+        }
     }
 
     return %cache{$cacheIndex} = $max
 }
 
-say getMax('AA', (), timeLimit, 'me')
+say getMax(%valves<AA>, [], timeLimit, 'me')
