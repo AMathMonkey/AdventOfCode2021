@@ -1,8 +1,8 @@
 # Raku is nightmarishly slow; this port of day6p2.tcl (which runs in ~2.5 minutes)
 # takes 9 hours to run in Raku. (Maybe hopefully between 6 and 7 hours after the last bugfix.) 
-# That's WTF-worthy.
-# The program only uses 11% of my CPU and the memory usage grows and shrinks;
-# I think the garbage collector is too eager and it's wasting time. Unsure though.
+# That's WTF-worthy. The memory usage grows and shrinks;
+# I think the garbage collector is too eager and it's wasting time. Unsure though
+# why this is unrivaled in its slowness. Is Raku faster on Linux? I hope so.
 
 my \timeLimit := 26;
 
