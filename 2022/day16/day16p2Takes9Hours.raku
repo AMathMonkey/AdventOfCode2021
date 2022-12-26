@@ -1,5 +1,6 @@
 # Raku is nightmarishly slow; this port of day6p2.tcl (which runs in ~2.5 minutes)
-# takes 9 hours to run in Raku. That's WTF-worthy.
+# takes 9 hours to run in Raku. (Maybe hopefully between 6 and 7 hours after the last bugfix.) 
+# That's WTF-worthy.
 # The program only uses 11% of my CPU and the memory usage grows and shrinks;
 # I think the garbage collector is too eager and it's wasting time. Unsure though.
 
@@ -30,7 +31,7 @@ constant elephant = 1;
 sub getMax($valve, @openValves, $timeRemaining is copy, $who) {
     return $who == me ?? getMax(%valves<AA>, @openValves, timeLimit, elephant) !! 0 unless $timeRemaining;
 
-    my $cacheIndex = "$valve,@openValves<>,$timeRemaining,$who";
+    my $cacheIndex = "{$valve.name},@openValves<>,$timeRemaining,$who";
     .return with %cache{$cacheIndex};
 
     --$timeRemaining;

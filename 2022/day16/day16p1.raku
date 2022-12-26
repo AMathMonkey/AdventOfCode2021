@@ -1,5 +1,5 @@
 # Raku is nightmarishly slow; this port of day6p1.tcl (which runs in <4 seconds)
-# takes almost 1m20s to run.
+# takes almost a minute to run.
 
 my \timeLimit := 30;
 
@@ -26,7 +26,7 @@ for 'input.txt'.IO.lines {
 sub getMax($valve, @openValves, $timeRemaining is copy) {
     return 0 unless $timeRemaining;
 
-    my $cacheIndex = "$valve,@openValves<>,$timeRemaining";
+    my $cacheIndex = "{$valve.name},@openValves<>,$timeRemaining";
     .return with %cache{$cacheIndex};
 
     --$timeRemaining;
