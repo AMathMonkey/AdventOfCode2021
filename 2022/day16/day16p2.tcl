@@ -17,9 +17,7 @@ proc getMax {valve openValves timeRemaining who} {
         } else {return 0}
     }
 
-    set openValves [lsort $openValves]
     set cacheIndex "$valve,$openValves,$timeRemaining,$who"
-
     if {[info exists cache($cacheIndex)]} {return $cache($cacheIndex)}
 
     incr timeRemaining -1
@@ -32,7 +30,7 @@ proc getMax {valve openValves timeRemaining who} {
     }
 
     if {$valves($valve,rate) > 0 && $valve ni $openValves} {
-        set val [getMax $valve [concat $openValves $valve] $timeRemaining $who]
+        set val [getMax $valve [lsort [concat $openValves $valve]] $timeRemaining $who]
         incr val [expr {$timeRemaining * $valves($valve,rate)}]
         if {$val > $max} {set max $val}
     }

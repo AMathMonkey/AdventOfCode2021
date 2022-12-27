@@ -1,4 +1,4 @@
-# Raku is nightmarishly slow; this port of day6p1.tcl (which runs in <4 seconds)
+# Raku is nightmarishly slow; this port of day6p1.tcl (which runs in 3 seconds)
 # takes almost a minute to run.
 
 my \timeLimit := 30;

@@ -1,6 +1,5 @@
-# Runs in under 4 minutes. Not as good as my Tcl implementation but eons better than Raku.
-# Correction, after adding type annotations, it runs in just over 2 minutes, beating Tcl!
-# Type annotations are very important for speedup.
+# Runs in just over 2 minutes. Not as good as my Tcl implementation but eons better than Raku.
+# Type annotations are very important for speedup. It took almost 4 minutes without them.
 
 struct Valve
     name::String

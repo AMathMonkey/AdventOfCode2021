@@ -1,4 +1,4 @@
-# Raku is nightmarishly slow; this port of day6p2.tcl (which runs in ~2.5 minutes)
+# Raku is nightmarishly slow; this port of day6p2.tcl (which runs in 1m25s)
 # takes 9 hours to run in Raku. (Maybe hopefully between 6 and 7 hours after the last bugfix.) 
 # That's WTF-worthy. The memory usage grows and shrinks;
 # I think the garbage collector is too eager and it's wasting time. Unsure though
