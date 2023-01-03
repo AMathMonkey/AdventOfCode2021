@@ -1,6 +1,6 @@
 (defun read-line-or-nil (input) ;; supports Windows CRLF format 
     (let ((rawline (read-line input nil nil)))
-        (if rawline (string-right-trim (string #\return) rawline) nil)))
+        (if rawline (string-right-trim #.(string #\return) rawline) nil)))
 
 (defparameter elves
     (loop with input = (open "input.txt")
