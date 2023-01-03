@@ -1,8 +1,12 @@
+(defun read-line-or-nil (input) ;; supports Windows CRLF format 
+    (let ((rawline (read-line input nil nil)))
+        (if rawline (string-right-trim (string #\return) rawline) nil)))
+
 (defparameter elves
     (loop with input = (open "input.txt")
-        with elves = '()
-        with current-elf = '()
-        for line = (let ((rawline (read-line input nil nil))) (if rawline (string-right-trim (string #\return) rawline) nil))
+        and elves = '()
+        and current-elf = '()
+        for line = (read-line-or-nil input)
         while line
         if (string= line "") do (progn (push current-elf elves) (setf current-elf '()))
         else do (push (parse-integer line) current-elf)
