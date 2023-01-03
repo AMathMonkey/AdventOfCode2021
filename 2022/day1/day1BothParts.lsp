@@ -9,7 +9,6 @@
                     collect (parse-integer line))
         while elf collect elf))
 
-(format t "Part 1: ~a
-Part 2: ~a~%"
+(format t "Part 1: ~a~%Part 2: ~a~%"
     (loop for elf in elves maximize (apply '+ elf))
     (apply '+ (subseq (sort (loop for elf in elves collect (apply '+ elf)) '>) 0 3)))
