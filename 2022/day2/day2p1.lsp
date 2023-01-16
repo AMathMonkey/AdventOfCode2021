@@ -14,8 +14,9 @@
         for strings = (uiop:split-string line)
         collect (loop for str in strings collect (getf decrypter (read-from-string str))))))
 
-    (princ (loop for (opponent me) in rounds summing (+ 
-        (getf point-mapping me)
-        (cond ((equal me opponent) (getf point-mapping 'draw))
-            ((equal (getf winner-mapping me) opponent) (getf point-mapping 'win))
-            (t 0))))))
+    (princ (loop for (opponent me) in rounds
+        summing (+ (getf point-mapping me)
+            (cond 
+                ((equal me opponent) (getf point-mapping 'draw))
+                ((equal (getf winner-mapping me) opponent) (getf point-mapping 'win))
+                (t 0))))))

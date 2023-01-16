@@ -14,9 +14,9 @@
      (point-mapping '(rock 1 paper 2 scissors 3 win 6 draw 3 lose 0))
      (winner-mapping '(rock scissors paper rock scissors paper))
      (rounds (loop with input = (open "input.txt")
-            for line = (read-line-or-nil input) while line
-            for strings = (uiop:split-string line)
-            collect (loop for str in strings collect (getf decrypter (read-from-string str))))))
+        for line = (read-line-or-nil input) while line
+        for strings = (uiop:split-string line)
+        collect (loop for str in strings collect (getf decrypter (read-from-string str))))))
 
     (princ (loop for (opponent outcome) in rounds 
         for me = (case outcome 
