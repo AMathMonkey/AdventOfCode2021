@@ -5,7 +5,7 @@
         (if rawline (string-right-trim #.(string #\return) rawline) nil)))
 
 (defun plist-key-for-value (plist value)
-    (loop for cell = plist then (cddr cell) while cell
+    (loop for cell on plist by 'cddr
         if (eql (cadr cell) value) return (car cell)
         finally (return nil)))
 
