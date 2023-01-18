@@ -9,9 +9,9 @@
         if (eql v value) return k))
 
 (let* 
-    ((decrypter '(A rock B paper C scissors X lose Y draw Z win))
-     (point-mapping '(rock 1 paper 2 scissors 3 win 6 draw 3 lose 0))
-     (winner-mapping '(rock scissors paper rock scissors paper))
+    ((decrypter '(A :rock B :paper C :scissors X :lose Y :draw Z :win))
+     (point-mapping '(:rock 1 :paper 2 :scissors 3 :win 6 :draw 3 :lose 0))
+     (winner-mapping '(:rock :scissors :paper :rock :scissors :paper))
      (rounds (loop with input = (open "input.txt")
         for line = (read-line-or-nil input) while line
         for strings = (uiop:split-string line)
@@ -19,7 +19,8 @@
 
     (princ (loop for (opponent outcome) in rounds 
         for me = (case outcome 
-            ('win (plist-key-for-value winner-mapping opponent))
-            ('lose (getf winner-mapping opponent))
-            ('draw opponent))
-        summing (+ (getf point-mapping me) (getf point-mapping outcome)))))
+            (:win (plist-key-for-value winner-mapping opponent))
+            (:lose (getf winner-mapping opponent))
+            (:draw opponent))
+        sum (getf point-mapping me) 
+        sum (getf point-mapping outcome))))
