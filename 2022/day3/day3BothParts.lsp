@@ -15,5 +15,3 @@
             for line = (coerce (read-line-or-nil input) 'list) while line
             collect line) while lines
         sum (score (car (reduce 'nintersection lines)))))
-
-
