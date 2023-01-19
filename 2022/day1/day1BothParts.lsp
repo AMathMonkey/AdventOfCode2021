@@ -8,5 +8,5 @@
             do (setf remaining-lines (cdr remaining-lines)))))
 
 (format t "Part 1: ~a~%Part 2: ~a~%"
-    (loop for elf in elves maximize elf)
+    (apply 'max elves)
     (apply '+ (subseq (sort elves '>) 0 3)))
