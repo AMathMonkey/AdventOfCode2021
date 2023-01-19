@@ -1,11 +1,6 @@
 (require "asdf")
 
-(defun read-line-or-nil (input) ;; supports Windows CRLF format 
-    (let ((rawline (read-line input nil nil)))
-        (if rawline (string-right-trim #.(string #\return) rawline) nil)))
-
-(defparameter ranges (loop with input = (open "input.txt")
-    for line = (read-line-or-nil input) while line
+(defparameter ranges (loop for line in (uiop:read-file-lines "input.txt")
     collect (mapcar 'parse-integer (uiop:split-string line :separator ",-"))))
 
 (format t "Part 1: ~a~%Part 2: ~a~%"

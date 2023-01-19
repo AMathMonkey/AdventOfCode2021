@@ -1,16 +1,11 @@
 
 (require "asdf")
 
-(defun read-line-or-nil (input) ;; supports Windows CRLF format 
-    (let ((rawline (read-line input nil nil)))
-        (if rawline (string-right-trim #.(string #\return) rawline) nil)))
-
 (let* 
     ((decrypter '(A :rock B :paper C :scissors X :rock Y :paper Z :scissors))
      (point-mapping '(:rock 1 :paper 2 :scissors 3 :win 6 :draw 3))
      (winner-mapping '(:rock :scissors :paper :rock :scissors :paper))
-     (rounds (loop with input = (open "input.txt")
-        for line = (read-line-or-nil input) while line
+     (rounds (loop for line in (uiop:read-file-lines "input.txt")
         for strings = (uiop:split-string line)
         collect (loop for str in strings collect (getf decrypter (read-from-string str))))))
 

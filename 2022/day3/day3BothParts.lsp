@@ -1,17 +1,15 @@
-(defun read-line-or-nil (input) ;; supports Windows CRLF format 
-    (let ((rawline (read-line input nil nil)))
-        (if rawline (string-right-trim #.(string #\return) rawline) nil)))
+(require "asdf")
 
 (defun score (letter) 
     (- (char-code letter) (if (upper-case-p letter) 38 96)))
 
+(defparameter lines (uiop:read-file-lines "input.txt"))
+
 (format t "Part 1: ~a~%Part 2: ~a~%" 
-    (loop with input = (open "input.txt")
-        for chars = (coerce (read-line-or-nil input) 'list) while chars
+    (loop for line in lines
+        for chars = (coerce line 'list)
         for halfway = (floor (length chars) 2)
         sum (score (car (nintersection (subseq chars 0 halfway) (subseq chars halfway)))))
-    (loop with input = (open "input.txt")
-        for lines = (loop repeat 3
-            for line = (coerce (read-line-or-nil input) 'list) while line
-            collect line) while lines
-        sum (score (car (reduce 'nintersection lines)))))
+    (loop for remaining-lines on lines by 'cdddr
+        for three-charlists = (loop for l in (subseq remaining-lines 0 3) collect (coerce l 'list)) 
+        sum (score (car (reduce 'nintersection three-charlists)))))
