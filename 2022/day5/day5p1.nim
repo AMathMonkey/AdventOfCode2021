@@ -19,7 +19,7 @@ for i in countdown(initLines - 1, 0):
   let
     line = lines[i]
     letters = collect:
-      for i in countup(1, line.len - 1, 4): line[i]
+      for i in countup(1, line.high, 4): line[i]
   for i, letter in letters:
     if letter != ' ': stacks[i].add(letter)
 
