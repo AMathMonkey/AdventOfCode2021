@@ -2,7 +2,7 @@ set lines [split [read [open input.txt]] \n]
 
 foreach line $lines {
     if {[string match {*\[*} $line]} {incr initLines; continue}
-    set numStacks [lindex [lsearch -inline -all $line {*?*}] end]
+    set numStacks [lindex $line end]
     break
 }
 
