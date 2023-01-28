@@ -10,12 +10,15 @@ set stacks [lrepeat $numStacks [list]]
 
 foreach line [lreverse [lrange $lines 0 $initLines-1]] {
     set letters [list]
-    for {set i 1} {$i < [string length $line]} {incr i 4} {
+    set len [string length $line]
+    for {set i 1} {$i < $len} {incr i 4} {
         lappend letters [string index $line $i]
     }
-    for {set i 0} {$i < [llength $letters]} {incr i} {
-        set letter [lindex $letters $i]
+
+    set i 0
+    foreach letter $letters {
         if {$letter ne { }} {lset stacks $i end+1 $letter}
+        incr i
     }
 }
 
