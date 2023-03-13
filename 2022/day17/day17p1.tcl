@@ -50,28 +50,17 @@ proc placeRock {} {
         if {$y > $highestY} {set highestY $y}
     }
 
-    # set displayBoard [lrepeat [expr {$highestY + 3}] [list . . . . . . .]]
-    # foreach coord [array names allPixels] {
-    #     lassign [split $coord ,] x y
-    #     puts "$x $y"
-    #     lset displayBoard $y $x "#"
-    # }
-    # foreach row [lreverse $displayBoard] {
-    #     puts [join $row " "]
-    # }
-    # puts ""
     newRock
 }
 
 set input [string trim [read [open input.txt]]]
-
-set currentPixels {}
 
 set highestY -1
 
 set minX 0
 set maxX 6
 
+set currentPixels {}
 set rockNum -1
 newRock
 
@@ -83,7 +72,6 @@ while {$rockNum < 2022} {
     set inputPtr [expr {($inputPtr + 1) % $inputLen}]
 
     move $inputChar
-
     if {![move down]} {placeRock}
 }
 
