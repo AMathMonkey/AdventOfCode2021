@@ -67,27 +67,22 @@ newRock
 set inputPtr 0
 set inputLen [string length $input]
 
+set yVals {}
+
 while {$rockNum < 1000000000000} {
     if {$inputPtr == 0 && $rockType == 0} {
-        set topRow [array names allPixels *,$highestY]
-        set topRowX [lsort [lmap coord $topRow {lindex [split $coord ,] 0}]]
-        if {![info exists lastTopRowX]} {
-            if {$topRow ne {}} {set lastTopRowX $topRowX}
-        } else {
-            if {$topRowX eq $lastTopRowX} {
-                lappend yVals $highestY
-                lappend rockVals $rockNum
-            }
-            if {[llength $yVals] == 2} {
-                lassign $yVals y1 y2
-                lassign $rockVals r1 r2
-                set yDiff [expr {$y2 - $y1}]
-                set rockDiff [expr {$r2 - $r1}]
-
-                set cycles [expr {(1000000000000 - $rockNum) / $rockDiff}]
-                incr rockNum [expr {$rockDiff * $cycles}]
-            } 
+        if {$highestY > 0} {
+            lappend yVals $highestY
+            lappend rockVals $rockNum
         }
+        if {[llength $yVals] == 2} {
+            lassign $yVals y1 y2
+            lassign $rockVals r1 r2
+            set yDiff [expr {$y2 - $y1}]
+            set rockDiff [expr {$r2 - $r1}]
+            set cycles [expr {(1000000000000 - $rockNum) / $rockDiff}]
+            incr rockNum [expr {$rockDiff * $cycles}]
+        } 
     }
     
     set inputChar [string index $input $inputPtr]
