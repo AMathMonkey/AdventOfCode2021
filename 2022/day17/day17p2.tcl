@@ -66,8 +66,6 @@ newRock
 set inputPtr 0
 set inputLen [string length $input]
 
-set yVals {}
-
 while {$rockNum < 1000000000000} {
     if {$inputPtr == 0 && $rockType == 0 && $rockNum > 0} {
         lappend yVals $highestY
