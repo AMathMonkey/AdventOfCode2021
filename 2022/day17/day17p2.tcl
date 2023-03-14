@@ -1,7 +1,6 @@
 proc move {dir} {
     global currentPixels allPixels minX maxX
     set newPixels {}
-    set incrVal [expr {$dir == {right} ? 1 : -1}]
     foreach coord $currentPixels {
         lassign [split $coord ,] x y
         switch $dir {
