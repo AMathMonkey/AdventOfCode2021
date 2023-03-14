@@ -70,11 +70,9 @@ set inputLen [string length $input]
 set yVals {}
 
 while {$rockNum < 1000000000000} {
-    if {$inputPtr == 0 && $rockType == 0} {
-        if {$highestY > 0} {
-            lappend yVals $highestY
-            lappend rockVals $rockNum
-        }
+    if {$inputPtr == 0 && $rockType == 0 && $rockNum > 0} {
+        lappend yVals $highestY
+        lappend rockVals $rockNum
         if {[llength $yVals] == 2} {
             lassign $yVals y1 y2
             lassign $rockVals r1 r2
