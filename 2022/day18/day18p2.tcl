@@ -36,7 +36,7 @@ while {$lastSize != [set newSize [array size steam]]} {
 
         set y1 [expr $y+1]
         set index $x,$y1,$z
-        if {$y + 1 <= $maxY && ![info exists cubes($index)]} {set steam($index) {}}
+        if {$y1 <= $maxY && ![info exists cubes($index)]} {set steam($index) {}}
 
         set ym1 [expr $y-1]
         set index $x,$ym1,$z
