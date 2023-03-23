@@ -26,28 +26,22 @@ while {$lastSize != [set newSize [array size steam]]} {
     foreach steamCube [array names steam] {
         lassign [split $steamCube ,] x y z
 
-        set x1 [expr $x+1]
-        set index $x1,$y,$z
+        set index [set x1 [expr {$x+1}]],$y,$z
         if {$x1 <= $maxX && ![info exists cubes($index)]} {set steam($index) {}}
 
-        set xm1 [expr $x-1]
-        set index $xm1,$y,$z
+        set index [set xm1 [expr {$x-1}]],$y,$z
         if {$xm1 >= -1 && ![info exists cubes($index)]} {set steam($index) {}}
 
-        set y1 [expr $y+1]
-        set index $x,$y1,$z
+        set index $x,[set y1 [expr {$y+1}]],$z
         if {$y1 <= $maxY && ![info exists cubes($index)]} {set steam($index) {}}
 
-        set ym1 [expr $y-1]
-        set index $x,$ym1,$z
+        set index $x,[set ym1 [expr {$y-1}]],$z
         if {$ym1 >= -1 && ![info exists cubes($index)]} {set steam($index) {}}
-
-        set z1 [expr $z+1]
-        set index $x,$y,$z1
+        
+        set index $x,$y,[set z1 [expr {$z+1}]]
         if {$z1 <= $maxZ && ![info exists cubes($index)]} {set steam($index) {}}
-
-        set zm1 [expr $z-1]
-        set index $x,$y,$zm1
+        
+        set index $x,$y,[set zm1 [expr {$z-1}]]
         if {$zm1 >= -1 && ![info exists cubes($index)]} {set steam($index) {}}
     }
     set lastSize $newSize
@@ -57,12 +51,12 @@ while {$lastSize != [set newSize [array size steam]]} {
 foreach cube [array names cubes] {
     lassign [split $cube ,] x y z
     foreach neighbour [list \
-        [expr $x+1],$y,$z \
-        [expr $x-1],$y,$z \
-        $x,[expr $y+1],$z \
-        $x,[expr $y-1],$z \
-        $x,$y,[expr $z+1] \
-        $x,$y,[expr $z-1] \
+        [expr {$x+1}],$y,$z \
+        [expr {$x-1}],$y,$z \
+        $x,[expr {$y+1}],$z \
+        $x,[expr {$y-1}],$z \
+        $x,$y,[expr {$z+1}] \
+        $x,$y,[expr {$z-1}] \
     ] {
         if {[info exists steam($neighbour)]} {incr result}
     }
