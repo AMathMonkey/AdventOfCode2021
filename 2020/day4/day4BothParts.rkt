@@ -2,14 +2,23 @@
 
 (define required (list "ecl:" "pid:" "eyr:" "hcl:" "byr:" "iyr:" "hgt:"))
 
+;;; (define passports
+;;;   (let recur ([lines (port->lines (open-input-file "input.txt") #:close? #t)]
+;;;               [result (list)]
+;;;               [sublist (list)])
+;;;     (if (null? lines) (reverse (cons (string-join sublist) result))
+;;;       (if (non-empty-string? (car lines)) 
+;;;         (recur (cdr lines) result (cons (car lines) sublist))
+;;;         (recur (cdr lines) (cons (string-join sublist) result) (list))))))
+
+;;; Weird alternative using splitf-at instead of sublist building
 (define passports
   (let recur ([lines (port->lines (open-input-file "input.txt") #:close? #t)]
-              [result (list)]
-              [sublist (list)])
-    (if (null? lines) (reverse (cons (string-join sublist) result))
-      (if (equal? (car lines) "") 
-        (recur (cdr lines) (cons (string-join sublist) result) (list))
-        (recur (cdr lines) result (cons (car lines) sublist))))))
+              [result (list)])
+    (let*-values ([(next-passport remaining-lines) (splitf-at lines non-empty-string?)]
+                  [(result) (cons (string-join next-passport) result)])
+       (if (null? remaining-lines) (reverse result)
+         (recur (dropf remaining-lines (negate non-empty-string?)) result)))))
 
 (printf "Part 1: ~a~%" 
   (count (λ (passport)
