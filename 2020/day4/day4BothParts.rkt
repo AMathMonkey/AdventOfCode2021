@@ -16,9 +16,10 @@
   (let recur ([lines (port->lines (open-input-file "input.txt") #:close? #t)]
               [result (list)])
     (let*-values ([(next-passport remaining-lines) (splitf-at lines non-empty-string?)]
+                  [(remaining-lines) (dropf remaining-lines (negate non-empty-string?))]
                   [(result) (cons (string-join next-passport) result)])
        (if (null? remaining-lines) (reverse result)
-         (recur (dropf remaining-lines (negate non-empty-string?)) result)))))
+         (recur remaining-lines result)))))
 
 (printf "Part 1: ~a~%" 
   (count (λ (passport)
