@@ -20,8 +20,8 @@ exec ros -Q -- $0 "$@"
 
 (defun min-or-max-index (min-or-max seq)
   (loop with v = nil
-   with comparison-func = (case min-or-max (:min #'<) (:max #'>))
    with v-index = nil
+   with comparison-func = (case min-or-max (:min #'<) (:max #'>))
    for i from 0 below (length seq)
    for item = (elt seq i)
    if item
@@ -34,8 +34,8 @@ exec ros -Q -- $0 "$@"
     (loop for line in +lines+
      for digit-chars = (list (find-if #'digit-char-p line) (find-if #'digit-char-p line :from-end t))
      sum (parse-integer (coerce digit-chars 'string)))
-    (loop for line in +lines+
-     with number-strings = (map 'list #'car +numstrs-and-values+)
+    (loop with number-strings = (map 'list #'car +numstrs-and-values+) 
+     for line in +lines+ 
      for min-index = (min-or-max-index :min (map 'vector (lambda (s) (search s line :test #'equal)) number-strings))
      for max-index = (min-or-max-index :max (map 'vector (lambda (s) (search s line :test #'equal :from-end t)) number-strings))
      sum (+ (* 10 (cdr (elt +numstrs-and-values+ min-index))) (cdr (elt +numstrs-and-values+ max-index))))))
