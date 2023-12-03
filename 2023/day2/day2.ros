@@ -5,52 +5,44 @@ exec ros -Q -- $0 "$@"
 |#
 (progn
   (ros:ensure-asdf)
-  #+quicklisp(ql:quickload '(cl-ppcre) :silent t)  )
+  #+quicklisp(ql:quickload '(str alexandria) :silent t))
 
 (defpackage :ros.script.day2.3910554417
   (:use :cl)
   (:import-from :uiop :read-file-lines)
-  (:import-from :ppcre :split :scan-to-strings :create-scanner))
+  (:import-from :alexandria :eswitch)
+  (:import-from :str :split :words))
 (in-package :ros.script.day2.3910554417)
 
-(defconstant +red-limit+ 12)
-(defconstant +green-limit+ 13)
-(defconstant +blue-limit+ 14)
-
 (defconstant +lines+ (read-file-lines "input.txt"))
-(defconstant +game-scanner+ (create-scanner "^Game (\\d+):(.*)"))
-(defconstant +red-scanner+ (create-scanner "(\\d+) red"))
-(defconstant +green-scanner+ (create-scanner "(\\d+) green"))
-(defconstant +blue-scanner+ (create-scanner "(\\d+) blue"))
-(defconstant +semicolon-scanner+ (create-scanner ";"))
 
-(defmacro get-first-match-group (scan-call)
-  `(or (ignore-errors (parse-integer (elt (nth-value 1 ,scan-call) 0))) 0))
+(defun get-limit (colour)
+  (eswitch (colour :test #'string=)
+    ("red" 12)
+    ("green" 13)
+    ("blue" 14)))
 
-(defmacro scan-turn-func (scanner)
-  `(lambda (turn) (get-first-match-group (scan-to-strings ,scanner turn))))
-
-(defun every-less-than-num (seq limit)
-  (every (lambda (num) (<= num limit)) seq))
+;; Example output: ((2 "red") (2 "green") (6 "red") (3 "green") (2 "red") (1 "green") (2 "blue") (1 "red"))
+(defun game-str-to-turn-pairs (game-str)
+  "Return a list of pairs of number int and colour string, which occurred in the provided game string"
+  (loop for turn-str in (split "; " game-str)
+   nconc (loop for pair-str in (split ", " turn-str)
+            for (number-str colour) = (words pair-str)
+            collect (list (parse-integer number-str) colour))))
 
 (defun main (&rest argv)
   (declare (ignorable argv))
   (format t "Part 1: ~a~%Part 2: ~a~%"
     (loop for line in +lines+
-     for (game-s rest) = (coerce (nth-value 1 (scan-to-strings +game-scanner+ line)) 'list)
-     for game = (parse-integer game-s)
-     for turns = (split +semicolon-scanner+ rest)
-     if (and
-          (every-less-than-num (map 'list (scan-turn-func +red-scanner+) turns) +red-limit+)
-          (every-less-than-num (map 'list (scan-turn-func +green-scanner+) turns) +green-limit+)
-          (every-less-than-num (map 'list (scan-turn-func +blue-scanner+) turns) +blue-limit+))
-     sum game)
+     for (game-id-str rest) = (split ": " line)
+     if (loop for (number colour) in (game-str-to-turn-pairs rest) always (<= number (get-limit colour)))
+     sum (parse-integer (second (words game-id-str))))
     (loop for line in +lines+
-     for (game-s rest) = (coerce (nth-value 1 (scan-to-strings +game-scanner+ line)) 'list)
-     for game = (parse-integer game-s)
-     for turns = (split +semicolon-scanner+ rest)
-     sum (* 
-           (reduce #'max turns :key (scan-turn-func +red-scanner+))
-           (reduce #'max turns :key (scan-turn-func +green-scanner+))
-           (reduce #'max turns :key (scan-turn-func +blue-scanner+))))))
+     for (game-id-str rest) = (split ": " line)
+     sum (apply #'*
+           (loop for (number colour) in (game-str-to-turn-pairs rest)
+            if (string= colour "red") maximize number into max-red
+            else if (string= colour "green") maximize number into max-green
+            else maximize number into max-blue
+            finally (return (list max-red max-green max-blue)))))))
     
