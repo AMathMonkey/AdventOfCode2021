@@ -27,8 +27,8 @@ exec ros -Q -- $0 "$@"
   "Return a list of pairs of number int and colour string, which occurred in the provided game string"
   (loop for turn-str in (split "; " game-str)
    nconc (loop for pair-str in (split ", " turn-str)
-            for (number-str colour) = (words pair-str)
-            collect (list (parse-integer number-str) colour))))
+          for (number-str colour) = (words pair-str)
+          collect (list (parse-integer number-str) colour))))
 
 (defun main (&rest argv)
   (declare (ignorable argv))
