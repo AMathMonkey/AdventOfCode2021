@@ -1,0 +1,54 @@
+#!/bin/sh
+#|-*- mode:lisp -*-|#
+#|
+exec ros -Q -- $0 "$@"
+|#
+(progn
+  (ros:ensure-asdf)
+  #+quicklisp(ql:quickload '(cl-ppcre) :silent t)
+  )
+
+(defpackage :ros.script.day2.3910554417
+  (:use :cl)
+  (:import-from :uiop :read-file-lines :println)
+  (:import-from :ppcre :split :scan-to-strings :create-scanner))
+(in-package :ros.script.day2.3910554417)
+
+(defconstant red-limit 12)
+(defconstant green-limit 13)
+(defconstant blue-limit 14)
+
+(defconstant +lines+ (read-file-lines "input.txt"))
+(defconstant game-scanner (create-scanner "^Game (\\d+):(.*)"))
+(defconstant red-scanner (create-scanner "(\\d+) red"))
+(defconstant green-scanner (create-scanner "(\\d+) green"))
+(defconstant blue-scanner (create-scanner "(\\d+) blue"))
+(defconstant semicolon-scanner (create-scanner ";"))
+
+(defmacro get-first-match-group (scan-call)
+  `(or (ignore-errors (parse-integer (elt (nth-value 1 ,scan-call) 0))) 0))
+
+(defun every-less-than-num (seq limit)
+  (every (lambda (num) (<= num limit)) seq))
+
+(defun main (&rest argv)
+  (declare (ignorable argv))
+  (format t "Part 1: ~a~%Part 2: ~a~%"
+    (loop for line in +lines+
+     for (game-s rest) = (coerce (nth-value 1 (scan-to-strings game-scanner line)) 'list)
+     for game = (parse-integer game-s)
+     for turns = (split semicolon-scanner rest)
+     if (and
+          (every (lambda (turn) (<= (get-first-match-group (scan-to-strings red-scanner turn)) red-limit)) turns)
+          (every (lambda (turn) (<= (get-first-match-group (scan-to-strings green-scanner turn)) green-limit)) turns)
+          (every (lambda (turn) (<= (get-first-match-group (scan-to-strings blue-scanner turn)) blue-limit)) turns)) 
+     sum game)
+    (loop for line in +lines+
+     for (game-s rest) = (coerce (nth-value 1 (scan-to-strings game-scanner line)) 'list)
+     for game = (parse-integer game-s)
+     for turns = (split semicolon-scanner rest)
+     for max-red = (reduce #'max turns :key (lambda (turn) (get-first-match-group (scan-to-strings red-scanner turn))))
+     for max-green = (reduce #'max turns :key (lambda (turn) (get-first-match-group (scan-to-strings green-scanner turn))))
+     for max-blue = (reduce #'max turns :key (lambda (turn) (get-first-match-group (scan-to-strings blue-scanner turn))))
+     sum (* max-red max-green max-blue))))
+    
