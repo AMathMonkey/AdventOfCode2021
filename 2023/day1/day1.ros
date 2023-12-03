@@ -5,17 +5,16 @@ exec ros -Q -- $0 "$@"
 |#
 (progn
   (ros:ensure-asdf)
-  #+quicklisp(ql:quickload '() :silent t)
-  )
+  #+quicklisp(ql:quickload '() :silent t))
 
 (defpackage :ros.script.day1.3910536952
   (:use :cl)
-  (:import-from :uiop :read-file-lines :println))
+  (:import-from :uiop :read-file-lines))
 (in-package :ros.script.day1.3910536952)
 
 (defconstant +lines+ (read-file-lines "input.txt"))
 
-(defconstant possible-numbers
+(defconstant +numstrs-and-values+
   #(("1" . 1) ("2" . 2) ("3" . 3) ("4" . 4) ("5" . 5) ("6" . 6) ("7" . 7) ("8" . 8) ("9" . 9)
     ("one" . 1) ("two" . 2) ("three" . 3) ("four" . 4) ("five" . 5) ("six" . 6) ("seven" . 7) ("eight" . 8) ("nine" . 9)))
 
@@ -36,7 +35,7 @@ exec ros -Q -- $0 "$@"
      for digit-chars = (list (find-if #'digit-char-p line) (find-if #'digit-char-p line :from-end t))
      sum (parse-integer (coerce digit-chars 'string)))
     (loop for line in +lines+
-     with number-strings = (map 'list #'car possible-numbers)
+     with number-strings = (map 'list #'car +numstrs-and-values+)
      for min-index = (min-or-max-index :min (map 'vector (lambda (s) (search s line :test #'equal)) number-strings))
      for max-index = (min-or-max-index :max (map 'vector (lambda (s) (search s line :test #'equal :from-end t)) number-strings))
-     sum (+ (* 10 (cdr (elt possible-numbers min-index))) (cdr (elt possible-numbers max-index))))))
+     sum (+ (* 10 (cdr (elt +numstrs-and-values+ min-index))) (cdr (elt +numstrs-and-values+ max-index))))))
