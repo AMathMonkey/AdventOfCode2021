@@ -24,8 +24,7 @@ exec ros -Q -- $0 "$@"
    with comparison-func = (case min-or-max (:min #'<) (:max #'>))
    for i from 0 below (length seq)
    for item = (elt seq i)
-   if item
-   if (or (not v) (funcall comparison-func item v)) do (setf v item v-index i)
+   if (and item (or (not v) (funcall comparison-func item v))) do (setf v item v-index i)
    finally (return v-index)))
 
 (defun main (&rest argv)
