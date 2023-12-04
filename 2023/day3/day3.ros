@@ -1,0 +1,75 @@
+#!/bin/sh
+#|-*- mode:lisp -*-|#
+#|
+exec ros -Q -- $0 "$@"
+|#
+(progn
+  (ros:ensure-asdf)
+  #+quicklisp(ql:quickload '(str alexandria) :silent t))
+
+(defpackage :ros.script.day3.3910652739
+  (:use :cl)
+  (:import-from :uiop :read-file-lines)
+  (:import-from :alexandria :clamp :maphash-values :when-let)
+  (:import-from :str :join))
+(in-package :ros.script.day3.3910652739)
+
+(defconstant +lines+
+  (let ((lines (read-file-lines "input.txt")))
+    (make-array (list (length lines) (length (first lines))) :initial-contents lines)))
+
+(defconstant +num-rows+ (array-dimension +lines+ 0))
+(defconstant +num-cols+ (array-dimension +lines+ 1))
+
+(defun symbol-char-nearby-p (row start end)
+  (loop for i from (clamp (1- row) 0 (1- +num-rows+)) to (clamp (1+ row) 0 (1- +num-rows+))
+   if (loop for j from (clamp (1- start) 0 (1- +num-cols+)) to (clamp (1+ end) 0 (1- +num-cols+))
+       for item = (aref +lines+ i j)
+       thereis (and (char/= item #\.) (not (alphanumericp item))))
+   return (parse-integer (coerce (loop for j from start to end collect (aref +lines+ row j)) 'string))))
+
+(defun star-nearby-p (row start end)
+  (loop named outer 
+   for i from (clamp (1- row) 0 (1- +num-rows+)) to (clamp (1+ row) 0 (1- +num-rows+))
+   do (loop for j from (clamp (1- start) 0 (1- +num-cols+)) to (clamp (1+ end) 0 (1- +num-cols+))
+       for item = (aref +lines+ i j)
+       if (char= item #\*) 
+       do (return-from outer 
+            (list 
+              (join " " (mapcar #'write-to-string (list i j)))
+              (parse-integer (coerce (loop for x from start to end collect (aref +lines+ row x)) 'string)))))))
+
+(defun get-gear-ratios (stars-and-adjacent-numbers)
+  (let ((result 0))
+    (maphash-values
+      (lambda (numbers) (when (= 2 (length numbers)) (incf result (apply #'* numbers))))
+      stars-and-adjacent-numbers)
+    result))
+
+(defun main (&rest argv)
+  (declare (ignorable argv))
+  (format t "Part 1: ~a~%Part 2: ~a~%"
+    (loop for i from 0 below +num-rows+
+     sum (loop with start = nil
+          for j from 0 below +num-cols+
+          for char = (aref +lines+ i j)
+          for digit-char-p = (digit-char-p char)
+          if (and (not start) digit-char-p) do (setf start j)
+          if (and start (or (= j (1- +num-cols+)) (not (digit-char-p (aref +lines+ i (1+ j))))))
+            sum (or (symbol-char-nearby-p i start j) 0)
+            and do (setf start nil)))
+    (loop with stars-and-adjacent-numbers = (make-hash-table :test #'equal)
+     for i from 0 below +num-rows+
+     do (loop with start = nil
+         for j from 0 below +num-cols+
+         for char = (aref +lines+ i j)
+         for digit-char-p = (digit-char-p char)
+         if (and (not start) digit-char-p) 
+         do (setf start j)
+         if (and start (or (= j (1- +num-cols+)) (not (digit-char-p (aref +lines+ i (1+ j))))))
+         do (when-let ((star-nearby-p (star-nearby-p i start j)))
+              (destructuring-bind (coord number) star-nearby-p
+                (push number (gethash coord stars-and-adjacent-numbers '()))))
+         and do (setf start nil))
+     finally (return (get-gear-ratios stars-and-adjacent-numbers)))))
+    
