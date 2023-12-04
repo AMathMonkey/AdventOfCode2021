@@ -1,0 +1,50 @@
+#!/bin/sh
+#|-*- mode:lisp -*-|#
+#|
+exec ros -Q -- $0 "$@"
+|#
+(progn
+  (ros:ensure-asdf)
+  #+quicklisp(ql:quickload '(str alexandria) :silent t))
+
+(defpackage :ros.script.day4.3910652739
+  (:use :cl)
+  (:import-from :uiop :read-file-lines)
+  (:import-from :alexandria :curry)
+  (:import-from :str :split :words))
+(in-package :ros.script.day4.3910652739)
+
+(defun list-set (list)
+  (loop with set = (make-hash-table :test #'equal)
+   for e in list
+   do (setf (gethash e set) nil)
+   finally (return set)))
+   
+(defun set-includes (set value)
+  (nth-value 1 (gethash value set)))
+
+(defconstant +lines+ (coerce (read-file-lines "input.txt") 'vector))
+(defconstant +matches-per-line+
+  (coerce 
+    (loop for line across +lines+
+     for (winning my-nums) = (mapcar #'words (split " | " (second (split ": " line))))
+     for winning-set = (list-set winning)
+     collect (count-if (curry #'set-includes winning-set) my-nums))
+     'vector))
+
+(defun main (&rest argv)
+  (declare (ignorable argv))
+  (format t "Part 1: ~a~%Part 2: ~a~%"
+    (loop for matches across +matches-per-line+
+     if (plusp matches) sum (expt 2 (1- matches)))
+    (loop with indices = (make-array 
+                           (list (length +lines+))
+                           :fill-pointer t :adjustable t 
+                           :initial-contents (loop for i from 0 below (length +lines+) collect i))
+     for i from 0
+     while (< i (length indices))
+     for card-number = (elt indices i)
+     for matches = (elt +matches-per-line+ card-number)
+     do (loop for offset from 1 to matches do (vector-push-extend (+ card-number offset) indices))
+     finally (return i))))
+    
