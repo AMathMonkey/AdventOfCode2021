@@ -58,10 +58,11 @@ exec ros -Q -- $0 "$@"
         and do (push-range-if-len-non-zero source-ranges (1+ source-end) (- this-length (- source-end this-start)))
 
         ; if mapping range starts after the range to process, and ends after the range to process ends,
-        ; need to transform the right side ; and split off the left side for further processing
+        ; need to transform the right side and split off the left side for further processing
         else if (<= source-start this-end source-end) collect (list dest-start (- this-length (- source-start this-start)))
         and do (push-range-if-len-non-zero source-ranges this-start (- source-start this-start)))
 
+       ; if loop collected nothing, don't transform the source range
        (list (list this-start this-length)))))
 
 (defun main (&rest argv)
