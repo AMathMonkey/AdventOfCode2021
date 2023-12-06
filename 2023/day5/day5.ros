@@ -5,12 +5,11 @@ exec ros -Q -- $0 "$@"
 |#
 (progn
   (ros:ensure-asdf)
-  #+quicklisp(ql:quickload '(str alexandria) :silent t))
+  #+quicklisp(ql:quickload '(str) :silent t))
 
 (defpackage :ros.script.day5.3910652739
   (:use :cl)
-  (:import-from :uiop :read-file-lines :println)
-  (:import-from :alexandria :curry)
+  (:import-from :uiop :read-file-lines)
   (:import-from :str :split :words :blankp))
 (in-package :ros.script.day5.3910652739)
 
