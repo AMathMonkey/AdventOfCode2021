@@ -14,13 +14,13 @@ exec ros -Q -- $0 "$@"
   (:import-from :str :split :words :blankp))
 (in-package :ros.script.day5.3910652739)
 
-(defconstant +lines+ (coerce (read-file-lines "input.txt") 'vector))
+(defvar *lines*)
 
 (defun range-until-next-blank (i)
-  (let ((pos (position-if #'blankp +lines+ :start i)))
+  (let ((pos (position-if #'blankp *lines* :start i)))
     (values
-      (or pos (length +lines+))
-      (map 'list (lambda (line) (mapcar #'parse-integer (words line))) (subseq +lines+ i pos)))))
+      (or pos (length *lines*))
+      (map 'list (lambda (line) (mapcar #'parse-integer (words line))) (subseq *lines* i pos)))))
 
 (defmacro update-var (varname)
   `(multiple-value-bind (new-i result) (range-until-next-blank (1+ i)) 
@@ -28,14 +28,33 @@ exec ros -Q -- $0 "$@"
 
 (defun get-mapping (sourceval mapvar)
   (loop for (dest-start source-start length) in mapvar
-   if (<= source-start sourceval (+ source-start length)) return (+ dest-start (- sourceval source-start))
+   if (<= source-start sourceval (+ source-start length -1)) return (+ dest-start (- sourceval source-start))
    finally (return sourceval)))
+
+(defun get-mappings (source-ranges mapvar)
+  (loop for (this-start this-length) in source-ranges nconc
+    (or 
+      (loop for (dest-start source-start length) in mapvar
+       if (<= source-start this-start (+ source-start length -1)) 
+         if (<= (+ this-start this-length -1) (+ source-start length -1)) collect (list (+ dest-start (- this-start source-start)) this-length)
+         else 
+           collect (list (+ dest-start (- this-start source-start)) length) 
+           and nconc (get-mappings (list (list (+ source-start length) (- this-length (+ source-start length -1) this-start))) mapvar)) 
+      (list (list this-start this-length)))))
 
 (defun main (&rest argv)
   (declare (ignorable argv))
-  (let ((seeds) (seed-to-soil) (soil-to-fertilizer) (fertilizer-to-water) (water-to-light) (light-to-temperature) (temperature-to-humidity) (humidity-to-location))
-    (loop for i from 0 below (length +lines+)
-     for line = (elt +lines+ i)
+  (setq *lines* (coerce (read-file-lines "input.txt") 'vector))
+  (let ((seeds) 
+        (seed-to-soil)
+        (soil-to-fertilizer)
+        (fertilizer-to-water)
+        (water-to-light)
+        (light-to-temperature)
+        (temperature-to-humidity)
+        (humidity-to-location))
+    (loop for i from 0 below (length *lines*)
+     for line = (elt *lines* i)
      if (search "seeds:" line) do (setf seeds (mapcar #'parse-integer (words (second (split ": " line)))))
      else if (search "seed-to-soil" line) do (update-var seed-to-soil)
      else if (search "soil-to-fertilizer" line) do (update-var soil-to-fertilizer)
@@ -54,17 +73,13 @@ exec ros -Q -- $0 "$@"
        for humidity = (get-mapping temperature temperature-to-humidity)
        for location = (get-mapping humidity humidity-to-location)
        minimize location)
-       nil
-    ;   (loop for (seed-range-start seed-range-length) on seeds by #'cddr
-    ;    do (println (list seed-range-start seed-range-length))
-    ;    minimize (loop for seed from seed-range-start by 1 repeat seed-range-length
-    ;              for soil = (get-mapping seed seed-to-soil)
-    ;              for fertilizer = (get-mapping soil soil-to-fertilizer)
-    ;              for water = (get-mapping fertilizer fertilizer-to-water)
-    ;              for light = (get-mapping water water-to-light)
-    ;              for temperature = (get-mapping light light-to-temperature)
-    ;              for humidity = (get-mapping temperature temperature-to-humidity)
-    ;              for location = (get-mapping humidity humidity-to-location)
-    ;              minimize location))
-                 )))
+      (loop for (seed-range-start seed-range-length) on seeds by #'cddr
+       for soils = (get-mappings (list (list seed-range-start seed-range-length)) seed-to-soil)
+       for fertilizers = (get-mappings soils soil-to-fertilizer)
+       for waters = (get-mappings fertilizers fertilizer-to-water)
+       for lights = (get-mappings waters water-to-light)
+       for temperatures = (get-mappings lights light-to-temperature)
+       for humidities = (get-mappings temperatures temperature-to-humidity)
+       for locations = (get-mappings humidities humidity-to-location)
+       minimize (apply #'min (mapcar #'car locations))))))
     
