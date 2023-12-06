@@ -31,15 +31,23 @@ exec ros -Q -- $0 "$@"
    finally (return sourceval)))
 
 (defun get-mappings (source-ranges mapvar)
-  (loop for (this-start this-length) in source-ranges nconc
-    (or 
-      (loop for (dest-start source-start length) in mapvar
-       if (<= source-start this-start (+ source-start length -1)) 
-         if (<= (+ this-start this-length -1) (+ source-start length -1)) collect (list (+ dest-start (- this-start source-start)) this-length)
-         else 
-           collect (list (+ dest-start (- this-start source-start)) length) 
-           and nconc (get-mappings (list (list (+ source-start length) (- this-length (+ source-start length -1) this-start))) mapvar)) 
-      (list (list this-start this-length)))))
+  (loop while source-ranges
+   for (this-start this-length) = (pop source-ranges)
+   for this-end = (+ this-start this-length -1)
+   if (plusp this-length)
+   nconc
+     (or 
+       (loop for (dest-start source-start length) in mapvar
+        for source-end = (+ source-start length -1)
+        if (<= source-start this-start this-end source-end) collect (list (+ dest-start (- this-start source-start)) this-length)
+        else if (<= this-start source-start source-end this-end) collect (list dest-start length)
+        and do (push (list this-start (- source-start this-start)) source-ranges)
+        and do (push (list (1+ source-end) (- this-end source-end)) source-ranges)
+        else if (<= source-start this-start source-end) collect (list (+ dest-start (- this-start source-start)) (- source-end this-start))
+        and do (push (list (1+ source-end) (- this-length (- source-end this-start))) source-ranges)
+        else if (<= source-start this-end source-end) collect (list dest-start (- this-length (- source-start this-start)))
+        and do (push (list this-start (- source-start this-start)) source-ranges))
+       (list (list this-start this-length)))))
 
 (defun main (&rest argv)
   (declare (ignorable argv))
@@ -72,13 +80,12 @@ exec ros -Q -- $0 "$@"
        for humidity = (get-mapping temperature temperature-to-humidity)
        for location = (get-mapping humidity humidity-to-location)
        minimize location)
-      (loop for (seed-range-start seed-range-length) on seeds by #'cddr
-       for soils = (get-mappings (list (list seed-range-start seed-range-length)) seed-to-soil)
-       for fertilizers = (get-mappings soils soil-to-fertilizer)
-       for waters = (get-mappings fertilizers fertilizer-to-water)
-       for lights = (get-mappings waters water-to-light)
-       for temperatures = (get-mappings lights light-to-temperature)
-       for humidities = (get-mappings temperatures temperature-to-humidity)
-       for locations = (get-mappings humidities humidity-to-location)
-       minimize (apply #'min (mapcar #'car locations))))))
+       (let* ((soils (get-mappings (loop for range-pair on seeds by #'cddr collect (subseq range-pair 0 2)) seed-to-soil))
+              (fertilizers (get-mappings soils soil-to-fertilizer))
+              (waters (get-mappings fertilizers fertilizer-to-water))
+              (lights (get-mappings waters water-to-light))
+              (temperatures (get-mappings lights light-to-temperature))
+              (humidities (get-mappings temperatures temperature-to-humidity))
+              (locations (get-mappings humidities humidity-to-location)))
+        (loop for (location) in locations minimize location)))))
     
