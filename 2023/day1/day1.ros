@@ -12,7 +12,7 @@ exec ros -Q -- $0 "$@"
   (:import-from :uiop :read-file-lines))
 (in-package :ros.script.day1.3910536952)
 
-(defconstant +lines+ (read-file-lines "input.txt"))
+(defvar *lines*)
 
 (defconstant +numstrs-and-values+
   #(("1" . 1) ("2" . 2) ("3" . 3) ("4" . 4) ("5" . 5) ("6" . 6) ("7" . 7) ("8" . 8) ("9" . 9)
@@ -24,17 +24,18 @@ exec ros -Q -- $0 "$@"
    with comparison-func = (case min-or-max (:min #'<) (:max #'>))
    for i from 0 below (length seq)
    for item = (elt seq i)
-   if (and item (or (not v) (funcall comparison-func item v))) do (setf v item v-index i)
+   if (and item (or (not v) (funcall comparison-func item v))) do (setq v item v-index i)
    finally (return v-index)))
 
 (defun main (&rest argv)
   (declare (ignorable argv))
+  (setq *lines* (read-file-lines "input.txt"))
   (format t "Part 1: ~a~%Part 2: ~a~%"
-    (loop for line in +lines+
+    (loop for line in *lines*
      for digit-chars = (list (find-if #'digit-char-p line) (find-if #'digit-char-p line :from-end t))
      sum (parse-integer (coerce digit-chars 'string)))
     (loop with number-strings = (map 'list #'car +numstrs-and-values+) 
-     for line in +lines+ 
+     for line in *lines* 
      for min-index = (min-or-max-index :min (map 'vector (lambda (s) (search s line :test #'equal)) number-strings))
      for max-index = (min-or-max-index :max (map 'vector (lambda (s) (search s line :test #'equal :from-end t)) number-strings))
      sum (+ (* 10 (cdr (elt +numstrs-and-values+ min-index))) (cdr (elt +numstrs-and-values+ max-index))))))

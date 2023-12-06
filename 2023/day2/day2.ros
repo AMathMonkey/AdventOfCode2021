@@ -14,7 +14,7 @@ exec ros -Q -- $0 "$@"
   (:import-from :str :split :words))
 (in-package :ros.script.day2.3910554417)
 
-(defconstant +lines+ (read-file-lines "input.txt"))
+(defvar *lines*)
 
 (defun get-limit (colour)
   (eswitch (colour :test #'string=)
@@ -32,12 +32,13 @@ exec ros -Q -- $0 "$@"
 
 (defun main (&rest argv)
   (declare (ignorable argv))
+  (setq *lines* (read-file-lines "input.txt"))
   (format t "Part 1: ~a~%Part 2: ~a~%"
-    (loop for line in +lines+
+    (loop for line in *lines*
      for (game-id-str rest) = (split ": " line)
      if (loop for (number colour) in (game-str-to-turn-pairs rest) always (<= number (get-limit colour)))
      sum (parse-integer (second (words game-id-str))))
-    (loop for line in +lines+
+    (loop for line in *lines*
      for (game-id-str rest) = (split ": " line)
      sum (apply #'*
            (loop for (number colour) in (game-str-to-turn-pairs rest)

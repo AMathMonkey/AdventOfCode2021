@@ -31,27 +31,30 @@ exec ros -Q -- $0 "$@"
         (when (plusp v) (return (cons k v))))
       hash)))
 
-(defconstant +lines+ (coerce (read-file-lines "input.txt") 'vector))
-(defconstant +matches-per-line+
-  (coerce 
-    (loop for line across +lines+
-     for (winning my-nums) = (mapcar #'words (split " | " (second (split ": " line))))
-     for winning-set = (list-set winning)
-     collect (count-if (curry #'set-includes winning-set) my-nums))
-    'vector))
+(defvar *lines*)
+(defvar *matches-per-line*)
 
 (defun main (&rest argv)
   (declare (ignorable argv))
+  (setq 
+    *lines* (coerce (read-file-lines "input.txt") 'vector)
+    *matches-per-line*
+      (coerce 
+        (loop for line across *lines*
+        for (winning my-nums) = (mapcar #'words (split " | " (second (split ": " line))))
+        for winning-set = (list-set winning)
+        collect (count-if (curry #'set-includes winning-set) my-nums))
+        'vector))
   (format t "Part 1: ~a~%Part 2: ~a~%"
-    (loop for matches across +matches-per-line+
+    (loop for matches across *matches-per-line*
      if (plusp matches) sum (expt 2 (1- matches)))
     (loop with card-counts = (loop with h = (make-hash-table)
-                              for i from 0 below (length +lines+) do (incf (gethash i h 0))
+                              for i from 0 below (length *lines*) do (incf (gethash i h 0))
                               finally (return h))
      for pair = (get-nonzero-kv-pair card-counts)
      while pair
      for (card-number . number-of-units) = pair
-     for matches = (elt +matches-per-line+ card-number)
+     for matches = (elt *matches-per-line* card-number)
      sum number-of-units
      do (loop for offset from 1 to matches 
          do (incf (gethash (+ card-number offset) card-counts 0) number-of-units)))))

@@ -14,28 +14,25 @@ exec ros -Q -- $0 "$@"
   (:import-from :str :join))
 (in-package :ros.script.day3.3910652739)
 
-(defconstant +lines+
-  (let ((lines (read-file-lines "input.txt")))
-    (make-array (list (length lines) (length (first lines))) :initial-contents lines)))
-
-(defconstant +num-rows+ (array-dimension +lines+ 0))
-(defconstant +num-cols+ (array-dimension +lines+ 1))
+(defvar *lines*)
+(defvar *num-rows*)
+(defvar *num-cols*)
 
 (defun col-range-to-number (row start end)
-  (parse-integer (coerce (loop for j from start to end collect (aref +lines+ row j)) 'string)))
+  (parse-integer (coerce (loop for j from start to end collect (aref *lines* row j)) 'string)))
 
 (defun symbol-char-nearby-p (row start end)
-  (loop for i from (clamp (1- row) 0 (1- +num-rows+)) to (clamp (1+ row) 0 (1- +num-rows+))
-   if (loop for j from (clamp (1- start) 0 (1- +num-cols+)) to (clamp (1+ end) 0 (1- +num-cols+))
-       for item = (aref +lines+ i j)
+  (loop for i from (clamp (1- row) 0 (1- *num-rows*)) to (clamp (1+ row) 0 (1- *num-rows*))
+   if (loop for j from (clamp (1- start) 0 (1- *num-cols*)) to (clamp (1+ end) 0 (1- *num-cols*))
+       for item = (aref *lines* i j)
        thereis (and (char/= item #\.) (not (alphanumericp item))))
    return (col-range-to-number row start end)))
 
 (defun star-nearby-p (row start end)
   (loop named outer 
-   for i from (clamp (1- row) 0 (1- +num-rows+)) to (clamp (1+ row) 0 (1- +num-rows+))
-   do (loop for j from (clamp (1- start) 0 (1- +num-cols+)) to (clamp (1+ end) 0 (1- +num-cols+))
-       for item = (aref +lines+ i j)
+   for i from (clamp (1- row) 0 (1- *num-rows*)) to (clamp (1+ row) 0 (1- *num-rows*))
+   do (loop for j from (clamp (1- start) 0 (1- *num-cols*)) to (clamp (1+ end) 0 (1- *num-cols*))
+       for item = (aref *lines* i j)
        if (char= item #\*) 
        do (return-from outer 
             (list 
@@ -51,32 +48,38 @@ exec ros -Q -- $0 "$@"
 
 (defun main (&rest argv)
   (declare (ignorable argv))
+  (setq 
+    *lines* 
+      (let ((lines (read-file-lines "input.txt")))
+        (make-array (list (length lines) (length (first lines))) :initial-contents lines))
+    *num-rows* (array-dimension *lines* 0)
+    *num-cols* (array-dimension *lines* 1))
   (format t "Part 1: ~a~%Part 2: ~a~%"
-    (loop for i from 0 below +num-rows+
+    (loop for i from 0 below *num-rows*
      sum (loop with start = nil
-          for j from 0 below +num-cols+
-          for char = (aref +lines+ i j)
+          for j from 0 below *num-cols*
+          for char = (aref *lines* i j)
           for digit-char-p = (digit-char-p char)
-          if (and (not start) digit-char-p) do (setf start j)
+          if (and (not start) digit-char-p) do (setq start j)
           if (and start (or 
-                          (= j (1- +num-cols+))
-                          (not (digit-char-p (aref +lines+ i (1+ j))))))
+                          (= j (1- *num-cols*))
+                          (not (digit-char-p (aref *lines* i (1+ j))))))
           sum (or (symbol-char-nearby-p i start j) 0)
-          and do (setf start nil)))
+          and do (setq start nil)))
     (loop with stars-and-adjacent-numbers = (make-hash-table :test #'equal)
-     for i from 0 below +num-rows+
+     for i from 0 below *num-rows*
      do (loop with start = nil
-         for j from 0 below +num-cols+
-         for char = (aref +lines+ i j)
+         for j from 0 below *num-cols*
+         for char = (aref *lines* i j)
          for digit-char-p = (digit-char-p char)
          if (and (not start) digit-char-p) 
-         do (setf start j)
+         do (setq start j)
          if (and start (or 
-                         (= j (1- +num-cols+))
-                         (not (digit-char-p (aref +lines+ i (1+ j))))))
+                         (= j (1- *num-cols*))
+                         (not (digit-char-p (aref *lines* i (1+ j))))))
          do (when-let ((star-nearby-p (star-nearby-p i start j)))
               (destructuring-bind (coord number) star-nearby-p
                 (push number (gethash coord stars-and-adjacent-numbers '()))))
-         and do (setf start nil))
+         and do (setq start nil))
      finally (return (get-gear-ratios stars-and-adjacent-numbers)))))
     

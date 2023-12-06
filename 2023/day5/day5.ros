@@ -24,7 +24,7 @@ exec ros -Q -- $0 "$@"
 
 (defmacro update-var (varname)
   `(multiple-value-bind (new-i result) (range-until-next-blank (1+ i)) 
-     (setf i new-i ,varname result)))
+     (setq i new-i ,varname result)))
 
 (defun get-mapping (sourceval mapvar)
   (loop for (dest-start source-start length) in mapvar
@@ -55,7 +55,7 @@ exec ros -Q -- $0 "$@"
         (humidity-to-location))
     (loop for i from 0 below (length *lines*)
      for line = (elt *lines* i)
-     if (search "seeds:" line) do (setf seeds (mapcar #'parse-integer (words (second (split ": " line)))))
+     if (search "seeds:" line) do (setq seeds (mapcar #'parse-integer (words (second (split ": " line)))))
      else if (search "seed-to-soil" line) do (update-var seed-to-soil)
      else if (search "soil-to-fertilizer" line) do (update-var soil-to-fertilizer)
      else if (search "fertilizer-to-water" line) do (update-var fertilizer-to-water)
