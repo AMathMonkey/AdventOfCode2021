@@ -30,23 +30,26 @@ exec ros -Q -- $0 "$@"
    if (<= source-start sourceval (+ source-start length -1)) return (+ dest-start (- sourceval source-start))
    finally (return sourceval)))
 
+(defun push-range-if-len-non-zero (ranges start len)
+  (when (plusp len)
+    (push (list start len) ranges)))
+
 (defun get-mappings (source-ranges mapvar)
   (loop while source-ranges
    for (this-start this-length) = (pop source-ranges)
    for this-end = (+ this-start this-length -1)
-   if (plusp this-length)
    nconc
      (or 
        (loop for (dest-start source-start length) in mapvar
         for source-end = (+ source-start length -1)
         if (<= source-start this-start this-end source-end) collect (list (+ dest-start (- this-start source-start)) this-length)
         else if (<= this-start source-start source-end this-end) collect (list dest-start length)
-        and do (push (list this-start (- source-start this-start)) source-ranges)
-        and do (push (list (1+ source-end) (- this-end source-end)) source-ranges)
+        and do (push-range-if-len-non-zero source-ranges this-start (- source-start this-start))
+        and do (push-range-if-len-non-zero source-ranges (1+ source-end) (- this-end source-end))
         else if (<= source-start this-start source-end) collect (list (+ dest-start (- this-start source-start)) (- source-end this-start))
-        and do (push (list (1+ source-end) (- this-length (- source-end this-start))) source-ranges)
+        and do (push-range-if-len-non-zero source-ranges (1+ source-end) (- this-length (- source-end this-start)))
         else if (<= source-start this-end source-end) collect (list dest-start (- this-length (- source-start this-start)))
-        and do (push (list this-start (- source-start this-start)) source-ranges))
+        and do (push-range-if-len-non-zero source-ranges this-start (- source-start this-start)))
        (list (list this-start this-length)))))
 
 (defun main (&rest argv)
