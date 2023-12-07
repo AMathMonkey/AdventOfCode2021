@@ -9,17 +9,14 @@ exec ros -Q -- $0 "$@"
 
 (defpackage :ros.script.day6.3910652739
   (:use :cl)
-  (:import-from :uiop :read-file-lines :println)
-  (:import-from :str :split :words :blankp :join))
+  (:import-from :uiop :read-file-lines)
+  (:import-from :str :words :join))
 (in-package :ros.script.day6.3910652739)
 
 (defvar *lines*)
 
 (defun merge-nums (line)
   (parse-integer (join "" (cdr (words line)))))
-
-(defun trace-me (thing)
-(println thing) thing)
 
 (defun main (&rest argv)
   (declare (ignorable argv))
