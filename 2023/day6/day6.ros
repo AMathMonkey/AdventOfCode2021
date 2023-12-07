@@ -1,0 +1,37 @@
+#!/bin/sh
+#|-*- mode:lisp -*-|#
+#|
+exec ros -Q -- $0 "$@"
+|#
+(progn
+  (ros:ensure-asdf)
+  #+quicklisp(ql:quickload '(str) :silent t))
+
+(defpackage :ros.script.day6.3910652739
+  (:use :cl)
+  (:import-from :uiop :read-file-lines :println)
+  (:import-from :str :split :words :blankp :join))
+(in-package :ros.script.day6.3910652739)
+
+(defvar *lines*)
+
+(defun merge-nums (line)
+  (parse-integer (join "" (cdr (words line)))))
+
+(defun trace-me (thing)
+(println thing) thing)
+
+(defun main (&rest argv)
+  (declare (ignorable argv))
+  (setq *lines* (read-file-lines "input.txt"))
+  (format t "Part 1: ~a~%Part 2: ~a~%"
+    (loop with result = 1 
+     with pairs = (apply #'mapcar (lambda (time dist) (cons (parse-integer time) (parse-integer dist))) (mapcar (lambda (line) (cdr (words line))) *lines*))
+     for (time . dist) in pairs
+     for num = (loop for i from 0 to time
+                count (< dist (* (- time i) i)))
+     do (setf result (* result num))
+     finally (return result))
+    (loop with (time dist) = (mapcar #'merge-nums *lines*)
+     for i from 0 to time
+     count (< dist (* (- time i) i)))))
