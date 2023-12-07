@@ -76,8 +76,7 @@ exec ros -Q -- $0 "$@"
       (compare-same-type-hands hand1 hand2))))
 
 (defun get-answer (hands card-ordering classifier)
-  "Takes a list of hands (conses of cards and bids), a string ascending
-card ordering, and a type-classifier function for hands, and computes the total value of all hands"
+  "Takes a list of hands (conses of cards and bids), ascending card values represented as a string, and a type-classifier function for hands, and computes the total value of all hands"
   (let ((*card-ordering* card-ordering)
         (*classifier* classifier))
     (loop for hand in (sort (copy-seq hands) #'compare-hands) 
