@@ -27,7 +27,7 @@ exec ros -Q -- $0 "$@"
      for (time . dist) in pairs
      for num = (loop for i from 0 to time
                 count (< dist (* (- time i) i)))
-     do (setf result (* result num))
+     do (setq result (* result num))
      finally (return result))
     (destructuring-bind (time dist) (mapcar #'merge-nums *lines*)
       (loop for i from 0 to time count (< dist (* (- time i) i))))))
