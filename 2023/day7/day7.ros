@@ -1,0 +1,93 @@
+#!/bin/sh
+#|-*- mode:lisp -*-|#
+#|
+exec ros -Q -- $0 "$@"
+|#
+(progn
+  (ros:ensure-asdf)
+  #+quicklisp(ql:quickload '(str alexandria) :silent t))
+
+(defpackage :ros.script.day7.3910652739
+  (:use :cl)
+  (:import-from :uiop :read-file-lines)
+  (:import-from :alexandria :hash-table-values :curry)
+  (:import-from :str :words))
+(in-package :ros.script.day7.3910652739)
+
+(defvar *card-ordering*)
+(defvar *classifier*)
+
+(defconstant +type-ordering+ 
+  (vector :high-card :one-pair :two-pair :three-kind :full-house :four-kind :five-kind))
+
+(defun count-chars (str)
+  "Get a hash counting the number of occurrences of each char in a string"
+  (let ((counts (make-hash-table)))
+    (loop for c across str do (incf (gethash c counts 0)))
+    counts))
+
+(defun get-max (hash)
+  "Get the largest value in a hash"
+  (apply #'max (hash-table-values hash)))
+
+(defun classify-part1 (hand)
+  "Return the type of a hand based on the rules from part 1"
+  (let ((counts (count-chars (car hand))))
+    (ecase (hash-table-count counts) 
+      (1 :five-kind) ; 11111
+      (2 (if (= (get-max counts) 4) :four-kind :full-house)) ; 11112 else 11122
+      (3 (if (= (get-max counts) 3) :three-kind :two-pair)) ; 11123 else 11223
+      (4 :one-pair) ; 11234
+      (5 :high-card)))) ; 12345
+
+(defun classify-part2 (hand)
+  "Return the type of a hand based on the new Joker rules from part 2"
+  (let* ((counts (count-chars (car hand)))
+         (jokers (gethash #\J counts 0)))
+    (ecase (hash-table-count counts) 
+      (1 :five-kind) ; jjjjj 11111
+      (2 (cond  
+           ((plusp jokers) :five-kind) ; j1111 jj111 jjj11 jjjj1
+           ((= (get-max counts) 4) :four-kind) ; 12222
+           (t :full-house))); 11222
+      (3 (ecase jokers
+           ((3 2) :four-kind) ; jjj12 jj112
+           (1 (if (= (get-max counts) 3) :four-kind :full-house)) ; j1112 else j1122
+           (0 (if (= (get-max counts) 3) :three-kind :two-pair)))) ; 11123 else 12233
+      (4 (ecase jokers 
+            ((2 1) :three-kind) ; jj123 j1123
+            (0 :one-pair))) ; 11234
+      (5 (if (= jokers 1) :one-pair :high-card))))) ; j1234 else 12345
+
+(defun compare-same-type-hands (hand1 hand2)
+  "Compare hands based on the values of their cards; only call this if their types are the same"
+  (loop for i from 0 below (length (car hand1))
+   for c1 = (elt (car hand1) i)
+   for c2 = (elt (car hand2) i)
+   if (char/= c1 c2) return (< (position c1 *card-ordering*) (position c2 *card-ordering*))
+   finally (return t)))
+
+(defun compare-hands (hand1 hand2)
+  "Returns if if hand1 is lesser than hand2"
+  (let ((pos1 (position (funcall *classifier* hand1) +type-ordering+))
+        (pos2 (position (funcall *classifier* hand2) +type-ordering+)))
+    (if (/= pos1 pos2) 
+      (< pos1 pos2)
+      (compare-same-type-hands hand1 hand2))))
+
+(defun get-answer (hands card-ordering classifier)
+  "Takes a list of hands (conses of cards and bids), a string ascending
+card ordering, and a type-classifier function for hands, and computes the total value of all hands"
+  (let ((*card-ordering* card-ordering)
+        (*classifier* classifier))
+    (loop for hand in (sort (copy-seq hands) #'compare-hands) 
+     for i from 1 sum (* (cdr hand) i))))
+
+(defun main (&rest argv)
+  (declare (ignorable argv))
+  (let ((hands (loop for line in (read-file-lines "input.txt")
+                for (hand bid) = (words line)
+                collect (cons hand (parse-integer bid)))))
+    (format t "Part 1: ~a~%Part 2: ~a~%"
+      (get-answer hands "23456789TJQKA" #'classify-part1)
+      (get-answer hands "J23456789TQKA" #'classify-part2))))
