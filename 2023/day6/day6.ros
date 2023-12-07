@@ -33,4 +33,4 @@ exec ros -Q -- $0 "$@"
      do (setf result (* result num))
      finally (return result))
     (destructuring-bind (time dist) (mapcar #'merge-nums *lines*)
-        (loop for i from 0 to time count (< dist (* (- time i) i))))))
+      (loop for i from 0 to time count (< dist (* (- time i) i))))))
