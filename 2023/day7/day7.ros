@@ -55,8 +55,8 @@ exec ros -Q -- $0 "$@"
            (1 (if (= (get-max counts) 3) :four-kind :full-house)) ; j1112 else j1122
            (0 (if (= (get-max counts) 3) :three-kind :two-pair)))) ; 11123 else 12233
       (4 (ecase jokers 
-            ((2 1) :three-kind) ; jj123 j1123
-            (0 :one-pair))) ; 11234
+           ((2 1) :three-kind) ; jj123 j1123
+           (0 :one-pair))) ; 11234
       (5 (if (= jokers 1) :one-pair :high-card))))) ; j1234 else 12345
 
 (defun compare-same-type-hands (hand1 hand2)
