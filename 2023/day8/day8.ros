@@ -1,0 +1,43 @@
+#!/bin/sh
+#|-*- mode:lisp -*-|#
+#|
+exec ros -Q -- $0 "$@"
+|#
+(progn
+  (ros:ensure-asdf)
+  #+quicklisp(ql:quickload '(str alexandria) :silent t))
+
+(defpackage :ros.script.day8.3910652739
+  (:use :cl)
+  (:import-from :uiop :read-file-lines :println)
+  (:import-from :alexandria :hash-table-keys :curry)
+  (:import-from :str :words :split))
+(in-package :ros.script.day8.3910652739)
+
+(defvar *lines*)
+
+(defun main (&rest argv)
+  (declare (ignorable argv))
+  (setq *lines* (coerce (read-file-lines "input.txt") 'vector))
+  (let* ((instructions (elt *lines* 0))
+         (lmap (make-hash-table :test #'equal))
+         (rmap (make-hash-table :test #'equal)))
+    (loop for line across (subseq *lines* 2)
+     for (source dest-str) = (split " = " line)
+     for (ldest rdest) = (mapcar (curry #'delete-if (complement #'alphanumericp)) (split ", " dest-str))
+     do (setf (gethash source lmap) ldest)
+     do (setf (gethash source rmap) rdest))
+    (format t "Part 1: ~a~%Part 2: ~a~%"
+      (loop with curr = "AAA"
+       for steps from 0
+       until (string= curr "ZZZ")
+       for inst = (elt instructions (rem steps (length instructions)))
+       do (setq curr (gethash curr (if (char= inst #\L) lmap rmap)))
+       finally (return steps))
+      (apply #'lcm
+        (loop for curr in (remove-if (lambda (node) (char/= #\A (char node 2))) (hash-table-keys lmap))
+         collect (loop for steps from 0 
+                  until (char= #\Z (char curr 2))
+                  for inst = (elt instructions (rem steps (length instructions)))
+                  do (setq curr (gethash curr (if (char= inst #\L) lmap rmap)))
+                  finally (return steps)))))))
