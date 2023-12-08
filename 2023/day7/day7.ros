@@ -26,7 +26,7 @@ exec ros -Q -- $0 "$@"
     (loop for c across str do (incf (gethash c counts 0)))
     counts))
 
-(defun get-max (hash)
+(defun hash-table-max-value (hash)
   "Get the largest value in a hash"
   (apply #'max (hash-table-values hash)))
 
@@ -35,8 +35,8 @@ exec ros -Q -- $0 "$@"
   (let ((counts (count-chars (car hand))))
     (ecase (hash-table-count counts) 
       (1 :five-kind) ; 11111
-      (2 (if (= (get-max counts) 4) :four-kind :full-house)) ; 11112 else 11122
-      (3 (if (= (get-max counts) 3) :three-kind :two-pair)) ; 11123 else 11223
+      (2 (if (= (hash-table-max-value counts) 4) :four-kind :full-house)) ; 11112 else 11122
+      (3 (if (= (hash-table-max-value counts) 3) :three-kind :two-pair)) ; 11123 else 11223
       (4 :one-pair) ; 11234
       (5 :high-card)))) ; 12345
 
@@ -48,12 +48,12 @@ exec ros -Q -- $0 "$@"
       (1 :five-kind) ; jjjjj 11111
       (2 (cond  
            ((plusp jokers) :five-kind) ; j1111 jj111 jjj11 jjjj1
-           ((= (get-max counts) 4) :four-kind) ; 12222
+           ((= (hash-table-max-value counts) 4) :four-kind) ; 12222
            (t :full-house))); 11222
       (3 (ecase jokers
            ((3 2) :four-kind) ; jjj12 jj112
-           (1 (if (= (get-max counts) 3) :four-kind :full-house)) ; j1112 else j1122
-           (0 (if (= (get-max counts) 3) :three-kind :two-pair)))) ; 11123 else 12233
+           (1 (if (= (hash-table-max-value counts) 3) :four-kind :full-house)) ; j1112 else j1122
+           (0 (if (= (hash-table-max-value counts) 3) :three-kind :two-pair)))) ; 11123 else 12233
       (4 (ecase jokers 
            ((2 1) :three-kind) ; jj123 j1123
            (0 :one-pair))) ; 11234
@@ -61,9 +61,8 @@ exec ros -Q -- $0 "$@"
 
 (defun compare-same-type-hands (hand1 hand2)
   "Compare hands based on the values of their cards; only call this if their types are the same"
-  (loop for i from 0 below (length (car hand1))
-   for c1 = (elt (car hand1) i)
-   for c2 = (elt (car hand2) i)
+  (loop for c1 across (car hand1)
+   for c2 across (car hand2)
    if (char/= c1 c2) return (< (position c1 *card-ordering*) (position c2 *card-ordering*))
    finally (return t)))
 
