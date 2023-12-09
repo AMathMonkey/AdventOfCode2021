@@ -1,0 +1,36 @@
+#!/bin/sh
+#|-*- mode:lisp -*-|#
+#|
+exec ros -Q -- $0 "$@"
+|#
+(progn
+  (ros:ensure-asdf)
+  #+quicklisp(ql:quickload '(str) :silent t))
+
+(defpackage :ros.script.day9.3910652739
+  (:use :cl)
+  (:import-from :uiop :read-file-lines)
+  (:import-from :str :words))
+(in-package :ros.script.day9.3910652739)
+
+(defun diff (list)
+  (loop for i in list
+   for i1 in (cdr list)
+   collect (- i1 i)))
+
+(defun main (&rest argv)
+  (declare (ignorable argv))
+  (let ((parsed-lines 
+          (loop for str in (read-file-lines "input.txt")
+           collect (mapcar #'parse-integer (words str)))))
+    (format t "Part 1: ~a~%Part 2: ~a~%"
+      (loop for list in parsed-lines
+       sum (loop sum (car (last list))
+            do (setq list (diff list))
+            until (every #'zerop list)))
+      (loop for list in parsed-lines
+       for first-vals = 
+         (loop collect (car list)
+          do (setq list (diff list))
+          until (every #'zerop list))
+       sum (reduce #'- first-vals :from-end t)))))
