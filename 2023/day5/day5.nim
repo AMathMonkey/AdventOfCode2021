@@ -16,9 +16,9 @@ proc getMappings(sourceRanges: var seq[Range], mapvar: seq[InputRange]): seq[Ran
     var thisResult: seq[Range]
     for (destStart, sourceStart, length) in mapvar:
       let sourceEnd = sourceStart + length - 1
-      if thisStart in sourceStart .. sourceEnd and thisEnd in sourceStart .. sourceEnd:
+      if thisStart >= sourceStart and thisStart <= sourceEnd and thisEnd >= sourceStart and thisEnd <= sourceEnd:
         thisResult.add((destStart + thisStart - sourceStart, thisLength))
-      elif sourceStart in thisStart .. thisEnd and sourceEnd in thisStart .. thisEnd:
+      elif sourceStart >= thisStart and sourceStart <= thisEnd and sourceEnd >= thisStart and sourceEnd <= thisEnd:
         thisResult.add((destStart, length))
         block:
           let len = sourceStart - thisStart
@@ -26,11 +26,11 @@ proc getMappings(sourceRanges: var seq[Range], mapvar: seq[InputRange]): seq[Ran
         block:
           let len = thisEnd - sourceEnd
           if len > 0: sourceRanges.add((sourceEnd + 1, len))
-      elif thisStart in sourceStart .. sourceEnd:
+      elif thisStart >= sourceStart and thisStart <= sourceEnd:
         thisResult.add((destStart + thisStart - sourceStart, sourceEnd - thisStart))
         let len = thisLength - sourceEnd - thisStart
         if len > 0: sourceRanges.add((sourceEnd + 1, len))
-      elif thisEnd in sourceStart .. sourceEnd:
+      elif thisEnd >= sourceStart and thisEnd <= sourceEnd:
         thisResult.add((destStart, thisLength - sourceStart - thisStart))
         let len = sourceStart - thisStart
         if len > 0: sourceRanges.add((thisStart, len))
