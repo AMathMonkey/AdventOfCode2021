@@ -8,7 +8,6 @@ type Range = (int, int)
 type InputRange = (int, int, int)
 
 proc getMappings(sourceRanges: var seq[Range], mapvar: seq[InputRange]): seq[Range] =
-  var results: seq[Range]
   while sourceRanges.len > 0:
     let 
       (thisStart, thisLength) = sourceRanges.pop
@@ -36,8 +35,7 @@ proc getMappings(sourceRanges: var seq[Range], mapvar: seq[InputRange]): seq[Ran
         if len > 0: sourceRanges.add((thisStart, len))
     if thisResult.len == 0:
       thisResult.add((thisStart, thisLength))
-    for r in thisResult: results.add(r)
-  return results
+    for r in thisResult: result.add(r)
     
 proc indexOfNextBlank(lines: seq[string], start: int): int = 
   for i in start ..< lines.len:
@@ -46,7 +44,7 @@ proc indexOfNextBlank(lines: seq[string], start: int): int =
 
 proc getMapping(sourceVal: int, mapVar: seq[InputRange]): int = 
   for (destStart, sourceStart, length) in mapVar:
-    if sourceVal in sourceStart ..< sourceStart + length:
+    if sourceVal >= sourceStart and sourceVal < sourceStart + length:
       return destStart + sourceVal - sourceStart
   return sourceVal
 
@@ -114,7 +112,7 @@ block:
       temperature = getMapping(light, lightToTemperature)
       humidity = getMapping(temperature, temperatureToHumidity)
       location = getMapping(humidity, humidityToLocation)
-    min = min(min, location)
+    if location < min: min = location
   echo "Part 1: ", min
 
 block:
@@ -131,5 +129,5 @@ block:
     humidities = getMappings(temperatures, temperatureToHumidity)
     locations = getMappings(humidities, humidityToLocation)
   for (location, _) in locations:
-    min = min(min, location)
+    if location < min: min = location
   echo "Part 2: ", min
