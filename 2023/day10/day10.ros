@@ -1,0 +1,82 @@
+#!/bin/sh
+#|-*- mode:lisp -*-|#
+#|
+exec ros -Q -- $0 "$@"
+|#
+(progn
+  (ros:ensure-asdf)
+  #+quicklisp(ql:quickload '(str alexandria) :silent t))
+
+(defpackage :ros.script.day10.3910652739
+  (:use :cl)
+  (:import-from :uiop :read-file-lines :println)
+  (:import-from :alexandria :copy-array)
+  (:import-from :str :words))
+(in-package :ros.script.day10.3910652739)
+
+(defun nested-seqs-to-2d-array (seqs)
+  (let ((rows (length seqs))
+        (cols (length (first seqs))))
+    (make-array (list rows cols) :initial-contents seqs)))
+
+(defvar *input-grid*)
+(defvar *rows*)
+(defvar *cols*)
+
+(defun connectp (direction src dest)
+  (ecase direction
+    (:left (and (find src "-J7S") (find dest "-LFS")))
+    (:right (and (find src "-LFS") (find dest "-J7S")))
+    (:up (and (find src "|LJS") (find dest "|7FS")))
+    (:down (and (find src "|7FS") (find dest "|LJS")))))
+
+(defun main (&rest argv)
+  (declare (ignorable argv))
+  (setq *input-grid* (nested-seqs-to-2d-array (read-file-lines "input.txt")))
+  (setq *rows* (array-dimension *input-grid* 0))
+  (setq *cols* (array-dimension *input-grid* 1))
+  (let ((grid (make-array (array-dimensions *input-grid*) :initial-element nil))
+        (part1))
+    (loop named outer
+     for row from 0 below *rows*
+     do (loop for col from 0 below *cols*
+         if (char= #\S (aref *input-grid* row col)) 
+         do (setf (aref grid row col) 0) and do (return-from outer)))
+    (loop for step from 1
+     for prev-step = (1- step)
+     for done = t
+     do (loop for row from 0 below *rows*
+         do (loop for col from 0 below *cols*
+             if (and (aref grid row col) (= prev-step (aref grid row col)))
+               if (and 
+                    (>= (1- row) 0)
+                    (not (aref grid (1- row) col))
+                    (connectp :up (aref *input-grid* row col) (aref *input-grid* (1- row) col)))
+               do (setf (aref grid (1- row) col) step done nil)
+               end
+
+               and if (and 
+                        (< (1+ row) *rows*)
+                        (not (aref grid (1+ row) col))
+                        (connectp :down (aref *input-grid* row col) (aref *input-grid* (1+ row) col)))
+               do (setf (aref grid (1+ row) col) step done nil)
+               end
+
+               and if (and 
+                        (>= (1- col) 0)
+                        (not (aref grid row (1- col)))
+                        (connectp :left (aref *input-grid* row col) (aref *input-grid* row (1- col))))
+               do (setf (aref grid row (1- col)) step done nil)
+               end
+
+               and if (and 
+                        (< (1+ col) *cols*) 
+                        (not (aref grid row (1+ col))) 
+                        (connectp :right (aref *input-grid* row col) (aref *input-grid* row (1+ col))))
+               do (setf (aref grid row (1+ col)) step done nil)
+               end))
+     if done do (setq part1 prev-step)
+     until done)
+     (format t "Part 1: ~a~%Part 2: ~a~%"
+       part1
+       nil)))
