@@ -10,7 +10,7 @@ exec ros -Q -- $0 "$@"
 (defpackage :ros.script.day5.3910652739
   (:use :cl)
   (:import-from :uiop :read-file-lines)
-  (:import-from :str :split :words :blankp))
+  (:import-from :str :split :words :blankp :starts-with-p))
 (in-package :ros.script.day5.3910652739)
 
 (defvar *lines*)
@@ -72,14 +72,14 @@ exec ros -Q -- $0 "$@"
         (water-to-light) (light-to-temperature) (temperature-to-humidity) (humidity-to-location))
     (loop for i from 0 below (length *lines*)
      for line = (elt *lines* i)
-     if (search "seeds:" line) do (setq seeds (mapcar #'parse-integer (words (second (split ": " line)))))
-     else if (search "seed-to-soil" line) do (update-var seed-to-soil)
-     else if (search "soil-to-fertilizer" line) do (update-var soil-to-fertilizer)
-     else if (search "fertilizer-to-water" line) do (update-var fertilizer-to-water)
-     else if (search "water-to-light" line) do (update-var water-to-light)
-     else if (search "light-to-temperature" line) do (update-var light-to-temperature)
-     else if (search "temperature-to-humidity" line) do (update-var temperature-to-humidity)
-     else if (search "humidity-to-location" line) do (update-var humidity-to-location))
+     if (starts-with-p "seeds:" line) do (setq seeds (mapcar #'parse-integer (words (second (split ": " line)))))
+     else if (starts-with-p "seed-to-soil" line) do (update-var seed-to-soil)
+     else if (starts-with-p "soil-to-fertilizer" line) do (update-var soil-to-fertilizer)
+     else if (starts-with-p "fertilizer-to-water" line) do (update-var fertilizer-to-water)
+     else if (starts-with-p "water-to-light" line) do (update-var water-to-light)
+     else if (starts-with-p "light-to-temperature" line) do (update-var light-to-temperature)
+     else if (starts-with-p "temperature-to-humidity" line) do (update-var temperature-to-humidity)
+     else if (starts-with-p "humidity-to-location" line) do (update-var humidity-to-location))
     (format t "Part 1: ~a~%Part 2: ~a~%"
       (loop for seed in seeds
        for soil = (get-mapping seed seed-to-soil)
