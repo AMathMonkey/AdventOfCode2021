@@ -5,23 +5,17 @@ exec ros -Q -- $0 "$@"
 |#
 (progn
   (ros:ensure-asdf)
-  #+quicklisp(ql:quickload '(str alexandria) :silent t))
+  #+quicklisp(ql:quickload '() :silent t))
 
 (defpackage :ros.script.day10.3910652739
   (:use :cl)
-  (:import-from :uiop :read-file-lines :println)
-  (:import-from :alexandria :copy-array)
-  (:import-from :str :words))
+  (:import-from :uiop :read-file-lines))
 (in-package :ros.script.day10.3910652739)
 
 (defun nested-seqs-to-2d-array (seqs)
   (let ((rows (length seqs))
         (cols (length (first seqs))))
     (make-array (list rows cols) :initial-contents seqs)))
-
-(defvar input-grid)
-(defvar rows)
-(defvar cols)
 
 (defun connectp (direction src dest)
   (ecase direction
