@@ -1,0 +1,64 @@
+#!/bin/sh
+#|-*- mode:lisp -*-|#
+#|
+exec ros -Q -- $0 "$@"
+|#
+(progn
+  (ros:ensure-asdf)
+  #+quicklisp(ql:quickload '(alexandria) :silent t))
+
+(defpackage :ros.script.day11.3910652739
+  (:use :cl)
+  (:import-from :uiop :read-file-lines)
+  (:import-from :alexandria :hash-table-keys))
+(in-package :ros.script.day11.3910652739)
+
+(defun nested-seqs-to-2d-array (seqs)
+  (let ((rows (length seqs))
+        (cols (length (first seqs))))
+    (make-array (list rows cols) :initial-contents seqs)))
+
+(defvar *grid*)
+(defvar *rows*)
+(defvar *cols*)
+
+(defun points ()
+  (loop with points = (make-hash-table :test #'equal) 
+   for row from 0 below *rows* do
+   (loop for col from 0 below *cols*
+    if (char= #\# (aref *grid* row col))
+    do (setf (gethash (cons row col) points) nil))
+   finally (return (hash-table-keys points))))
+
+(defun empty-rows ()
+  (loop with empty-rows = (make-hash-table)
+   for row from 0 below *rows*
+   if (loop for col from 0 below *cols* never (char= #\# (aref *grid* row col)))
+   do (setf (gethash row empty-rows) nil)
+   finally (return empty-rows)))
+
+(defun empty-cols ()
+  (loop with empty-cols = (make-hash-table)
+   for col from 0 below *cols*
+   if (loop for row from 0 below *rows* never (char= #\# (aref *grid* row col)))
+   do (setf (gethash col empty-cols) nil)
+   finally (return empty-cols)))
+
+(defun main (&rest argv)
+  (declare (ignorable argv))
+  (setq *grid* (nested-seqs-to-2d-array (read-file-lines "input.txt")))
+  (setq *rows* (array-dimension *grid* 0))
+  (setq *cols* (array-dimension *grid* 1))
+  (let ((points (points))
+        (empty-rows (empty-rows))
+        (empty-cols (empty-cols)))
+    (loop for empty-space-val in (list 2 1000000)
+     for part in (list 1 2)
+     for result = 
+       (loop for ((row1 . col1) . rest) on points
+        sum (loop for (row2 . col2) in rest
+             sum (loop for row from (min row1 row2) below (max row1 row2)
+        sum (if (nth-value 1 (gethash row empty-rows)) empty-space-val 1))
+             sum (loop for col from (min col1 col2) below (max col1 col2)
+        sum (if (nth-value 1 (gethash col empty-cols)) empty-space-val 1))))
+     do (format t "Part ~a: ~a~%" part result))))
