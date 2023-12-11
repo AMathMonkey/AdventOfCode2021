@@ -58,7 +58,7 @@ exec ros -Q -- $0 "$@"
        (loop for ((row1 . col1) . rest) on points
         sum (loop for (row2 . col2) in rest
              sum (loop for row from (min row1 row2) below (max row1 row2)
-        sum (if (nth-value 1 (gethash row empty-rows)) empty-space-val 1))
+                  sum (if (nth-value 1 (gethash row empty-rows)) empty-space-val 1))
              sum (loop for col from (min col1 col2) below (max col1 col2)
-        sum (if (nth-value 1 (gethash col empty-cols)) empty-space-val 1))))
+                  sum (if (nth-value 1 (gethash col empty-cols)) empty-space-val 1))))
      do (format t "Part ~a: ~a~%" part result))))
