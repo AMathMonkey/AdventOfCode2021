@@ -24,41 +24,124 @@ exec ros -Q -- $0 "$@"
     (:up (and (find src "|LJS") (find dest "|7FS")))
     (:down (and (find src "|7FS") (find dest "|LJS")))))
 
+(defun opposite-direction (direction)
+  (ecase direction
+    (:up :down)
+    (:down :up)
+    (:left :right)
+    (:right :left)))
+
 (defun main (&rest argv)
   (declare (ignorable argv))
   (let* ((input-grid (nested-seqs-to-2d-array (read-file-lines "input.txt")))
          (grid (make-array (array-dimensions input-grid) :initial-element nil))
          (rows (array-dimension input-grid 0))
-         (cols (array-dimension input-grid 1)))
-    (loop named outer
-     for row from 0 below rows
-     do (loop for col from 0 below cols
-         if (char= #\S (aref input-grid row col)) 
-         do (setf (aref grid row col) 0) 
-         and do (return-from outer)))
-    (let ((part1
-            (loop for step from 1
-             for prev-step = (1- step)
-             for done = t
-             do (loop for row from 0 below rows
-                 do (loop for col from 0 below cols
-                     if (and (aref grid row col) (= prev-step (aref grid row col)))
-                       if (and (>= (1- row) 0) (not (aref grid (1- row) col))
-                            (connectp :up (aref input-grid row col) (aref input-grid (1- row) col)))
-                       do (setf (aref grid (1- row) col) step done nil) end
-                       and 
-                       if (and (< (1+ row) rows) (not (aref grid (1+ row) col))
-                            (connectp :down (aref input-grid row col) (aref input-grid (1+ row) col)))
-                       do (setf (aref grid (1+ row) col) step done nil) end
-                       and
-                       if (and (>= (1- col) 0) (not (aref grid row (1- col)))
-                            (connectp :left (aref input-grid row col) (aref input-grid row (1- col))))
-                       do (setf (aref grid row (1- col)) step done nil) end
-                       and
-                       if (and (< (1+ col) cols) (not (aref grid row (1+ col))) 
-                            (connectp :right (aref input-grid row col) (aref input-grid row (1+ col))))
-                       do (setf (aref grid row (1+ col)) step done nil) end))
-             if done return prev-step)))
+         (cols (array-dimension input-grid 1))
+         (start-coords
+           (loop named outer
+            for row from 0 below rows
+            do (loop for col from 0 below cols
+                if (char= #\S (aref input-grid row col)) 
+                do (setf (aref grid row col) 0) 
+                and do (return-from outer (list row col)))))
+         (part1
+           (loop for step from 1
+            for prev-step = (1- step)
+            for done = t
+            do (loop for row from 0 below rows
+                do (loop for col from 0 below cols
+                    if (and (aref grid row col) (= prev-step (aref grid row col)))
+                      if (and (>= (1- row) 0) (not (aref grid (1- row) col))
+                           (connectp :up (aref input-grid row col) (aref input-grid (1- row) col)))
+                      do (setf (aref grid (1- row) col) step done nil) end
+                      and 
+                      if (and (< (1+ row) rows) (not (aref grid (1+ row) col))
+                           (connectp :down (aref input-grid row col) (aref input-grid (1+ row) col)))
+                      do (setf (aref grid (1+ row) col) step done nil) end
+                      and
+                      if (and (>= (1- col) 0) (not (aref grid row (1- col)))
+                           (connectp :left (aref input-grid row col) (aref input-grid row (1- col))))
+                      do (setf (aref grid row (1- col)) step done nil) end
+                      and
+                      if (and (< (1+ col) cols) (not (aref grid row (1+ col))) 
+                           (connectp :right (aref input-grid row col) (aref input-grid row (1+ col))))
+                      do (setf (aref grid row (1+ col)) step done nil) end))
+            if done return prev-step)))
       (format t "Part 1: ~a~%Part 2: ~a~%"
         part1
-        nil))))
+        (labels ((next-vertex-p (row col direction)
+                   (ecase direction
+                     (:right
+                       (and (< (1+ col) cols) (aref grid row (1+ col))
+                         (= -1 (- (aref grid row col) (aref grid row (1+ col))))))
+                     (:left 
+                       (and (>= (1- col) 0) (aref grid row (1- col))
+                         (= -1 (- (aref grid row col) (aref grid row (1- col))))))
+                     (:up 
+                       (and (>= (1- row) 0)
+                         (aref grid (1- row) col)
+                         (= -1 (- (aref grid row col) (aref grid (1- row) col)))))
+                     (:down 
+                       (and (< (1+ row) rows)
+                         (aref grid (1+ row) col)
+                         (= -1 (- (aref grid row col) (aref grid (1+ row) col)))))))
+                 (get-half-of-boundary-points (start-row start-col prohibited-start-direction)
+                   (loop with row-coords with col-coords
+                    with row = start-row with col = start-col
+                    with prev-dir = (opposite-direction prohibited-start-direction)
+                    do (push row row-coords) do (push col col-coords)
+                    
+                    until (= part1 (aref grid row col))
+        
+                    if (and (not (eql prev-dir :left)) 
+                         (next-vertex-p row col :right)
+                         (connectp :right (aref input-grid row col) (aref input-grid row (1+ col))))
+                    do (setq col (1+ col) prev-dir :right)
+                     
+                    else if (and 
+                              (not (eql prev-dir :right)) 
+                              (next-vertex-p row col :left)
+                              (connectp :left (aref input-grid row col) (aref input-grid row (1- col))))
+                    do (setq col (1- col) prev-dir :left)
+        
+                    else if (and 
+                              (not (eql prev-dir :down))
+                              (next-vertex-p row col :up)
+                              (connectp :up (aref input-grid row col) (aref input-grid (1- row) col)))
+                    do (setq row (1- row) prev-dir :up)
+        
+                    else if (and 
+                              (not (eql prev-dir :up))
+                              (next-vertex-p row col :down)
+                              (connectp :down (aref input-grid row col) (aref input-grid (1+ row) col)))
+                    do (setq row (1+ row) prev-dir :down)
+        
+                    finally (return (pairlis col-coords row-coords))))
+                  (compute-inner-points (coord-pairs)
+                    (loop for (x1 . y1) in coord-pairs
+                     for (x2 . y2) in (append (cdr coord-pairs) (list (car coord-pairs)))
+                     sum (- (* x1 y2) (* x2 y1)) into Ax2
+                     finally (return (- (1+ (abs (floor Ax2 2))) (floor (length coord-pairs) 2))))))
+          (destructuring-bind (start-row start-col) start-coords
+            (destructuring-bind (dir1 dir2)
+              (append
+                (when 
+                  (and (< (1+ start-row) rows) (aref grid (1+ start-row) start-col)
+                    (= 1 (aref grid (1+ start-row) start-col)))
+                  '(:down))
+                (when 
+                  (and (>= (1- start-row) 0) (aref grid (1- start-row) start-col)
+                    (= 1 (aref grid (1- start-row) start-col)))
+                  '(:up))
+                (when 
+                  (and (>= (1- start-col) 0) (aref grid start-row (1- start-col))
+                    (= 1 (aref grid start-row (1- start-col))))
+                  '(:left))
+                (when
+                  (and (< (1+ start-col) cols) (aref grid start-row (1+ start-col))
+                    (= 1 (aref grid start-row (1+ start-col))))
+                  '(:right)))
+              (compute-inner-points 
+                (append 
+                  (get-half-of-boundary-points start-row start-col dir1)
+                  (cdr (nreverse (get-half-of-boundary-points start-row start-col dir2)))))))))))
