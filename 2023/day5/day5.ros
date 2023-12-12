@@ -30,40 +30,50 @@ exec ros -Q -- $0 "$@"
    if (<= source-start sourceval (+ source-start length -1)) return (+ dest-start (- sourceval source-start))
    finally (return sourceval)))
 
-(defun push-range-if-len-non-zero (ranges start len)
-  (when (plusp len)
-    (push (list start len) ranges)))
+(defun get-mapping-part2 (source-range mapvar)
+  (loop with (this-start this-length) = source-range
+   with this-end = (+ this-start this-length -1)
+
+   for (dest-start source-start length) in mapvar
+   for source-end = (+ source-start length -1)
+
+   ; if range to process falls entirely within the mapping range, easiest case, transform entire range
+   if (<= source-start this-start this-end source-end) 
+   return (list 
+            (list (+ dest-start this-start (- source-start)) this-length)
+            (list))
+        
+   ; if mapping range falls entirely within the range to process, need to transform the middle part
+   ; and split off the left and right sides for further processing
+   else if (<= this-start source-start source-end this-end)
+   return (list 
+            (list dest-start length) 
+            (list 
+              (list this-start (- source-start this-start)) 
+              (list (1+ source-end) (- this-end source-end))))
+
+   ; if mapping range starts before the range to process, and ends before range to process ends,
+   ; need to transform the left side and split off the right side for further processing
+   else if (<= source-start this-start source-end)
+   return (list 
+            (list (+ dest-start this-start (- source-start)) (- source-end this-start)) 
+            (list 
+              (list (1+ source-end) (- this-length (- source-end this-start)))))
+
+   ; if mapping range starts after the range to process, and ends after the range to process ends,
+   ; need to transform the right side and split off the left side for further processing
+   else if (<= source-start this-end source-end)
+   return (list
+            (list dest-start (- this-length (- source-start this-start)))
+            (list 
+              (list this-start (- source-start this-start))))))
 
 (defun get-mappings (source-ranges mapvar)
   (loop while source-ranges
-   for (this-start this-length) = (pop source-ranges)
-   for this-end = (+ this-start this-length -1)
-   nconc
-     (or 
-       (loop for (dest-start source-start length) in mapvar
-        for source-end = (+ source-start length -1)
-
-        ; if range to process falls entirely within the mapping range, easiest case, transform entire range
-        if (<= source-start this-start this-end source-end) collect (list (+ dest-start (- this-start source-start)) this-length)
-        
-        ; if mapping range falls entirely within the range to process, need to transform the middle part
-        ; and split off the left and right sides for further processing
-        else if (<= this-start source-start source-end this-end) collect (list dest-start length)
-        and do (push-range-if-len-non-zero source-ranges this-start (- source-start this-start))
-        and do (push-range-if-len-non-zero source-ranges (1+ source-end) (- this-end source-end))
-
-        ; if mapping range starts before the range to process, and ends before range to process ends,
-        ; need to transform the left side and split off the right side for further processing
-        else if (<= source-start this-start source-end) collect (list (+ dest-start (- this-start source-start)) (- source-end this-start))
-        and do (push-range-if-len-non-zero source-ranges (1+ source-end) (- this-length (- source-end this-start)))
-
-        ; if mapping range starts after the range to process, and ends after the range to process ends,
-        ; need to transform the right side and split off the left side for further processing
-        else if (<= source-start this-end source-end) collect (list dest-start (- this-length (- source-start this-start)))
-        and do (push-range-if-len-non-zero source-ranges this-start (- source-start this-start)))
-
-       ; if loop collected nothing, don't transform the source range
-       (list (list this-start this-length)))))
+   for source-range = (pop source-ranges)
+   for (to-collect to-push) = (get-mapping-part2 source-range mapvar)
+   do (loop for r in to-push if (plusp (second r)) do (push r source-ranges))
+   collect (or to-collect source-range)))
 
 (defun main (&rest argv)
   (declare (ignorable argv))
