@@ -1,41 +1,47 @@
 import strutils
 import sequtils
 import sugar
+import options
 
 let lines = lines("input.txt").toSeq
 
 type Range = (int, int)
 type InputRange = (int, int, int)
 
-proc getMappings(sourceRanges: var seq[Range], mapvar: seq[InputRange]): seq[Range] =
-  while sourceRanges.len > 0:
-    let 
-      (thisStart, thisLength) = sourceRanges.pop
-      thisEnd = thisStart + thisLength - 1
-    var thisResult: seq[Range]
-    for (destStart, sourceStart, length) in mapvar:
-      let sourceEnd = sourceStart + length - 1
-      if thisStart >= sourceStart and thisStart <= sourceEnd and thisEnd >= sourceStart and thisEnd <= sourceEnd:
-        thisResult.add((destStart + thisStart - sourceStart, thisLength))
-      elif sourceStart >= thisStart and sourceStart <= thisEnd and sourceEnd >= thisStart and sourceEnd <= thisEnd:
-        thisResult.add((destStart, length))
-        block:
-          let len = sourceStart - thisStart
-          if len > 0: sourceRanges.add((thisStart, len))
-        block:
-          let len = thisEnd - sourceEnd
-          if len > 0: sourceRanges.add((sourceEnd + 1, len))
-      elif thisStart >= sourceStart and thisStart <= sourceEnd:
-        thisResult.add((destStart + thisStart - sourceStart, sourceEnd - thisStart))
-        let len = thisLength - sourceEnd - thisStart
-        if len > 0: sourceRanges.add((sourceEnd + 1, len))
-      elif thisEnd >= sourceStart and thisEnd <= sourceEnd:
-        thisResult.add((destStart, thisLength - sourceStart - thisStart))
+proc getMappingPart2(sourceRange: Range, mapvar: seq[InputRange], sourceRanges: var seq[Range]): Option[Range] = 
+  let 
+    (thisStart, thisLength) = sourceRange
+    thisEnd = thisStart + thisLength - 1
+
+  for (destStart, sourceStart, length) in mapvar:
+    let sourceEnd = sourceStart + length - 1
+    
+    if thisStart >= sourceStart and thisStart <= sourceEnd and thisEnd >= sourceStart and thisEnd <= sourceEnd:
+      return some((destStart + thisStart - sourceStart, thisLength))
+    
+    if sourceStart >= thisStart and sourceStart <= thisEnd and sourceEnd >= thisStart and sourceEnd <= thisEnd:
+      block:
         let len = sourceStart - thisStart
         if len > 0: sourceRanges.add((thisStart, len))
-    if thisResult.len == 0:
-      thisResult.add((thisStart, thisLength))
-    for r in thisResult: result.add(r)
+      block:
+        let len = thisEnd - sourceEnd
+        if len > 0: sourceRanges.add((sourceEnd + 1, len))
+      return some((destStart, length))
+    
+    if thisStart >= sourceStart and thisStart <= sourceEnd:
+      let len = thisLength - sourceEnd - thisStart
+      if len > 0: sourceRanges.add((sourceEnd + 1, len))
+      return some((destStart + thisStart - sourceStart, sourceEnd - thisStart))
+    
+    if thisEnd >= sourceStart and thisEnd <= sourceEnd:
+      let len = sourceStart - thisStart
+      if len > 0: sourceRanges.add((thisStart, len))
+      return some((destStart, thisLength - sourceStart - thisStart))      
+
+proc getMappings(sourceRanges: var seq[Range], mapvar: seq[InputRange]): seq[Range] =
+  while sourceRanges.len > 0:
+    let sourceRange = sourceRanges.pop
+    result.add(getMappingPart2(sourceRange, mapvar, sourceRanges).get(sourceRange))
     
 proc indexOfNextBlank(lines: seq[string], start: int): int = 
   for i in start ..< lines.len:
