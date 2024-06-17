@@ -9,7 +9,7 @@ exec ros -Q -- $0 "$@"
 
 (defpackage :ros.script.day12.3910652739
   (:use :cl)
-  (:import-from :uiop :read-file-lines :println :first-char)
+  (:import-from :uiop :read-file-lines :first-char)
   (:import-from :str :words :concat :split :join :s-rest))
 (in-package :ros.script.day12.3910652739)
 
