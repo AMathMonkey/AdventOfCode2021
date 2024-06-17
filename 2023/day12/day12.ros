@@ -9,49 +9,48 @@ exec ros -Q -- $0 "$@"
 
 (defpackage :ros.script.day12.3910652739
   (:use :cl)
-  (:import-from :uiop :read-file-lines :println)
-  (:import-from :str :words :split :replace-first)
-  (:import-from :alexandria :hash-table-keys))
+  (:import-from :uiop :read-file-lines :println :first-char)
+  (:import-from :alexandria :eswitch)
+  (:import-from :str :words :concat :split :join :s-rest))
 (in-package :ros.script.day12.3910652739)
 
 (defun parse-line (line)
   (destructuring-bind (conditions groups) (words line)
-    (let* ((groups (mapcar #'parse-integer (split #\, groups)))
-           (total (reduce #'+ groups))
-           (unassigned (- total (count #\# conditions))))
-      (list conditions groups unassigned))))
+    (list conditions (mapcar #'parse-integer (split #\, groups)))))
 
-(defun parse-groups (cond-str)
-  (loop with size = 0
-   with result = (list)
-   for c across cond-str
-   when (char= c #\#) do (incf size)
-   else when (plusp size) do (push size result) and do (setq size 0)
-   finally (progn (when (plusp size) (push size result)) (return (nreverse result)))))
+(defvar *cache* (make-hash-table :test #'equal))
 
-(defun verify-groups-valid (actual expected)
-  (loop named outer for a in actual
-   do (loop
-       when (null expected) do (return-from outer nil)
-       while (> a (car expected)) do (pop expected)
-       finally (pop expected)))
-   t)
-
-(defun recur (string groups remaining)
-  (let ((unknowns (count #\? string)))
-    (if (< unknowns remaining) 0 
-      (if (plusp unknowns)
-        (if (verify-groups-valid (parse-groups string) groups)
-          (+ 
-            (if (plusp remaining) (recur (replace-first "?" "#" string) groups (1- remaining)) 0)
-            (recur (replace-first "?" "." string) groups remaining))
-          0)
-        (if (and (zerop remaining) (equal (parse-groups string) groups)) 1 0)))))
+(defun recur (string groups &optional (curr-group 0))
+  (let ((key (concat string (write-to-string groups) (write-to-string curr-group))))
+    (or (gethash key *cache*)
+      (setf (gethash key *cache*)
+        (if (zerop (length string)) 
+          (if (or (and (null groups) (zerop curr-group)) (equal groups (list curr-group))) 1 0)
+          (let ((desired-group-size (or (car groups) 0))
+                (remaining-chars (s-rest string)))
+            (eswitch ((first-char string) :test #'char=)
+              (#\. (if (plusp curr-group) 
+                     (if (< curr-group desired-group-size) 
+                       0
+                       (recur remaining-chars (cdr groups) 0))
+                     (recur remaining-chars groups 0)))
+              (#\# (if (= curr-group desired-group-size) 0
+                     (recur remaining-chars groups (1+ curr-group))))
+              (#\? (cond
+                     ((= curr-group desired-group-size) (recur remaining-chars (cdr groups) 0))
+                     ((zerop curr-group)
+                       (+ 
+                         (recur remaining-chars groups 0)
+                         (recur remaining-chars groups 1)))
+                     (t (recur remaining-chars groups (1+ curr-group))))))))))))
 
 (defun main (&rest argv)
   (declare (ignorable argv))
-  (format t "Part 1: ~a~%Part 2: ~a~%"
-    (loop for line in (read-file-lines "input.txt") 
-     for (conditions groups unassigned) = (parse-line line)
-     sum (recur conditions groups unassigned))
-     nil))
+  (let ((lines (read-file-lines "input.txt")))
+    (format t "Part 1: ~a~%Part 2: ~a~%"
+      (loop for line in lines
+       for (conditions groups) = (parse-line line)
+       sum (recur conditions groups))
+      (loop for line in lines
+       for (conditions groups) = (parse-line line)
+       sum (recur (join #\? (loop repeat 5 collect conditions)) (loop repeat 5 nconc (copy-seq groups)))))))
