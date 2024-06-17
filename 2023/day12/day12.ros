@@ -5,12 +5,11 @@ exec ros -Q -- $0 "$@"
 |#
 (progn
   (ros:ensure-asdf)
-  #+quicklisp(ql:quickload '(str alexandria) :silent t))
+  #+quicklisp(ql:quickload '(str) :silent t))
 
 (defpackage :ros.script.day12.3910652739
   (:use :cl)
   (:import-from :uiop :read-file-lines :println :first-char)
-  (:import-from :alexandria :eswitch)
   (:import-from :str :words :concat :split :join :s-rest))
 (in-package :ros.script.day12.3910652739)
 
@@ -28,7 +27,7 @@ exec ros -Q -- $0 "$@"
           (if (or (and (null groups) (zerop curr-group)) (equal groups (list curr-group))) 1 0)
           (let ((desired-group-size (or (car groups) 0))
                 (remaining-chars (s-rest string)))
-            (eswitch ((first-char string) :test #'char=)
+            (ecase (first-char string)
               (#\. (if (plusp curr-group) 
                      (if (< curr-group desired-group-size) 
                        0
