@@ -13,41 +13,60 @@ exec ros -Q -- $0 "$@"
   (:import-from :str :words :concat :split :join :s-rest))
 (in-package :ros.script.day13.3910652739)
  
+(defvar *part*)
+(defvar *lines*)
+ 
 (defun next-grid (lines)
-  (loop with rest = (copy-seq lines)
-   for line in lines
-   for i from 0
-   until (equal line "")
+  (loop for line = (pop lines)
+   until (emptyp line)
    collect line into grid
-   finally (return (list (coerce grid 'vector) (and lines (subseq lines (1+ i)))))))
+   finally (return (list (coerce grid 'vector) lines))))
  
 (defun transpose-grid (grid)
   (coerce 
     (loop with rows = (length grid)
      with cols = (length (elt grid 0))
      for col from 0 below cols
-     for s-list = (loop for row across grid collect (char row col))
-     collect (coerce s-list 'string))
+     for col-charlist = (loop for row across grid collect (char row col))
+     collect (coerce col-charlist 'string))
     'vector))
  
-(defun find-symmetry (grid)
+(defun string-diff (s1 s2)
+  (loop for i from 0 below (length s1)
+   count (not (char= (char s1 i) (char s2 i))) into result
+   until (> result 1)
+   finally (return result)))
+ 
+(defun find-symmetry-row (grid)
   (let ((len (length grid)))
-     (flet ((expand-from (row)
-              (loop for top from row downto 0
-               for bottom from (1+ row) below len
-               always (equal (elt grid top) (elt grid bottom)))))
-       (loop for i from 0 below (1- len)
-        when (expand-from i) return (1+ i)))))
+    (flet 
+      ((symmetry-at-row-p (row)
+         (ecase *part*
+           (:part1 
+             (loop for top from row downto 0
+              for bottom from (1+ row) below len
+              always (equal (elt grid top) (elt grid bottom))))
+           (:part2
+             (loop for top from row downto 0
+              for bottom from (1+ row) below len
+              sum (string-diff (elt grid top) (elt grid bottom)) into total-diff
+              until (> total-diff 1)
+              finally (return (= total-diff 1)))))))
+      (loop for i from 0 below (1- len)
+       when (symmetry-at-row-p i) return (1+ i)))))
+ 
+(defun solve ()
+  (loop with rest = *lines* 
+   for (grid rest1) = (next-grid rest)
+   until (emptyp grid)
+   do (setq rest rest1)
+   when (find-symmetry-row grid) sum it into horizontal
+   else when (find-symmetry-row (transpose-grid grid)) sum it into vertical
+   finally (return (+ vertical (* 100 horizontal)))))
 
 (defun main (&rest argv)
   (declare (ignorable argv))
-  (let ((lines (read-file-lines "input.txt")))
+  (let ((*lines* (read-file-lines "input.txt")))
     (format t "Part 1: ~a~%Part 2: ~a~%"
-      (loop with rest = lines 
-       for (g rest1) = (next-grid rest)
-       until (emptyp g)
-       do (setq rest rest1)
-       when (find-symmetry g) sum it into horizontal
-       else when (find-symmetry (transpose-grid g)) sum it into vertical
-       finally (return (+ vertical (* 100 horizontal))))
-      nil)))
+      (let ((*part* :part1)) (solve))
+      (let ((*part* :part2)) (solve)))))
