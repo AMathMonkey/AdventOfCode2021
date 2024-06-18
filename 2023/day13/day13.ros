@@ -4,13 +4,11 @@
 exec ros -Q -- $0 "$@"
 |#
 (progn
-  (ros:ensure-asdf)
-  #+quicklisp(ql:quickload '(str) :silent t))
+  (ros:ensure-asdf))
 
 (defpackage :ros.script.day13.3910652739
   (:use :cl)
-  (:import-from :uiop :read-file-lines :emptyp :println)
-  (:import-from :str :words :concat :split :join :s-rest))
+  (:import-from :uiop :read-file-lines :emptyp))
 (in-package :ros.script.day13.3910652739)
  
 (defvar *part*)
