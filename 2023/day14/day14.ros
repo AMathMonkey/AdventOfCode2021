@@ -1,0 +1,33 @@
+#!/bin/sh
+#|-*- mode:lisp -*-|#
+#|
+exec ros -Q -- $0 "$@"
+|#
+(progn
+  (ros:ensure-asdf))
+
+(defpackage :ros.script.day14.3910652739
+  (:use :cl)
+  (:import-from :uiop :read-file-lines :println :emptyp))
+(in-package :ros.script.day14.3910652739)
+
+(defvar *lines*)
+
+(defun get-cols ()
+  (loop for i from 0 below (length (car *lines*))
+  collect (coerce (loop for line in *lines* until (emptyp line) collect (char line i)) 'string)))
+ 
+(defun score (string)
+  (loop with value = (length string) 
+   for c across string
+   for i downfrom value
+   when (char= c #\O) sum value and do (decf value)
+   else when (char= c #\#) do (setq value (1- i))))
+
+(defun main (&rest argv)
+  (declare (ignorable argv))
+  (let* ((*lines* (read-file-lines "input.txt"))
+         (cols (get-cols)))
+    (format t "Part 1: ~a~%Part 2: ~a~%"
+      (loop for col in cols sum (score col))
+      nil)))
