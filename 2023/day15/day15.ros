@@ -13,19 +13,15 @@ exec ros -Q -- $0 "$@"
   (:import-from :str :split))
 (in-package :ros.script.day15.3910652739)
  
-(defun hash (string)
+(defun hash (str)
   (loop with result = 0
-   for c across string
-   do (incf result (char-code c))
-   do (setq result (* result 17))
-   do (setq result (rem result 256))
+   for c across str
+   do (setq result (rem (* (+ result (char-code c)) 17) 256))
    finally (return result)))
 
 (defun main (&rest argv)
   (declare (ignorable argv))
-  (let* ((line (car (read-file-lines "input.txt")))
-         (strings (split "," line)))
+  (let* ((strings (split "," (car (read-file-lines "input.txt")))))
     (format t "Part 1: ~a~%Part 2: ~a~%"
       (loop for s in strings sum (hash s))
       nil)))
-    
