@@ -8,26 +8,60 @@ exec ros -Q -- $0 "$@"
 
 (defpackage :ros.script.day14.3910652739
   (:use :cl)
-  (:import-from :uiop :read-file-lines :println :emptyp))
+  (:import-from :uiop :read-file-lines :emptyp))
 (in-package :ros.script.day14.3910652739)
 
-(defvar *lines*)
+(defun transpose (grid)
+  (loop for i from 0 below (length (car grid))
+  collect (coerce (loop for line in grid collect (char line i)) 'string)))
 
-(defun get-cols ()
-  (loop for i from 0 below (length (car *lines*))
-  collect (coerce (loop for line in *lines* until (emptyp line) collect (char line i)) 'string)))
+(defun rotate-cw (grid)
+  (mapcar #'reverse (transpose grid)))
  
-(defun score (string)
-  (loop with value = (length string) 
-   for c across string
+(defun score-p1 (col)
+  (loop with value = (length col) 
+   for c across col
    for i downfrom value
    when (char= c #\O) sum value and do (decf value)
    else when (char= c #\#) do (setq value (1- i))))
 
+(defun shift-north (col)
+  (loop for i from 0 below (length col)
+   with top = 0
+   for c across col
+   when (char= c #\#) do (setq top (1+ i))
+   else when (char= c #\O) do (rotatef (char col top) (char col i)) and do (incf top)
+   finally (return col)))
+
+(defun score-p2 (grid)
+  (loop for row in grid
+   for value downfrom (length grid)
+   sum (* value (count #\O row))))
+
+(defun one-cycle (grid)
+  (loop repeat 4
+   do (setq grid (rotate-cw (transpose (mapcar #'shift-north (transpose grid)))))
+   finally (return grid)))
+
 (defun main (&rest argv)
   (declare (ignorable argv))
-  (let* ((*lines* (read-file-lines "input.txt"))
-         (cols (get-cols)))
+  (let* ((grid (loop for line in (read-file-lines "input.txt") 
+                until (emptyp line) 
+                collect line))
+         (cols (transpose grid))
+         (limit 1000000000))
     (format t "Part 1: ~a~%Part 2: ~a~%"
-      (loop for col in cols sum (score col))
-      nil)))
+      (loop for col in cols sum (score-p1 col))
+      (loop with cycle-found = nil
+       for iter from 0 to limit
+       for score = (score-p2 grid)
+       collect score into scores
+       when (and (not cycle-found) (> iter 4))
+       do (let ((i (search (subseq scores (- iter 3) iter) scores :end2 (- iter 4))))
+            (when i 
+              (setq cycle-found t)
+              (loop with step = (- iter i 3)
+               while (< (+ iter step) limit)
+               do (incf iter step))))
+       do (setq grid (one-cycle grid))
+       finally (return score)))))
