@@ -19,7 +19,7 @@ exec ros -Q -- $0 "$@"
   (mapcar #'reverse (transpose grid)))
  
 (defun score-p1 (col)
-  (loop with value = (length col) 
+  (loop with value = (length col)
    for c across col
    for i downfrom value
    when (char= c #\O) sum value and do (decf value)
@@ -38,30 +38,34 @@ exec ros -Q -- $0 "$@"
    for value downfrom (length grid)
    sum (* value (count #\O row))))
 
-(defun one-cycle (grid)
+(defun one-move (grid)
   (loop repeat 4
    do (setq grid (rotate-cw (transpose (mapcar #'shift-north (transpose grid)))))
    finally (return grid)))
 
 (defun main (&rest argv)
   (declare (ignorable argv))
-  (let* ((grid (loop for line in (read-file-lines "input.txt") 
-                until (emptyp line) 
+  (let* ((grid (loop for line in (read-file-lines "input.txt")
+                until (emptyp line)
                 collect line))
          (cols (transpose grid))
-         (limit 1000000000))
+         (limit 1000000000)
+         (window-length 3))
     (format t "Part 1: ~a~%Part 2: ~a~%"
       (loop for col in cols sum (score-p1 col))
       (loop with cycle-found = nil
-       for iter from 0 to limit
+       for moves from 0 to limit
        for score = (score-p2 grid)
        collect score into scores
-       when (and (not cycle-found) (> iter 4))
-       do (let ((i (search (subseq scores (- iter 3) iter) scores :end2 (- iter 4))))
-            (when i 
+       when (and (not cycle-found) (> moves (1+ window-length)))
+       do (let ((cycle-start-index 
+                  (search
+                    (subseq scores (- moves window-length) moves)
+                    scores 
+                    :end2 (- moves (1+ window-length)))))
+            (when cycle-start-index
               (setq cycle-found t)
-              (loop with step = (- iter i 3)
-               while (< (+ iter step) limit)
-               do (incf iter step))))
-       do (setq grid (one-cycle grid))
+              (let ((cycle-length (- moves cycle-start-index window-length)))
+                (incf moves (* cycle-length (floor (- limit moves) cycle-length))))))
+       do (setq grid (one-move grid))
        finally (return score)))))
