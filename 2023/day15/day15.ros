@@ -1,0 +1,31 @@
+#!/bin/sh
+#|-*- mode:lisp -*-|#
+#|
+exec ros -Q -- $0 "$@"
+|#
+(progn
+  (ros:ensure-asdf)
+  #+quicklisp(ql:quickload '(str) :silent t))
+
+(defpackage :ros.script.day15.3910652739
+  (:use :cl)
+  (:import-from :uiop :read-file-lines :emptyp)
+  (:import-from :str :split))
+(in-package :ros.script.day15.3910652739)
+ 
+(defun hash (string)
+  (loop with result = 0
+   for c across string
+   do (incf result (char-code c))
+   do (setq result (* result 17))
+   do (setq result (rem result 256))
+   finally (return result)))
+
+(defun main (&rest argv)
+  (declare (ignorable argv))
+  (let* ((line (car (read-file-lines "input.txt")))
+         (strings (split "," line)))
+    (format t "Part 1: ~a~%Part 2: ~a~%"
+      (loop for s in strings sum (hash s))
+      nil)))
+    
