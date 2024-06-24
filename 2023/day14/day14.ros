@@ -59,9 +59,9 @@ exec ros -Q -- $0 "$@"
        collect score into scores
        when (and (not cycle-found) (> moves (1+ window-length)))
        do (let ((cycle-start-index 
-                  (search
-                    (subseq scores (- moves window-length) moves)
-                    scores 
+                  (search scores scores
+                    :start1 (- moves window-length)
+                    :end1 moves
                     :end2 (- moves (1+ window-length)))))
             (when cycle-start-index
               (setq cycle-found t)
