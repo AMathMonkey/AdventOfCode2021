@@ -5,12 +5,12 @@ exec ros -Q -- $0 "$@"
 |#
 (progn
   (ros:ensure-asdf)
-  #+quicklisp(ql:quickload '(str) :silent t))
+  #+quicklisp(ql:quickload '(cl-ppcre) :silent t))
 
 (defpackage :ros.script.day15.3910652739
   (:use :cl)
-  (:import-from :uiop :read-file-lines :emptyp)
-  (:import-from :str :split))
+  (:import-from :uiop :read-file-lines)
+  (:import-from :cl-ppcre :split))
 (in-package :ros.script.day15.3910652739)
  
 (defun hash (str)
@@ -24,4 +24,20 @@ exec ros -Q -- $0 "$@"
   (let* ((strings (split "," (car (read-file-lines "input.txt")))))
     (format t "Part 1: ~a~%Part 2: ~a~%"
       (loop for s in strings sum (hash s))
-      nil)))
+      (let ((boxes (make-array 256 :initial-element nil)))
+        (loop for s in strings
+         for pair = (split "[=-]" s)
+         for (lens focal-length) = pair
+         for box-num = (hash lens)
+         for box = (elt boxes box-num)
+         when focal-length
+         do (let ((i (position lens box :key #'car :test #'equal)))
+              (if i
+                (setf (elt box i) pair)
+                (setf (elt boxes box-num) (cons pair box))))
+         else do (setf (elt boxes box-num) (delete lens box :key #'car :test #'equal :count 1)))
+        (loop for b across boxes
+         for bnum from 1
+         sum (loop for slot-num downfrom (length b)
+              for (lens focal-length) in b
+              sum (* bnum slot-num (read-from-string focal-length))))))))
