@@ -48,11 +48,10 @@ exec ros -Q -- $0 "$@"
   (let* ((grid (loop for line in (read-file-lines "input.txt")
                 until (emptyp line)
                 collect line))
-         (cols (transpose grid))
          (limit 1000000000)
          (window-length 3))
     (format t "Part 1: ~a~%Part 2: ~a~%"
-      (loop for col in cols sum (score-p1 col))
+      (loop for col in (transpose grid) sum (score-p1 col))
       (loop with cycle-found = nil
        for moves from 0 to limit
        for score = (score-p2 grid)
