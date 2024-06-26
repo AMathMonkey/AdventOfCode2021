@@ -19,29 +19,29 @@ exec ros -Q -- $0 "$@"
  
 (defun advance (r c dir)
   (ecase dir
-    ((:r) (list r (1+ c) dir))
-    ((:l) (list r (1- c) dir))
-    ((:u) (list (1- r) c dir))
-    ((:d) (list (1+ r) c dir))))
+    (:r (list r (1+ c) dir))
+    (:l (list r (1- c) dir))
+    (:u (list (1- r) c dir))
+    (:d (list (1+ r) c dir))))
  
 (defun mirror (tile dir)
   (ecase dir
-    ((:r) (if (char= tile #\\) :d :u))
-    ((:l) (if (char= tile #\\) :u :d))
-    ((:u) (if (char= tile #\\) :l :r))
-    ((:d) (if (char= tile #\\) :r :l))))
+    (:r (if (char= tile #\\) :d :u))
+    (:l (if (char= tile #\\) :u :d))
+    (:u (if (char= tile #\\) :l :r))
+    (:d (if (char= tile #\\) :r :l))))
  
 (defun split (r c tile)
   (ecase tile
-    ((#\-) (list (list r (1- c) :l) (list r (1+ c) :r)))
-    ((#\|) (list (list (1- r) c :u) (list (1+ r) c :d)))))
+    (#\- (list (list r (1- c) :l) (list r (1+ c) :r)))
+    (#\| (list (list (1- r) c :u) (list (1+ r) c :d)))))
  
 (defun what-next (dir tile mirrored)
   (ecase tile
-    ((#\.) :advance)
+    (#\. :advance)
     ((#\\ #\/) (if mirrored :advance :mirror))
-    ((#\-) (if (or (eq dir :l) (eq dir :r)) :advance :split))
-    ((#\|) (if (or (eq dir :u) (eq dir :d)) :advance :split))))
+    (#\- (if (or (eq dir :l) (eq dir :r)) :advance :split))
+    (#\| (if (or (eq dir :u) (eq dir :d)) :advance :split))))
 
 (defun main (&rest argv)
   (declare (ignorable argv))
@@ -61,9 +61,9 @@ exec ros -Q -- $0 "$@"
                  and do (set-add seen s)
                  and do (let ((tile (aref grid r c)))
                           (ecase (what-next dir tile mirrored)
-                            ((:advance) (push (advance r c dir) beams))
-                            ((:mirror) (push (list r c (mirror tile dir) t) beams))
-                            ((:split) (dolist (b (split r c tile)) (push b beams)))))
+                            (:advance (push (advance r c dir) beams))
+                            (:mirror (push (list r c (mirror tile dir) t) beams))
+                            (:split (dolist (b (split r c tile)) (push b beams)))))
                  finally (return (hash-table-count energized)))))
       (format t "Part 1: ~a~%Part 2: ~a~%" 
         (solve (list 0 0 :r))
