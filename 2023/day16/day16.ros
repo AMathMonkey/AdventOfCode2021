@@ -1,0 +1,72 @@
+#!/bin/sh
+#|-*- mode:lisp -*-|#
+#|
+exec ros -Q -- $0 "$@"
+|#
+(progn
+  (ros:ensure-asdf))
+
+(defpackage :ros.script.day16.3910652739
+  (:use :cl)
+  (:import-from :uiop :read-file-lines :emptyp))
+(in-package :ros.script.day16.3910652739)
+ 
+(defun set-add (hash v)
+  (setf (gethash v hash) nil))
+
+(defun set-contains (hash v)
+  (nth-value 1 (gethash v hash)))
+ 
+(defun advance (r c dir)
+  (ecase dir
+    ((:r) (list r (1+ c) dir))
+    ((:l) (list r (1- c) dir))
+    ((:u) (list (1- r) c dir))
+    ((:d) (list (1+ r) c dir))))
+ 
+(defun mirror (tile dir)
+  (ecase dir
+    ((:r) (if (char= tile #\\) :d :u))
+    ((:l) (if (char= tile #\\) :u :d))
+    ((:u) (if (char= tile #\\) :l :r))
+    ((:d) (if (char= tile #\\) :r :l))))
+ 
+(defun split (r c tile)
+  (ecase tile
+    ((#\-) (list (list r c :l) (list r c :r)))
+    ((#\|) (list (list r c :u) (list r c :d)))))
+ 
+(defun what-next (dir tile mirrored)
+  (ecase tile
+    ((#\.) :advance)
+    ((#\\ #\/) (if mirrored :advance :mirror))
+    ((#\-) (if (or (eq dir :l) (eq dir :r)) :advance :split))
+    ((#\|) (if (or (eq dir :u) (eq dir :d)) :advance :split))))
+
+(defun main (&rest argv)
+  (declare (ignorable argv))
+  (let ((grid (let ((lines (loop for line in (read-file-lines "input.txt") until (emptyp line) collect line)))
+                (make-array (list (length lines) (length (car lines))) :initial-contents lines))))
+    (destructuring-bind (rows cols) (array-dimensions grid)
+      (format t "Part 1: ~a~%Part 2: ~a~%" 
+        (loop with energized = (make-hash-table :test #'equal)
+         with known = (make-hash-table :test #'equal)
+         with beams = (list (list 0 0 :r))
+         while beams
+         for (r c dir mirrored) = (pop beams)
+         for s = (write-to-string (list r c dir mirrored))
+         when (and (< -1 r rows) (< -1 c cols) (not (set-contains known s)))
+         do (set-add energized (write-to-string (list r c)))
+         and do (set-add known s)
+         and do (let ((tile (aref grid r c)))
+                  (ecase (what-next dir tile mirrored)
+                    ((:advance) (push (advance r c dir) beams))
+                    ((:mirror) (push (list r c (mirror tile dir) t) beams))
+                    ((:split) (dolist (it (split r c tile)) (push it beams)))))
+        ;  finally (loop for i from 0 below rows
+        ;           do (loop for j from 0 below cols
+        ;               when (set-contains energized (write-to-string (list i j))) do (princ #\#)
+        ;               else do (princ #\.))
+        ;           do (terpri))
+         finally (return (hash-table-count energized)))
+        nil))))
