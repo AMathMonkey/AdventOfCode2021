@@ -50,23 +50,19 @@ exec ros -Q -- $0 "$@"
     (destructuring-bind (rows cols) (array-dimensions grid)
       (format t "Part 1: ~a~%Part 2: ~a~%" 
         (loop with energized = (make-hash-table :test #'equal)
-         with known = (make-hash-table :test #'equal)
+         with seen = (make-hash-table :test #'equal)
          with beams = (list (list 0 0 :r))
          while beams
-         for (r c dir mirrored) = (pop beams)
-         for s = (write-to-string (list r c dir mirrored))
-         when (and (< -1 r rows) (< -1 c cols) (not (set-contains known s)))
+         for beam = (pop beams)
+         for (r c dir mirrored) = beam
+         for s = (write-to-string beam)
+         when (and (< -1 r rows) (< -1 c cols) (not (set-contains seen s)))
          do (set-add energized (write-to-string (list r c)))
-         and do (set-add known s)
+         and do (set-add seen s)
          and do (let ((tile (aref grid r c)))
                   (ecase (what-next dir tile mirrored)
                     ((:advance) (push (advance r c dir) beams))
                     ((:mirror) (push (list r c (mirror tile dir) t) beams))
-                    ((:split) (dolist (it (split r c tile)) (push it beams)))))
-        ;  finally (loop for i from 0 below rows
-        ;           do (loop for j from 0 below cols
-        ;               when (set-contains energized (write-to-string (list i j))) do (princ #\#)
-        ;               else do (princ #\.))
-        ;           do (terpri))
+                    ((:split) (dolist (b (split r c tile)) (push b beams)))))
          finally (return (hash-table-count energized)))
         nil))))
