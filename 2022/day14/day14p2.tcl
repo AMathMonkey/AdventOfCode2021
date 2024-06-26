@@ -35,7 +35,7 @@ incr maxRow 2
 while {![info exists grid(0,500)]} {
     set sandRow 0
     set sandCol 500
-    
+
     while {$sandRow + 1 < $maxRow} {
         if {![info exists grid([expr {$sandRow + 1}],$sandCol)]} {
             incr sandRow

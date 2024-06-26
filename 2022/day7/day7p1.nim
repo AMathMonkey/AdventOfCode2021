@@ -1,6 +1,6 @@
 import strutils
 import tables
-var 
+var
   dirsToSizes = Table[string, int]()
   curPath: seq[string]
 
@@ -19,7 +19,7 @@ for line in "input.txt".lines:
 var sum = 0
 for path, size in dirsToSizes:
   var sizesOfChildren = 0
-  for key, value in dirsToSizes: 
+  for key, value in dirsToSizes:
     if key.startsWith(path & "/"): sizesOfChildren.inc(value)
   let recursiveSize = size + sizesOfChildren
   if recursiveSize <= 100000: sum.inc(recursiveSize)

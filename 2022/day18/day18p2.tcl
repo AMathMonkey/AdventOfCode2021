@@ -37,17 +37,17 @@ while {$lastSize != [set newSize [array size steam]]} {
 
         set index $x,[set ym1 [expr {$y-1}]],$z
         if {$ym1 >= -1 && ![info exists cubes($index)]} {set steam($index) {}}
-        
+
         set index $x,$y,[set z1 [expr {$z+1}]]
         if {$z1 <= $maxZ && ![info exists cubes($index)]} {set steam($index) {}}
-        
+
         set index $x,$y,[set zm1 [expr {$z-1}]]
         if {$zm1 >= -1 && ![info exists cubes($index)]} {set steam($index) {}}
     }
     set lastSize $newSize
 }
 
-# count cube faces that are in contact with steam 
+# count cube faces that are in contact with steam
 foreach cube [array names cubes] {
     lassign [split $cube ,] x y z
     foreach neighbour [list \
@@ -60,6 +60,6 @@ foreach cube [array names cubes] {
     ] {
         if {[info exists steam($neighbour)]} {incr result}
     }
-} 
+}
 
 puts $result

@@ -12,7 +12,7 @@ chomp(my @input = <$inputfile>);
 my $grid = zeroes byte, 101, 101, 101;
 
 LINE: foreach my $line (@input) {
-    my ($command, $xmin, $xmax, $ymin, $ymax, $zmin, $zmax) = 
+    my ($command, $xmin, $xmax, $ymin, $ymax, $zmin, $zmax) =
         $line =~ /(on|off) x=(-?\d+)\.\.(-?\d+),y=(-?\d+)\.\.(-?\d+),z=(-?\d+)\.\.(-?\d+)/;
 
     foreach ($xmin, $xmax, $ymin, $ymax, $zmin, $zmax) {

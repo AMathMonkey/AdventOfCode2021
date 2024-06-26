@@ -35,7 +35,7 @@ while {[gets $input line] >= 0} {
 while {true} {
     set sandRow 0
     set sandCol 500
-    
+
     set cond {$sandRow <= $maxRow && $sandCol <= $maxCol && $sandCol >= $minCol}
     while $cond {
         if {![info exists grid([expr {$sandRow + 1}],$sandCol)]} {

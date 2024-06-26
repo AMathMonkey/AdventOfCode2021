@@ -16,6 +16,6 @@ foreach cube [array names cubes] {
     ] {
         if {![info exists cubes($neighbour)]} {incr result}
     }
-} 
+}
 
 puts $result

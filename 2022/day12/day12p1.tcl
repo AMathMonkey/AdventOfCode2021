@@ -50,7 +50,7 @@ while {$prevResultGrid ne $resultGrid} {
             if {$valBelow ne {} && $distBelow + 1 < $curDist && [diff $val $valBelow] <= 1} {
                 set curDist [expr {$distBelow + 1}]
             }
-            
+
             lset resultGrid $row $col $curDist
         }
     }

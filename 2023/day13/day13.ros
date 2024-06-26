@@ -10,37 +10,37 @@ exec ros -Q -- $0 "$@"
   (:use :cl)
   (:import-from :uiop :read-file-lines :emptyp))
 (in-package :ros.script.day13.3910652739)
- 
+
 (defvar *part*)
 (defvar *lines*)
- 
+
 (defun next-grid (lines)
   (loop for line = (pop lines)
    until (emptyp line)
    collect line into grid
    finally (return (list (coerce grid 'vector) lines))))
- 
+
 (defun transpose-grid (grid)
-  (coerce 
+  (coerce
     (loop with rows = (length grid)
      with cols = (length (elt grid 0))
      for col from 0 below cols
      for col-charlist = (loop for row across grid collect (char row col))
      collect (coerce col-charlist 'string))
     'vector))
- 
+
 (defun string-diff (s1 s2)
   (loop for i from 0 below (length s1)
    count (not (char= (char s1 i) (char s2 i))) into result
    until (> result 1)
    finally (return result)))
- 
+
 (defun find-symmetry-row (grid)
   (let ((len (length grid)))
-    (flet 
+    (flet
       ((symmetry-at-row-p (row)
          (ecase *part*
-           (:part1 
+           (:part1
              (loop for top from row downto 0
               for bottom from (1+ row) below len
               always (equal (elt grid top) (elt grid bottom))))
@@ -52,9 +52,9 @@ exec ros -Q -- $0 "$@"
               finally (return (= total-diff 1)))))))
       (loop for i from 0 below (1- len)
        when (symmetry-at-row-p i) return (1+ i)))))
- 
+
 (defun solve ()
-  (loop with rest = *lines* 
+  (loop with rest = *lines*
    for (grid rest1) = (next-grid rest)
    until (emptyp grid)
    do (setq rest rest1)

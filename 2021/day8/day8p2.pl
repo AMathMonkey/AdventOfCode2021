@@ -72,7 +72,7 @@ for (my $i = 0; $i < @patterns; ++$i) {
     $segments{e} = first {$three !~ /$_/} split '', $two;
 
     $segments{d} = first {(join '', values %segments) !~ /$_/} split '', $four;
-    
+
     $segments{g} = first {
         my $char = $_;
         (grep {$_ eq $char} values %segments) == 0
@@ -84,7 +84,7 @@ for (my $i = 0; $i < @patterns; ++$i) {
     foreach my $digit ($displays[$i]->@*) {
         eval "\$digit =~ tr/$str/a-g/";
         $digit = join '', sort split '', $digit;
-        push @digits, $decoder{$digit} 
+        push @digits, $decoder{$digit}
     }
     $result += join '', @digits
 }

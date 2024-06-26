@@ -29,7 +29,7 @@ let winnerMapping = {
   "scissors" : "paper",
 }.toTable
 
-var rounds = newSeq[round](lines.len) 
+var rounds = newSeq[round](lines.len)
 
 for i, line in lines:
   let roundSplit = line.split
@@ -40,7 +40,7 @@ var points = 0
 for (outcome, opponent) in rounds:
   var me: string
   case outcome:
-    of "win": 
+    of "win":
       for key, value in winnerMapping:
         if value == opponent: me = key; break
     of "lose": me = winnerMapping[opponent]

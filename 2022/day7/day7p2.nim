@@ -1,11 +1,11 @@
 import strutils
 import tables
 import sequtils
-var 
+var
   dirsToSizes = Table[string, int]()
   curPath: seq[string]
 
-const 
+const
   fileSystemSize = 70000000
   requiredFreeSpace = 30000000
 
@@ -21,7 +21,7 @@ for line in "input.txt".lines:
   elif line.startsWith("$ ls").not and line.startsWith("dir ").not:
     dirsToSizes[curPath.join("/")].inc(line.split[0].parseInt)
 
-let 
+let
   usedSpace = dirsToSizes.values.toSeq.foldl(a + b)
   currentFreeSpace = fileSystemSize - usedSpace
   diff = requiredFreeSpace - currentFreeSpace
@@ -30,10 +30,10 @@ var result = fileSystemSize
 
 for path, size in dirsToSizes:
   var sizesOfChildren = 0
-  for key, value in dirsToSizes: 
+  for key, value in dirsToSizes:
     if key.startsWith(path & "/"): sizesOfChildren.inc(value)
   let recursiveSize = size + sizesOfChildren
-  if recursiveSize >= diff and recursiveSize < result: 
+  if recursiveSize >= diff and recursiveSize < result:
     result = recursiveSize
 
 echo result

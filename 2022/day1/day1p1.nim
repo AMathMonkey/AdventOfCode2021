@@ -3,7 +3,7 @@ import sequtils
 
 let lines = readFile("input.txt").splitLines
 
-iterator getElves(lines: seq[string]): seq[int] = 
+iterator getElves(lines: seq[string]): seq[int] =
   var currentElf: seq[int] = @[]
   for line in lines:
     if line != "": currentElf.add(line.parseInt)

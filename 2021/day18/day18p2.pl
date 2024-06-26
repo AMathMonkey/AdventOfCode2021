@@ -93,7 +93,7 @@ sub splitIfNeeded { my ($pair) = @_;
     if ($pair =~ /\d{2,}/) {
         my $div = substr($pair, $-[0], $+[0] - $-[0]) / 2;
         substr($pair, $-[0], $+[0] - $-[0]) = '[' . floor($div) . ',' . ceil($div) . ']';
-        
+
         @_ = ($pair); goto &explodeIfNeeded
     }
     $pair

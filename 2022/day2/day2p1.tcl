@@ -5,7 +5,7 @@ set pointMapping [dict create rock 1 paper 2 scissors 3 win 6 draw 3]
 set winnerMapping [dict create rock scissors paper rock scissors paper]
 
 while {[gets $input line] >= 0} {
-    lappend rounds [lmap letter [split $line { }] {dict get $decrypter $letter}] 
+    lappend rounds [lmap letter [split $line { }] {dict get $decrypter $letter}]
 }
 
 set points 0

@@ -19,14 +19,14 @@ exec ros -Q -- $0 "$@"
    for e in list
    do (setf (gethash e set) nil)
    finally (return set)))
-   
+
 (defun set-includes (set value)
   (nth-value 1 (gethash value set)))
 
 (defun get-nonzero-kv-pair (hash)
   (block nil
-    (maphash 
-      (lambda (k v) 
+    (maphash
+      (lambda (k v)
         (remhash k hash)
         (when (plusp v) (return (cons k v))))
       hash)))
@@ -36,10 +36,10 @@ exec ros -Q -- $0 "$@"
 
 (defun main (&rest argv)
   (declare (ignorable argv))
-  (setq 
+  (setq
     *lines* (coerce (read-file-lines "input.txt") 'vector)
     *matches-per-line*
-      (coerce 
+      (coerce
         (loop for line across *lines*
         for (winning my-nums) = (mapcar #'words (split " | " (second (split ": " line))))
         for winning-set = (list-set winning)
@@ -56,6 +56,5 @@ exec ros -Q -- $0 "$@"
      for (card-number . number-of-units) = pair
      for matches = (elt *matches-per-line* card-number)
      sum number-of-units
-     do (loop for offset from 1 to matches 
+     do (loop for offset from 1 to matches
          do (incf (gethash (+ card-number offset) card-counts 0) number-of-units)))))
-    

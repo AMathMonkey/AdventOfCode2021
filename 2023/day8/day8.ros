@@ -36,7 +36,7 @@ exec ros -Q -- $0 "$@"
        finally (return steps))
       (apply #'lcm
         (loop for curr in (delete-if (lambda (node) (char/= #\A (char node 2))) (hash-table-keys lmap))
-         collect (loop for steps from 0 
+         collect (loop for steps from 0
                   until (char= #\Z (char curr 2))
                   for inst = (elt instructions (rem steps len))
                   do (setq curr (gethash curr (if (char= inst #\L) lmap rmap)))

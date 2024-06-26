@@ -19,7 +19,7 @@ my %values = (
     ')' => 1,
     ']' => 2,
     '}' => 3,
-    '>' => 4 
+    '>' => 4
 );
 
 my @stacks;
@@ -34,7 +34,7 @@ LINE: foreach my $line (@input) {
         }
     }
     push @stacks, \@stack
-} 
+}
 
 my @scores;
 
@@ -45,6 +45,6 @@ foreach my $stack (@stacks) {
         $score += $values{$pairs{$char}}
     }
     push @scores, $score
-} 
+}
 
 say((sort {$a <=> $b} @scores)[int(@scores / 2)])

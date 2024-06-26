@@ -12,7 +12,7 @@ exec ros -Q -- $0 "$@"
   (:import-from :uiop :read-file-lines)
   (:import-from :cl-ppcre :split))
 (in-package :ros.script.day15.3910652739)
- 
+
 (defun hash (str)
   (loop with result = 0
    for c across str

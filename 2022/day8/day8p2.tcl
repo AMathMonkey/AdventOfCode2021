@@ -18,7 +18,7 @@ for {set i 1} {$i < ($rows - 1)} {incr i} {
             incr downwardScore
             if {[lindex $grid $downCounter $j] >= $val} {break}
         }
-        
+
         set upCounter $i
         set upwardScore 0
         while {true} {

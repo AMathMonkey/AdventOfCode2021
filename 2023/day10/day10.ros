@@ -41,8 +41,8 @@ exec ros -Q -- $0 "$@"
            (loop named outer
             for row from 0 below rows
             do (loop for col from 0 below cols
-                if (char= #\S (aref input-grid row col)) 
-                do (setf (aref grid row col) 0) 
+                if (char= #\S (aref input-grid row col))
+                do (setf (aref grid row col) 0)
                 and do (return-from outer (list row col)))))
          (part1
            (loop for step from 1
@@ -54,7 +54,7 @@ exec ros -Q -- $0 "$@"
                       if (and (>= (1- row) 0) (not (aref grid (1- row) col))
                            (connectp :up (aref input-grid row col) (aref input-grid (1- row) col)))
                       do (setf (aref grid (1- row) col) step done nil) end
-                      and 
+                      and
                       if (and (< (1+ row) rows) (not (aref grid (1+ row) col))
                            (connectp :down (aref input-grid row col) (aref input-grid (1+ row) col)))
                       do (setf (aref grid (1+ row) col) step done nil) end
@@ -63,7 +63,7 @@ exec ros -Q -- $0 "$@"
                            (connectp :left (aref input-grid row col) (aref input-grid row (1- col))))
                       do (setf (aref grid row (1- col)) step done nil) end
                       and
-                      if (and (< (1+ col) cols) (not (aref grid row (1+ col))) 
+                      if (and (< (1+ col) cols) (not (aref grid row (1+ col)))
                            (connectp :right (aref input-grid row col) (aref input-grid row (1+ col))))
                       do (setf (aref grid row (1+ col)) step done nil) end))
             if done return prev-step)))
@@ -74,14 +74,14 @@ exec ros -Q -- $0 "$@"
                      (:right
                        (and (< (1+ col) cols) (aref grid row (1+ col))
                          (= -1 (- (aref grid row col) (aref grid row (1+ col))))))
-                     (:left 
+                     (:left
                        (and (>= (1- col) 0) (aref grid row (1- col))
                          (= -1 (- (aref grid row col) (aref grid row (1- col))))))
-                     (:up 
+                     (:up
                        (and (>= (1- row) 0)
                          (aref grid (1- row) col)
                          (= -1 (- (aref grid row col) (aref grid (1- row) col)))))
-                     (:down 
+                     (:down
                        (and (< (1+ row) rows)
                          (aref grid (1+ row) col)
                          (= -1 (- (aref grid row col) (aref grid (1+ row) col)))))))
@@ -90,32 +90,32 @@ exec ros -Q -- $0 "$@"
                     with row = start-row with col = start-col
                     with prev-dir = (opposite-direction prohibited-start-direction)
                     do (push row row-coords) do (push col col-coords)
-                    
+
                     until (= part1 (aref grid row col))
-        
-                    if (and (not (eql prev-dir :left)) 
+
+                    if (and (not (eql prev-dir :left))
                          (next-vertex-p row col :right)
                          (connectp :right (aref input-grid row col) (aref input-grid row (1+ col))))
                     do (setq col (1+ col) prev-dir :right)
-                     
-                    else if (and 
-                              (not (eql prev-dir :right)) 
+
+                    else if (and
+                              (not (eql prev-dir :right))
                               (next-vertex-p row col :left)
                               (connectp :left (aref input-grid row col) (aref input-grid row (1- col))))
                     do (setq col (1- col) prev-dir :left)
-        
-                    else if (and 
+
+                    else if (and
                               (not (eql prev-dir :down))
                               (next-vertex-p row col :up)
                               (connectp :up (aref input-grid row col) (aref input-grid (1- row) col)))
                     do (setq row (1- row) prev-dir :up)
-        
-                    else if (and 
+
+                    else if (and
                               (not (eql prev-dir :up))
                               (next-vertex-p row col :down)
                               (connectp :down (aref input-grid row col) (aref input-grid (1+ row) col)))
                     do (setq row (1+ row) prev-dir :down)
-        
+
                     finally (return (pairlis col-coords row-coords))))
                   (compute-inner-points (coord-pairs)
                     (loop for (x1 . y1) in coord-pairs
@@ -125,15 +125,15 @@ exec ros -Q -- $0 "$@"
           (destructuring-bind (start-row start-col) start-coords
             (destructuring-bind (dir1 dir2)
               (append
-                (when 
+                (when
                   (and (< (1+ start-row) rows) (aref grid (1+ start-row) start-col)
                     (= 1 (aref grid (1+ start-row) start-col)))
                   '(:down))
-                (when 
+                (when
                   (and (>= (1- start-row) 0) (aref grid (1- start-row) start-col)
                     (= 1 (aref grid (1- start-row) start-col)))
                   '(:up))
-                (when 
+                (when
                   (and (>= (1- start-col) 0) (aref grid start-row (1- start-col))
                     (= 1 (aref grid start-row (1- start-col))))
                   '(:left))
@@ -141,7 +141,7 @@ exec ros -Q -- $0 "$@"
                   (and (< (1+ start-col) cols) (aref grid start-row (1+ start-col))
                     (= 1 (aref grid start-row (1+ start-col))))
                   '(:right)))
-              (compute-inner-points 
-                (append 
+              (compute-inner-points
+                (append
                   (get-half-of-boundary-points start-row start-col dir1)
                   (cdr (nreverse (get-half-of-boundary-points start-row start-col dir2)))))))))))

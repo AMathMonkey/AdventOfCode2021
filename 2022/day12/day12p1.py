@@ -2,7 +2,7 @@ import math
 import copy
 import sys
 
-def transform(ch): 
+def transform(ch):
   return 'a' if ch == 'S' else 'z' if ch == 'E' else ch
 
 def diff(src, dest):
@@ -22,7 +22,7 @@ while prevResultGrid != resultGrid:
       if elem == 'E':
         resultGrid[rowNum][colNum] = 0
         curDist = 0
-      
+
       if colNum - 1 >= 0:
         valToLeft = grid[rowNum][colNum - 1]
         distToLeft = resultGrid[rowNum][colNum - 1]
@@ -40,7 +40,7 @@ while prevResultGrid != resultGrid:
         distAbove = resultGrid[rowNum - 1][colNum]
         if distAbove + 1 < curDist and diff(elem, valAbove) <= 1:
           curDist = distAbove + 1
-        
+
       if rowNum + 1 < len(grid):
         valBelow = grid[rowNum + 1][colNum]
         distBelow = resultGrid[rowNum + 1][colNum]
@@ -51,6 +51,6 @@ while prevResultGrid != resultGrid:
 
 for rowNum, row in enumerate(grid):
   for colNum, elem in enumerate(row):
-    if elem == 'S': 
+    if elem == 'S':
       print(resultGrid[rowNum][colNum])
       sys.exit(0)

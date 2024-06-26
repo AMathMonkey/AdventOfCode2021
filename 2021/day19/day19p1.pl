@@ -41,7 +41,7 @@ sub translate { my ($scanner, $tx, $ty, $tz) = @_;
 my @rotNumToRotator = (
     sub {my ($x, $y, $z) = @_; [$x, $y, $z]},
     sub {my ($x, $y, $z) = @_; [-$x, -$y, $z]},
-    sub {my ($x, $y, $z) = @_; [-$x, $y, -$z]}, 
+    sub {my ($x, $y, $z) = @_; [-$x, $y, -$z]},
     sub {my ($x, $y, $z) = @_; [$x, -$y, -$z]},
     sub {my ($x, $y, $z) = @_; [-$x, $z, $y]},
     sub {my ($x, $y, $z) = @_; [$x, $z, -$y]},
@@ -65,7 +65,7 @@ my @rotNumToRotator = (
     sub {my ($x, $y, $z) = @_; [-$z, -$y, -$x]}
 );
 
-sub rotate { my ($scanner, $rotNum) = @_; 
+sub rotate { my ($scanner, $rotNum) = @_;
     [map {$rotNumToRotator[$rotNum]->(@$_)} @$scanner]
 }
 
@@ -85,10 +85,10 @@ sub beaconsEqual { my ($beacon1, $beacon2) = @_;
 
 sub beaconsInCommon { my ($scanner1, $scanner2) = @_;
     scalar grep {
-        my $beacon = $_; 
+        my $beacon = $_;
         any {beaconsEqual($beacon, $_)} @$scanner2
     } @$scanner1
-} 
+}
 
 my @solved = (0);
 my %resultSet;

@@ -23,13 +23,13 @@ exec ros -Q -- $0 "$@"
   (let ((key (concat string (write-to-string groups) (write-to-string curr-group))))
     (or (gethash key *cache*)
       (setf (gethash key *cache*)
-        (if (zerop (length string)) 
+        (if (zerop (length string))
           (if (or (and (null groups) (zerop curr-group)) (equal groups (list curr-group))) 1 0)
           (let ((desired-group-size (or (car groups) 0))
                 (remaining-chars (s-rest string)))
             (ecase (first-char string)
-              (#\. (if (plusp curr-group) 
-                     (if (< curr-group desired-group-size) 
+              (#\. (if (plusp curr-group)
+                     (if (< curr-group desired-group-size)
                        0
                        (recur remaining-chars (cdr groups) 0))
                      (recur remaining-chars groups 0)))
@@ -38,7 +38,7 @@ exec ros -Q -- $0 "$@"
               (#\? (cond
                      ((= curr-group desired-group-size) (recur remaining-chars (cdr groups) 0))
                      ((zerop curr-group)
-                       (+ 
+                       (+
                          (recur remaining-chars groups 0)
                          (recur remaining-chars groups 1)))
                      (t (recur remaining-chars groups (1+ curr-group))))))))))))

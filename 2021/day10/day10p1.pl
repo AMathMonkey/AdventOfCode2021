@@ -19,7 +19,7 @@ my %values = (
     ')' => 3,
     ']' => 57,
     '}' => 1197,
-    '>' => 25137 
+    '>' => 25137
 );
 
 my $score = 0;
@@ -36,6 +36,6 @@ LINE: foreach my $line (@input) {
             }
         }
     }
-} 
+}
 
 say $score;

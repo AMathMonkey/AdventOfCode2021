@@ -34,7 +34,7 @@ proc getMax {valve openValves timeRemaining who} {
         incr val [expr {$timeRemaining * $valves($valve,rate)}]
         if {$val > $max} {set max $val}
     }
-    
+
     return [set cache($cacheIndex) $max]
 }
 

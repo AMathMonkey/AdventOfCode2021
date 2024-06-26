@@ -17,7 +17,7 @@ exec ros -Q -- $0 "$@"
 
 (defun rotate-cw (grid)
   (mapcar #'reverse (transpose grid)))
- 
+
 (defun score-p1 (col)
   (loop with value = (length col)
    for c across col
@@ -57,7 +57,7 @@ exec ros -Q -- $0 "$@"
        for score = (score-p2 grid)
        collect score into scores
        when (and (not cycle-found) (> moves (1+ window-length)))
-       do (let ((cycle-start-index 
+       do (let ((cycle-start-index
                   (search scores scores
                     :start1 (- moves window-length)
                     :end1 moves

@@ -17,7 +17,7 @@ for {set i 1} {$i < ($rows - 1)} {incr i} {
             if {[lindex $grid $downCounter $j] >= $val} {break}
         }
         if {$downCounter == $rows} {lset resultGrid $i $j 1; continue}
-        
+
         for {set upCounter [expr {$i - 1}]} {$upCounter != -1} {incr upCounter -1} {
             if {[lindex $grid $upCounter $j] >= $val} {break}
         }
@@ -27,7 +27,7 @@ for {set i 1} {$i < ($rows - 1)} {incr i} {
             if {[lindex $grid $i $rightCounter] >= $val} {break}
         }
         if {$rightCounter == $cols} {lset resultGrid $i $j 1; continue}
-        
+
         for {set leftCounter [expr {$j - 1}]} {$leftCounter != -1} {incr leftCounter -1} {
             if {[lindex $grid $i $leftCounter] >= $val} {break}
         }

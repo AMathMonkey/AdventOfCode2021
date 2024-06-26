@@ -22,7 +22,7 @@ exec ros -Q -- $0 "$@"
       (map 'list (lambda (line) (mapcar #'parse-integer (words line))) (subseq *lines* i pos)))))
 
 (defmacro update-var (varname)
-  `(multiple-value-bind (new-i result) (range-until-next-blank (1+ i)) 
+  `(multiple-value-bind (new-i result) (range-until-next-blank (1+ i))
      (setq i new-i ,varname result)))
 
 (defun get-mapping (sourceval mapvar)
@@ -38,26 +38,26 @@ exec ros -Q -- $0 "$@"
    for source-end = (+ source-start length -1)
 
    ; if range to process falls entirely within the mapping range, easiest case, transform entire range
-   if (<= source-start this-start this-end source-end) 
-   return (list 
+   if (<= source-start this-start this-end source-end)
+   return (list
             (list (+ dest-start this-start (- source-start)) this-length)
             (list))
-        
+
    ; if mapping range falls entirely within the range to process, need to transform the middle part
    ; and split off the left and right sides for further processing
    else if (<= this-start source-start source-end this-end)
-   return (list 
-            (list dest-start length) 
-            (list 
-              (list this-start (- source-start this-start)) 
+   return (list
+            (list dest-start length)
+            (list
+              (list this-start (- source-start this-start))
               (list (1+ source-end) (- this-end source-end))))
 
    ; if mapping range starts before the range to process, and ends before range to process ends,
    ; need to transform the left side and split off the right side for further processing
    else if (<= source-start this-start source-end)
-   return (list 
-            (list (+ dest-start this-start (- source-start)) (- source-end this-start)) 
-            (list 
+   return (list
+            (list (+ dest-start this-start (- source-start)) (- source-end this-start))
+            (list
               (list (1+ source-end) (- this-length (- source-end this-start)))))
 
    ; if mapping range starts after the range to process, and ends after the range to process ends,
@@ -65,7 +65,7 @@ exec ros -Q -- $0 "$@"
    else if (<= source-start this-end source-end)
    return (list
             (list dest-start (- this-length (- source-start this-start)))
-            (list 
+            (list
               (list this-start (- source-start this-start))))))
 
 (defun get-mappings (source-ranges mapvar)
@@ -108,4 +108,4 @@ exec ros -Q -- $0 "$@"
              (humidities (get-mappings temperatures temperature-to-humidity))
              (locations (get-mappings humidities humidity-to-location)))
         (loop for (location) in locations minimize location)))))
-    
+

@@ -1,4 +1,4 @@
-# Still slower than my Tcl implementation but not too bad. Takes <5 seconds. 
+# Still slower than my Tcl implementation but not too bad. Takes <5 seconds.
 # Was closer to 8 seconds before I added type annotations, so they do speed things up.
 
 struct Valve

@@ -17,7 +17,7 @@ exec ros -Q -- $0 "$@"
 (defvar *card-ordering*)
 (defvar *classifier*)
 
-(defconstant +type-ordering+ 
+(defconstant +type-ordering+
   (vector :high-card :one-pair :two-pair :three-kind :full-house :four-kind :five-kind))
 
 (defun count-chars (str)
@@ -33,7 +33,7 @@ exec ros -Q -- $0 "$@"
 (defun classify-part1 (hand)
   "Return the type of a hand based on the rules from part 1"
   (let ((counts (count-chars (car hand))))
-    (ecase (hash-table-count counts) 
+    (ecase (hash-table-count counts)
       (1 :five-kind) ; 11111
       (2 (if (= (hash-table-max-value counts) 4) :four-kind :full-house)) ; 11112 else 11122
       (3 (if (= (hash-table-max-value counts) 3) :three-kind :two-pair)) ; 11123 else 11223
@@ -44,9 +44,9 @@ exec ros -Q -- $0 "$@"
   "Return the type of a hand based on the new Joker rules from part 2"
   (let* ((counts (count-chars (car hand)))
          (jokers (gethash #\J counts 0)))
-    (ecase (hash-table-count counts) 
+    (ecase (hash-table-count counts)
       (1 :five-kind) ; jjjjj 11111
-      (2 (cond  
+      (2 (cond
            ((plusp jokers) :five-kind) ; j1111 jj111 jjj11 jjjj1
            ((= (hash-table-max-value counts) 4) :four-kind) ; 12222
            (t :full-house))); 11222
@@ -54,7 +54,7 @@ exec ros -Q -- $0 "$@"
            ((3 2) :four-kind) ; jjj12 jj112
            (1 (if (= (hash-table-max-value counts) 3) :four-kind :full-house)) ; j1112 else j1122
            (0 (if (= (hash-table-max-value counts) 3) :three-kind :two-pair)))) ; 11123 else 12233
-      (4 (ecase jokers 
+      (4 (ecase jokers
            ((2 1) :three-kind) ; jj123 j1123
            (0 :one-pair))) ; 11234
       (5 (if (= jokers 1) :one-pair :high-card))))) ; j1234 else 12345
@@ -70,7 +70,7 @@ exec ros -Q -- $0 "$@"
   "Returns if if hand1 is lesser than hand2"
   (let ((pos1 (position (funcall *classifier* hand1) +type-ordering+))
         (pos2 (position (funcall *classifier* hand2) +type-ordering+)))
-    (if (/= pos1 pos2) 
+    (if (/= pos1 pos2)
       (< pos1 pos2)
       (compare-same-type-hands hand1 hand2))))
 
@@ -78,7 +78,7 @@ exec ros -Q -- $0 "$@"
   "Takes a list of hands (conses of cards and bids), ascending card values represented as a string, and a type-classifier function for hands, and computes the total value of all hands"
   (let ((*card-ordering* card-ordering)
         (*classifier* classifier))
-    (loop for hand in (sort (copy-seq hands) #'compare-hands) 
+    (loop for hand in (sort (copy-seq hands) #'compare-hands)
      for i from 1 sum (* (cdr hand) i))))
 
 (defun main (&rest argv)

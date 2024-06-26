@@ -1,7 +1,7 @@
 
 (require "asdf")
 
-(let* 
+(let*
     ((decrypter '(A :rock B :paper C :scissors X :rock Y :paper Z :scissors))
      (point-mapping '(:rock 1 :paper 2 :scissors 3 :win 6 :draw 3))
      (winner-mapping '(:rock :scissors :paper :rock :scissors :paper))
@@ -11,7 +11,7 @@
 
     (princ (loop for (opponent me) in rounds
         sum (getf point-mapping me)
-        sum (cond 
+        sum (cond
                 ((equal me opponent) (getf point-mapping :draw))
                 ((equal (getf winner-mapping me) opponent) (getf point-mapping :win))
                 (t 0)))))

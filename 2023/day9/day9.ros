@@ -20,7 +20,7 @@ exec ros -Q -- $0 "$@"
 
 (defun main (&rest argv)
   (declare (ignorable argv))
-  (let ((parsed-lines 
+  (let ((parsed-lines
           (loop for str in (read-file-lines "input.txt")
            collect (mapcar #'parse-integer (words str)))))
     (format t "Part 1: ~a~%Part 2: ~a~%"
@@ -29,7 +29,7 @@ exec ros -Q -- $0 "$@"
             do (setq list (diff list))
             until (every #'zerop list)))
       (loop for list in parsed-lines
-       for first-vals = 
+       for first-vals =
          (loop collect (car list)
           do (setq list (diff list))
           until (every #'zerop list))

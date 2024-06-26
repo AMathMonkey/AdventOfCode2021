@@ -39,5 +39,5 @@ while {[gets $input line] >= 0} {
         }
         set tailLocations([lindex $tails end]) {}
     }
-} 
+}
 puts [array size tailLocations]

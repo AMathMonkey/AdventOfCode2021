@@ -9,7 +9,7 @@ my $inputfile = IO::File->new('./input.txt');
 my $input = <$inputfile>;
 chomp $input;
 
-my ($xlower, $xupper, $ylower, $yupper) = 
+my ($xlower, $xupper, $ylower, $yupper) =
     $input =~ /target area: x=(-?\d+)\.\.(-?\d+), y=(-?\d+)\.\.(-?\d+)/;
 
 sub testvels { my ($xvel, $yvel) = @_;

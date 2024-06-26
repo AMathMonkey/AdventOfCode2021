@@ -8,17 +8,17 @@ let lines = lines("input.txt").toSeq
 type Range = (int, int)
 type InputRange = (int, int, int)
 
-proc getMappingPart2(sourceRange: Range, mapvar: seq[InputRange], sourceRanges: var seq[Range]): Option[Range] = 
-  let 
+proc getMappingPart2(sourceRange: Range, mapvar: seq[InputRange], sourceRanges: var seq[Range]): Option[Range] =
+  let
     (thisStart, thisLength) = sourceRange
     thisEnd = thisStart + thisLength - 1
 
   for (destStart, sourceStart, length) in mapvar:
     let sourceEnd = sourceStart + length - 1
-    
+
     if thisStart >= sourceStart and thisStart <= sourceEnd and thisEnd >= sourceStart and thisEnd <= sourceEnd:
       return some((destStart + thisStart - sourceStart, thisLength))
-    
+
     if sourceStart >= thisStart and sourceStart <= thisEnd and sourceEnd >= thisStart and sourceEnd <= thisEnd:
       block:
         let len = sourceStart - thisStart
@@ -27,34 +27,34 @@ proc getMappingPart2(sourceRange: Range, mapvar: seq[InputRange], sourceRanges: 
         let len = thisEnd - sourceEnd
         if len > 0: sourceRanges.add((sourceEnd + 1, len))
       return some((destStart, length))
-    
+
     if thisStart >= sourceStart and thisStart <= sourceEnd:
       let len = thisLength - sourceEnd - thisStart
       if len > 0: sourceRanges.add((sourceEnd + 1, len))
       return some((destStart + thisStart - sourceStart, sourceEnd - thisStart))
-    
+
     if thisEnd >= sourceStart and thisEnd <= sourceEnd:
       let len = sourceStart - thisStart
       if len > 0: sourceRanges.add((thisStart, len))
-      return some((destStart, thisLength - sourceStart - thisStart))      
+      return some((destStart, thisLength - sourceStart - thisStart))
 
 proc getMappings(sourceRanges: var seq[Range], mapvar: seq[InputRange]): seq[Range] =
   while sourceRanges.len > 0:
     let sourceRange = sourceRanges.pop
     result.add(getMappingPart2(sourceRange, mapvar, sourceRanges).get(sourceRange))
-    
-proc indexOfNextBlank(lines: seq[string], start: int): int = 
+
+proc indexOfNextBlank(lines: seq[string], start: int): int =
   for i in start ..< lines.len:
     if lines[i].isEmptyOrWhitespace: return i
   return lines.len
 
-proc getMapping(sourceVal: int, mapVar: seq[InputRange]): int = 
+proc getMapping(sourceVal: int, mapVar: seq[InputRange]): int =
   for (destStart, sourceStart, length) in mapVar:
     if sourceVal >= sourceStart and sourceVal < sourceStart + length:
       return destStart + sourceVal - sourceStart
   return sourceVal
 
-var 
+var
   seeds: seq[int]
   seedToSoil: seq[InputRange]
   soilToFertilizer: seq[InputRange]
@@ -106,7 +106,7 @@ block:
           let words = line.split.mapIt(it.parseInt)
           humidityToLocation.add((words[0], words[1], words[2]))
       i = nextIndex + 1
-    
+
 block:
   var min = int.high
   for seed in seeds:

@@ -46,4 +46,3 @@ exec ros -Q -- $0 "$@"
             else if (string= colour "green") maximize number into max-green
             else maximize number into max-blue
             finally (return (list max-red max-green max-blue)))))))
-    

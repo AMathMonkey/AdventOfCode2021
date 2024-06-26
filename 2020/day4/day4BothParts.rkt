@@ -5,7 +5,7 @@
 ;;;               [result (list)]
 ;;;               [sublist (list)])
 ;;;     (if (null? lines) (reverse (cons (string-join sublist) result))
-;;;       (if (non-empty-string? (car lines)) 
+;;;       (if (non-empty-string? (car lines))
 ;;;         (recur (cdr lines) result (cons (car lines) sublist))
 ;;;         (recur (cdr lines) (cons (string-join sublist) result) (list))))))
 
@@ -20,10 +20,10 @@
         (recur remaining-lines result)))))
 
 
-(printf "Part 1: ~a~%" 
+(printf "Part 1: ~a~%"
   (let ([required (list "ecl:" "pid:" "eyr:" "hcl:" "byr:" "iyr:" "hgt:")])
-    (count 
-      (λ (passport) (andmap (λ (req-str) (string-contains? passport req-str)) required)) 
+    (count
+      (λ (passport) (andmap (λ (req-str) (string-contains? passport req-str)) required))
       passports)))
 
 
@@ -31,11 +31,11 @@
   (let ([capture-group-n-in-range (λ (regex string n low high)
           (let ([m (regexp-match regex string)])
             (and m (<= low (string->number (list-ref m n)) high))))])
-    (count 
+    (count
       (λ (passport)
-        (let ([match-in-range (λ (regex low high) 
+        (let ([match-in-range (λ (regex low high)
                 (capture-group-n-in-range regex passport 1 low high))])
-          (and 
+          (and
             (match-in-range #px"\\bbyr:(\\d{4})\\b" 1920 2002)
             (match-in-range #px"\\biyr:(\\d{4})\\b" 2010 2020)
             (match-in-range #px"\\beyr:(\\d{4})\\b" 2020 2030)

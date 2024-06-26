@@ -22,7 +22,7 @@ exec ros -Q -- $0 "$@"
   (declare (ignorable argv))
   (setq *lines* (read-file-lines "input.txt"))
   (format t "Part 1: ~a~%Part 2: ~a~%"
-    (loop with result = 1 
+    (loop with result = 1
      with pairs = (apply #'mapcar (lambda (time dist) (cons (parse-integer time) (parse-integer dist))) (mapcar (lambda (line) (cdr (words line))) *lines*))
      for (time . dist) in pairs
      for num = (loop for i from 0 to time

@@ -28,7 +28,7 @@ let winnerMapping = {
   "scissors" : "paper",
 }.toTable
 
-var rounds = newSeq[round](lines.len) 
+var rounds = newSeq[round](lines.len)
 
 for i, line in lines:
   let roundSplit = line.split

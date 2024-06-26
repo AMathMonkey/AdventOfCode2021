@@ -8,7 +8,7 @@ set pixels [expr {$height * $width}]
 set cycle 1
 set x 1
 set nextop readline
-set screen [lrepeat $pixels .] 
+set screen [lrepeat $pixels .]
 
 while {$cycle <= $pixels} {
     if {($cycle + $offset) % $width == 0 && $nextop ne {readline}} {

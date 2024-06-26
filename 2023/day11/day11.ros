@@ -23,7 +23,7 @@ exec ros -Q -- $0 "$@"
 (defvar *cols*)
 
 (defun points ()
-  (loop with points = (make-hash-table :test #'equal) 
+  (loop with points = (make-hash-table :test #'equal)
    for row from 0 below *rows* do
    (loop for col from 0 below *cols*
     if (char= #\# (aref *grid* row col))
@@ -54,7 +54,7 @@ exec ros -Q -- $0 "$@"
         (empty-cols (empty-cols)))
     (loop for empty-space-val in (list 2 1000000)
      for part in (list 1 2)
-     for result = 
+     for result =
        (loop for ((row1 . col1) . rest) on points
         sum (loop for (row2 . col2) in rest
              sum (loop for row from (min row1 row2) below (max row1 row2)

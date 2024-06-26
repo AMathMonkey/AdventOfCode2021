@@ -30,7 +30,7 @@ proc newRock {} {
     set y1 [expr {$y + 1}]
     set y2 [expr {$y + 2}]
     set y3 [expr {$y + 3}]
-    
+
     set currentPixels [switch $rockType {
         0 {list "2,$y" "3,$y" "4,$y" "5,$y"}
         1 {list "3,$y" "2,$y1" "3,$y1" "4,$y1" "3,$y2"}
@@ -77,9 +77,9 @@ while {$rockNum < 1000000000000} {
             set rockDiff [expr {$r2 - $r1}]
             set cycles [expr {(1000000000000 - $rockNum) / $rockDiff}]
             incr rockNum [expr {$rockDiff * $cycles}]
-        } 
+        }
     }
-    
+
     set inputChar [string index $input $inputPtr]
     set inputPtr [expr {($inputPtr + 1) % $inputLen}]
 

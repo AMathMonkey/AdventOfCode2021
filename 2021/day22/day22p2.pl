@@ -15,7 +15,7 @@ my @ycoords;
 my @zcoords;
 
 foreach my $line (@input) {
-    my ($xmin, $xmax, $ymin, $ymax, $zmin, $zmax) = 
+    my ($xmin, $xmax, $ymin, $ymax, $zmin, $zmax) =
         $line =~ /x=(-?\d+)\.\.(-?\d+),y=(-?\d+)\.\.(-?\d+),z=(-?\d+)\.\.(-?\d+)/;
 
     push @xcoords, $xmin, $xmax + 1;
@@ -61,7 +61,7 @@ foreach my $zcoord (@zcoords[1 .. $#zcoords]) {
 my $grid = zeroes byte, scalar(@xcoords), scalar(@ycoords), scalar(@zcoords);
 
 foreach my $line (@input) {
-    my ($command, $xmin, $xmax, $ymin, $ymax, $zmin, $zmax) = 
+    my ($command, $xmin, $xmax, $ymin, $ymax, $zmin, $zmax) =
         $line =~ /(on|off) x=(-?\d+)\.\.(-?\d+),y=(-?\d+)\.\.(-?\d+),z=(-?\d+)\.\.(-?\d+)/;
 
     $xmin = first_index {$_ == $xmin - $minx} @xcoords;

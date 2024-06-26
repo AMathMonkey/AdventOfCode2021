@@ -29,13 +29,13 @@ exec ros -Q -- $0 "$@"
    return (col-range-to-number row start end)))
 
 (defun star-nearby-p (row start end)
-  (loop named outer 
+  (loop named outer
    for i from (clamp (1- row) 0 (1- *num-rows*)) to (clamp (1+ row) 0 (1- *num-rows*))
    do (loop for j from (clamp (1- start) 0 (1- *num-cols*)) to (clamp (1+ end) 0 (1- *num-cols*))
        for item = (aref *lines* i j)
-       if (char= item #\*) 
-       do (return-from outer 
-            (list 
+       if (char= item #\*)
+       do (return-from outer
+            (list
               (join " " (mapcar #'write-to-string (list i j)))
               (col-range-to-number row start end))))))
 
@@ -48,8 +48,8 @@ exec ros -Q -- $0 "$@"
 
 (defun main (&rest argv)
   (declare (ignorable argv))
-  (setq 
-    *lines* 
+  (setq
+    *lines*
       (let ((lines (read-file-lines "input.txt")))
         (make-array (list (length lines) (length (first lines))) :initial-contents lines))
     *num-rows* (array-dimension *lines* 0)
@@ -61,7 +61,7 @@ exec ros -Q -- $0 "$@"
           for char = (aref *lines* i j)
           for digit-char-p = (digit-char-p char)
           if (and (not start) digit-char-p) do (setq start j)
-          if (and start (or 
+          if (and start (or
                           (= j (1- *num-cols*))
                           (not (digit-char-p (aref *lines* i (1+ j))))))
           sum (or (symbol-char-nearby-p i start j) 0)
@@ -72,9 +72,9 @@ exec ros -Q -- $0 "$@"
          for j from 0 below *num-cols*
          for char = (aref *lines* i j)
          for digit-char-p = (digit-char-p char)
-         if (and (not start) digit-char-p) 
+         if (and (not start) digit-char-p)
          do (setq start j)
-         if (and start (or 
+         if (and start (or
                          (= j (1- *num-cols*))
                          (not (digit-char-p (aref *lines* i (1+ j))))))
          do (when-let ((star-nearby-p (star-nearby-p i start j)))
@@ -82,4 +82,3 @@ exec ros -Q -- $0 "$@"
                 (push number (gethash coord stars-and-adjacent-numbers '()))))
          and do (setq start nil))
      finally (return (get-gear-ratios stars-and-adjacent-numbers)))))
-    

@@ -15,7 +15,7 @@ class Valve {
 }
 
 for 'input.txt'.IO.lines {
-    my ($name, $rate, $tunnels) := 
+    my ($name, $rate, $tunnels) :=
         m:s/Valve (\w+) has flow rate\=(\d+)\; tunnels? leads? to valves? (.*)/;
     %valves{$name} = Valve.new(
         :$name,

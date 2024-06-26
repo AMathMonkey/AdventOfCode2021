@@ -8,7 +8,7 @@ import algorithm
 # I should translate my Tcl solution back to Nim, rather than keeping this solution
 # But this one is still technically faster thanks to Nim making slow things fast
 
-const 
+const
   fileSystemSize = 70000000
   requiredFreeSpace = 30000000
 
@@ -21,16 +21,16 @@ func calcSize(self: FileSystemNode): int =
   for node in self.children: result.inc(node.calcSize)
   result.inc self.size
 
-proc createDir(self: FileSystemNode, name: string): FileSystemNode = 
+proc createDir(self: FileSystemNode, name: string): FileSystemNode =
   let newDir = FileSystemNode(name: name)
   self.children.add newDir
   newDir
 
-proc createFile(self: FileSystemNode, name: string, size: int) = 
+proc createFile(self: FileSystemNode, name: string, size: int) =
   let newFile = FileSystemNode(name: name, size: size)
   self.children.add newFile
 
-func `$`(self: FileSystemNode): string = 
+func `$`(self: FileSystemNode): string =
   &"FileSystemNode(name: {self.name}, size: {self.calcSize}, #children: {self.children.len})"
 
 var root = FileSystemNode(name: "/")
@@ -43,23 +43,23 @@ var dirTable: Table[string, FileSystemNode] = {
 for line in lines("input.txt"):
   let tokens = line.split
   case tokens[0]:
-  of "$": 
+  of "$":
     if tokens[1] == "cd":
       case tokens[2]:
-      of "/": 
+      of "/":
         current = root
         currentPath = @["/"]
       of "..":
         discard currentPath.pop
         current = dirTable[currentPath.join(" ")]
-      else: 
+      else:
         currentPath.add tokens[2]
         current = dirTable[currentPath.join(" ")]
   of "dir":
     dirTable[(currentPath & @[tokens[1]]).join(" ")] = current.createDir(tokens[1])
   else: current.createFile(tokens[1], tokens[0].parseInt)
 
-let 
+let
   currentFreeSpace = fileSystemSize - root.calcSize
   diff = requiredFreeSpace - currentFreeSpace
 

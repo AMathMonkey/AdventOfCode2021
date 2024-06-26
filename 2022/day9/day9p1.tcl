@@ -35,5 +35,5 @@ while {[gets $input line] >= 0} {
         lassign [moveTail $x $y $tailX $tailY] tailX tailY
         set tailLocations([list $tailX $tailY]) {}
     }
-} 
+}
 puts [array size tailLocations]

@@ -27,7 +27,7 @@ while (@oxygen > 1) {
         } @sums;
 
         my $most_common = $most_common[$i];
-        my $substr = substr($_, $i, 1); 
+        my $substr = substr($_, $i, 1);
         $most_common eq '=' ? $substr eq 1 :
         $substr eq $most_common ? 1 : 0
     } @oxygen;
@@ -52,7 +52,7 @@ while (@co2 > 1) {
         } @sums;
 
         my $most_common = $most_common[$i];
-        my $substr = substr($_, $i, 1); 
+        my $substr = substr($_, $i, 1);
         $most_common eq '=' ? $substr eq 0 :
         $substr ne $most_common ? 1 : 0
     } @co2;
