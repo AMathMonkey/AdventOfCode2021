@@ -3,7 +3,7 @@ class Day1 {
     static void main(String[] args) {
         List pairs = ('input.txt' as File).readLines().collect {
             it.split()*.toInteger()
-        }.transpose().each {it.sort()}.transpose()
+        }.transpose().each(List.&sort).transpose()
         int diff = pairs.sum { left, right -> Math.abs(left - right) }
 
         Map rightCounts = pairs.countBy { left, right -> right }
