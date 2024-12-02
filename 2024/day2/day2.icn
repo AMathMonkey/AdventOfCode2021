@@ -1,0 +1,21 @@
+procedure main()
+    local input, ints, safe1 := 0
+    input := open("input.txt")
+    while line := read(input) do {
+        d := diffs(to_ints(line))
+        if *d = (*[: (1 <= !d <= 3) :] | *[: (-3 <= !d <= -1) :]) then safe1 +:= 1
+    }
+    write("Part 1: ", safe1)
+end
+
+procedure to_ints(line)
+    local res := []
+    line ? repeat {
+        put(res, integer(tab(many(&digits)))) | return res
+        tab(upto(&digits))
+    }
+end
+
+procedure diffs(ints)
+    return [: (i := 1 to *ints - 1, ints[i + 1] - ints[i]) :]
+end
