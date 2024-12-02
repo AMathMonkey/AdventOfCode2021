@@ -1,0 +1,27 @@
+procedure main()
+    local input, lefts := [], rights := [], diff := 0, res, right_counts := table(), score := 0
+    input := open("input.txt")
+    while line := read(input) do {
+        res := to_ints(line)
+        put(lefts, res[1])
+        put(rights, res[2])
+    }
+    lefts := sort(lefts)
+    rights := sort(rights)
+    every i := 1 to *lefts do diff +:= abs(lefts[i] - rights[i])
+    write("Part 1: ", diff)
+
+    every r := !rights do right_counts[r] := (\right_counts[r] | 0) + 1
+    every l := !lefts do score +:= l * (\right_counts[l] | 0)
+    write("Part 2: ", score)
+end
+
+procedure to_ints(line)
+    local left, right
+    line ? {
+        left := tab(many(&digits))
+        tab(upto(&digits))
+        right := tab(many(&digits))
+    }
+    return [integer(left), integer(right)]
+end
