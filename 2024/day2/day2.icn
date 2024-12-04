@@ -1,19 +1,21 @@
 procedure main()
-    local input, ints, safe1 := 0, safe2 := 0, c, d
+    local input, ints, safe1 := 0, safe2 := 0, c, diffs
     input := open("input.txt")
     while line := read(input) do {
-        d := diffs(to_ints(line))
-        (validPos(diffs) | validNeg(diffs)) & safe1 +:= 1
-        every i := 1 to *diffs do {
-            c := copy(diffs)
+        ints := toInts(line)
+        diffs := getDiffs(ints)
+        if validPos(diffs) | validNeg(diffs) then safe1 +:= 1
+        every i := 1 to *ints do {
+            c := copy(ints)
             delete(c, i)
-            (validPos(c) | validNeg(c)) & { safe1 +:= 1; break }
+            diffs := getDiffs(c)
+            if validPos(diffs) | validNeg(diffs) then { safe2 +:= 1; break }
         }
     }
     write("Part 1: ", safe1, "\nPart 2: ", safe2)
 end
 
-procedure to_ints(line)
+procedure toInts(line)
     local res := []
     line ? repeat {
         put(res, integer(tab(many(&digits)))) | return res
@@ -21,16 +23,16 @@ procedure to_ints(line)
     }
 end
 
-procedure diffs(ints)
+procedure getDiffs(ints)
     return [: (i := 1 to *ints - 1, ints[i + 1] - ints[i]) :]
 end
 
 procedure validPos(ints)
-    every if not 1 <= !ints <= 3 then fail
-    return &null
+    every i := !ints do if not (1 <= i <= 3) then fail
+    return
 end
 
 procedure validNeg(ints)
-    every if not -3 <= !ints <= -1 then fail
-    return &null
+    every i := !ints do if not (-3 <= i <= -1) then fail
+    return
 end
