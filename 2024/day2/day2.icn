@@ -1,11 +1,16 @@
 procedure main()
-    local input, ints, safe1 := 0
+    local input, ints, safe1 := 0, safe2 := 0, c, d
     input := open("input.txt")
     while line := read(input) do {
         d := diffs(to_ints(line))
-        if *d = (*[: (1 <= !d <= 3) :] | *[: (-3 <= !d <= -1) :]) then safe1 +:= 1
+        (validPos(diffs) | validNeg(diffs)) & safe1 +:= 1
+        every i := 1 to *diffs do {
+            c := copy(diffs)
+            delete(c, i)
+            (validPos(c) | validNeg(c)) & { safe1 +:= 1; break }
+        }
     }
-    write("Part 1: ", safe1)
+    write("Part 1: ", safe1, "\nPart 2: ", safe2)
 end
 
 procedure to_ints(line)
@@ -18,4 +23,14 @@ end
 
 procedure diffs(ints)
     return [: (i := 1 to *ints - 1, ints[i + 1] - ints[i]) :]
+end
+
+procedure validPos(ints)
+    every if not 1 <= !ints <= 3 then fail
+    return &null
+end
+
+procedure validNeg(ints)
+    every if not -3 <= !ints <= -1 then fail
+    return &null
 end
