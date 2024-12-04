@@ -2,13 +2,13 @@ procedure main()
     local input, ints, safe1 := 0, safe2 := 0, c, diffs
     input := open("input.txt")
     while line := read(input) do {
-        ints := toInts(line)
-        diffs := getDiffs(ints)
+        ints := [: toInts(line) :]
+        diffs := [: getDiffs(ints) :] 
         if validPos(diffs) | validNeg(diffs) then safe1 +:= 1
         every i := 1 to *ints do {
             c := copy(ints)
             delete(c, i)
-            diffs := getDiffs(c)
+            diffs := [: getDiffs(c) :] 
             if validPos(diffs) | validNeg(diffs) then { safe2 +:= 1; break }
         }
     }
@@ -16,15 +16,15 @@ procedure main()
 end
 
 procedure toInts(line)
-    local res := []
+    local i
     line ? repeat {
-        put(res, integer(tab(many(&digits)))) | return res
+        if i := integer(tab(many(&digits))) then suspend i else fail
         tab(upto(&digits))
     }
 end
 
 procedure getDiffs(ints)
-    return [: (i := 1 to *ints - 1, ints[i + 1] - ints[i]) :]
+    suspend (i := 1 to *ints - 1, ints[i + 1] - ints[i])
 end
 
 procedure validPos(ints)
