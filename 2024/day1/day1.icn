@@ -11,8 +11,8 @@ procedure main()
     every i := 1 to *lefts do diff +:= abs(lefts[i] - rights[i])
     write("Part 1: ", diff)
 
-    every r := !rights do right_counts[r] := (\right_counts[r] | 0) + 1
-    every l := !lefts do score +:= l * (\right_counts[l] | 0)
+    every r := !rights do right_counts[r] := \right_counts[r] | 0 + 1
+    every l := !lefts do score +:= l * \right_counts[l] | 0
     write("Part 2: ", score)
 end
 
