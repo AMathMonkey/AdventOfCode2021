@@ -1,0 +1,10 @@
+procedure main()
+    local input, line, pat, m1, m2
+    input := open("input.txt")
+    pat := "mul(" || <[0-9]+> -> m1 || "," || <[0-9]+> -> m2 || ")"
+    sum := 0
+    while line := read(input) do {
+        every line ?? pat do sum +:= integer(m1) * integer(m2)
+    }
+    write("Part 1: ", sum)
+end
