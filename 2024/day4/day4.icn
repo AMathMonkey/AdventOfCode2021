@@ -23,16 +23,16 @@ end
 
 procedure getCols(rows)
     local i, j, col
-    every j := 1 to *rows[1] do {
+    every j := !*rows[1] do {
         col := ""
-        every i := 1 to *rows do col ||:= rows[i, j]
+        every i := !*rows do col ||:= rows[i, j]
         suspend col
     }
 end
 
 procedure getDiags(rows)
     local startCol, startRow, col, row
-    every startCol := 1 to *rows[1] do {
+    every startCol := !*rows[1] do {
         str := ""
         col := startCol
         row := 1
@@ -54,7 +54,7 @@ procedure getDiags(rows)
         }
         suspend str
     }
-    every startRow := 1 to *rows do {
+    every startRow := !*rows do {
         str := ""
         col := 1
         row := startRow

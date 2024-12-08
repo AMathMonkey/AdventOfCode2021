@@ -32,7 +32,7 @@ end
 
 procedure findBadIndices(line, pairs)
     local mappings := table(), i, pair
-    every i := 1 to *line do mappings[line[i]] := i
+    every i := !*line do mappings[line[i]] := i
     every pair := !pairs do {
         if \mappings[pair[1]] >= \mappings[pair[2]] then return [mappings[pair[1]], mappings[pair[2]]]
     }

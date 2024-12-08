@@ -8,7 +8,7 @@ procedure main()
     }
     lefts := sort(lefts)
     rights := sort(rights)
-    every i := 1 to *lefts do diff +:= abs(lefts[i] - rights[i])
+    every i := !*lefts do diff +:= abs(lefts[i] - rights[i])
     write("Part 1: ", diff)
 
     every r := !rights do right_counts[r] := \right_counts[r] | 0 + 1
