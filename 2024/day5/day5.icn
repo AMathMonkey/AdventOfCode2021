@@ -1,0 +1,33 @@
+procedure main()
+    local input, lines := [], pairs := [], sum1 := 0, sum2 := 0, i, j, left, right, arr, num, line
+    input := open("input.txt")
+    while line := read(input) do {
+        if find("|", line) then line ? {
+            left := tab(many(&digits))
+            tab(upto(&digits))
+            right := tab(many(&digits))
+            put(pairs, [left, right])
+        }
+        else {
+            arr := []
+            line ? repeat {
+                if num := tab(many(&digits)) then put(arr, num) else break
+                tab(upto(&digits))
+            }
+            if *arr > 0 then put(lines, arr)
+        }
+    }
+    every line := !lines do {
+        if checkLine(line, pairs) then sum1 +:= line[(*line + 1) / 2]
+    } 
+    write("Part 1: ", sum1)
+end
+
+procedure checkLine(line, pairs)
+    local mappings := table(), i, pair
+    every i := 1 to *line do mappings[line[i]] := i
+    every pair := !pairs do {
+        if \mappings[pair[1]] >= \mappings[pair[2]] then fail
+    }
+    return
+end
