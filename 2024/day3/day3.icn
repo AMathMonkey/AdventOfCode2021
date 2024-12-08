@@ -1,18 +1,15 @@
 procedure main()
-    local input, line, mulPat, pat, m1, m2, enabled, sum1, sum2
+    local input, line, mulPat, pat, m1, m2, enabled := 1, sum1 := 0, sum2 := 0
     input := open("input.txt")
     mulPat := "mul(" || Nspan(&digits) -> m1 || "," || Nspan(&digits) -> m2 || ")"
     pat := mulPat .| "do()" -> m1 .| "don't()" -> m1
-    sum1 := 0
-    sum2 := 0
-    enabled := 1
     while line := read(input) do {
         every line ?? mulPat do sum1 +:= integer(m1) * integer(m2)
         every line ?? pat do {
             case m1 of {
                 "do()": enabled := 1
                 "don't()": enabled := &null
-                default: sum2 +:= integer(\enabled & \m1) * integer(m2)
+                default: sum2 +:= integer(\enabled & m1) * integer(m2)
             }
         }
     }
