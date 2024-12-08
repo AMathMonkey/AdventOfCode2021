@@ -1,0 +1,50 @@
+procedure main()
+    local input, lines := [], i, j, uniq, dir, coords
+    input := open("input.txt")
+    while put(lines, read(input))
+    uniq := set()
+    coords := findStart(lines)
+    i := coords[1]
+    j := coords[2]
+    dir := "up"
+    repeat {
+        if not (i > 0 & i <= *lines & j > 0 & j <= *lines[i]) then break
+        insert(uniq, i || " " || j)
+        coords := advance(i, j, dir)
+        if lines[coords[1], coords[2]] == "#" then {
+            dir := rotate(dir)
+            coords := advance(i, j, dir)
+        }
+        i := coords[1]
+        j := coords[2]
+    }
+    write("Part 1: ", *uniq, "\nPart 2: ", 0)
+end
+
+procedure findStart(grid)
+    local i, j
+    every i := !*grid do {
+        every j := !*grid[i] do {
+            if grid[i, j] == "^" then return [i, j]
+        }
+    }
+end
+
+procedure advance(i, j, dir)
+    case dir of {
+        "up": i -:= 1
+        "down": i +:= 1
+        "left": j -:= 1
+        "right": j +:= 1
+    }
+    return [i, j]
+end
+
+procedure rotate(dir)
+    case dir of {
+        "up": return "right"
+        "down": return "left"
+        "left": return "up"
+        "right": return "down"
+    }
+end
