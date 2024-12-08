@@ -18,7 +18,7 @@ end
 procedure toInts(line)
     local i
     line ? repeat {
-        if i := integer(tab(many(&digits))) then suspend i else fail
+        if i := tab(many(&digits)) then suspend i else fail
         tab(upto(&digits))
     }
 end

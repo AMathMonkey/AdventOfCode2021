@@ -23,5 +23,5 @@ procedure to_ints(line)
         tab(upto(&digits))
         right := tab(many(&digits))
     }
-    return [integer(left), integer(right)]
+    return [left, right]
 end

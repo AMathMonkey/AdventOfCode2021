@@ -4,12 +4,12 @@ procedure main()
     mulPat := "mul(" || Nspan(&digits) -> m1 || "," || Nspan(&digits) -> m2 || ")"
     pat := mulPat .| "do()" -> m1 .| "don't()" -> m1
     while line := read(input) do {
-        every line ?? mulPat do sum1 +:= integer(m1) * integer(m2)
+        every line ?? mulPat do sum1 +:= m1 * m2
         every line ?? pat do {
             case m1 of {
                 "do()": enabled := 1
                 "don't()": enabled := &null
-                default: sum2 +:= integer(\enabled & m1) * integer(m2)
+                default: \enabled & sum2 +:= m1 * m2
             }
         }
     }
