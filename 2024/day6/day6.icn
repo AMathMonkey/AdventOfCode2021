@@ -1,24 +1,44 @@
 procedure main()
-    local input, lines := [], i, j, uniq, dir, coords
+    local input, lines := [], i, j, visited, dir, coords, sum2 := 0
     input := open("input.txt")
     while put(lines, read(input))
-    uniq := set()
     coords := findStart(lines)
+    visited := simulate(lines, coords)
+    every vCoord := !visited do {
+        vCoord ? {
+            i := tab(many(&digits))
+            tab(upto(&digits))
+            j := tab(many(&digits))
+        }
+        if i = coords[1] & j = coords[2] then next
+        assign := create(lines[i, j] <- "#")
+        @assign
+        /simulate(lines, coords) & sum2 +:= 1
+        @assign
+    }
+    write("Part 1: ", *visited, "\nPart 2: ", sum2)
+end
+
+procedure simulate(grid, coords)
+    visited := set()
+    cycles := set()
     i := coords[1]
     j := coords[2]
     dir := "up"
     repeat {
-        if not (i > 0 & i <= *lines & j > 0 & j <= *lines[i]) then break
-        insert(uniq, i || " " || j)
+        cycleKey := i || " " || j || " " || dir
+        if member(cycles, cycleKey) then return
+        if i <= 0 | i > *grid | j <= 0 | j > *grid[i] then return visited
+        insert(cycles, cycleKey)
+        insert(visited, i || " " || j)
         coords := advance(i, j, dir)
-        if lines[coords[1], coords[2]] == "#" then {
+        while grid[coords[1], coords[2]] == "#" do {
             dir := rotate(dir)
             coords := advance(i, j, dir)
         }
         i := coords[1]
         j := coords[2]
     }
-    write("Part 1: ", *uniq, "\nPart 2: ", 0)
 end
 
 procedure findStart(grid)
