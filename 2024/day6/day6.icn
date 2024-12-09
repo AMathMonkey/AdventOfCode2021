@@ -23,28 +23,25 @@ end
 
 procedure findStart(grid)
     local i, j
-    every i := !*grid do {
-        every j := !*grid[i] do {
+    every i := !*grid do
+        every j := !*grid[i] do 
             if grid[i, j] == "^" then return [i, j]
-        }
-    }
 end
 
 procedure advance(i, j, dir)
-    case dir of {
-        "up": i -:= 1
-        "down": i +:= 1
-        "left": j -:= 1
-        "right": j +:= 1
+    return case dir of {
+        "up": [i - 1, j]
+        "down": [i + 1, j]
+        "left": [i, j - 1]
+        "right": [i, j + 1]
     }
-    return [i, j]
 end
 
 procedure rotate(dir)
-    case dir of {
-        "up": return "right"
-        "down": return "left"
-        "left": return "up"
-        "right": return "down"
+    return case dir of {
+        "up": "right"
+        "down": "left"
+        "left": "up"
+        "right": "down"
     }
 end
