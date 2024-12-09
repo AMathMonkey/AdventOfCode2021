@@ -24,15 +24,16 @@ procedure toInts(line)
 end
 
 procedure getDiffs(ints)
-    suspend (i := 1 to *ints - 1, ints[i + 1] - ints[i])
+    local i
+    suspend (i := !(*ints - 1), ints[i + 1] - ints[i])
 end
 
 procedure validPos(ints)
-    every i := !ints do if not (1 <= i <= 3) then fail
-    return
+    local i
+    return not (i := !ints, not (1 <= i <= 3))
 end
 
 procedure validNeg(ints)
-    every i := !ints do if not (-3 <= i <= -1) then fail
-    return
+    local i
+    return not (i := !ints, not (-3 <= i <= -1))
 end
