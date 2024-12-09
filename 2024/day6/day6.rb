@@ -10,8 +10,7 @@ def simulate(grid, coords)
     cycles << cycleKey
     visited << [i, j]
     (i1, j1) = advance(i, j, dir)
-    return visited unless checkBounds(grid, i1, j1)
-    while grid[i1][j1] == "#"
+    while checkBounds(grid, i1, j1) && grid[i1][j1] == "#"
       dir = rotate(dir)
       (i1, j1) = advance(i, j, dir)
     end
