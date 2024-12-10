@@ -4,8 +4,8 @@ procedure main()
     local input := open("input.txt"), sum1 := 0, sum2 := 0
     while line := read(input) do {
         line := [: util::genFields(line, ': ') :]
-        if recur(line[1], line[2], line[3:0], &null) then every sum1 +:= line[1]
-        if recur(line[1], line[2], line[3:0], 1) then every sum2 +:= line[1]
+        if recur(line[1], line[2], line[3:0], &null) then sum1 +:= line[1]
+        if recur(line[1], line[2], line[3:0], 1) then sum2 +:= line[1]
     }
     write("Part 1: ", sum1, "\nPart 2: ", sum2)
 end
