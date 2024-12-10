@@ -1,7 +1,7 @@
+link lists
+
 procedure main()
-    local input, lines := [], i, j, visited, dir, coords, sum2 := 0
-    input := open("input.txt")
-    while put(lines, read(input))
+    local lines := file2lst("input.txt"), i, j, visited, dir, coords, sum2 := 0
     coords := findStart(lines)
     visited := simulate(lines, coords)
     every vCoord := !visited do {
@@ -33,7 +33,7 @@ procedure simulate(grid, coords)
         insert(visited, i || " " || j)
         coords := advance(i, j, dir)
         while grid[coords[1], coords[2]] == "#" do {
-            dir := rotate(dir)
+            dir := rotateDir(dir)
             coords := advance(i, j, dir)
         }
         i := coords[1]
@@ -57,7 +57,7 @@ procedure advance(i, j, dir)
     }
 end
 
-procedure rotate(dir)
+procedure rotateDir(dir)
     return case dir of {
         "up": "right"
         "down": "left"
