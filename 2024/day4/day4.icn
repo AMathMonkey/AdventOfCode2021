@@ -16,8 +16,7 @@ end
 
 procedure countXMAS(str)
     local result := 0
-    str ? every find("XMAS") do result +:= 1
-    str ? every find("SAMX") do result +:= 1
+    (str | reverse(str)) ? every find("XMAS") do result +:= 1
     return result
 end
 
