@@ -11,6 +11,7 @@ procedure main()
 end
 
 procedure recur(goal, curr, rest, p2)
+    local newRest
     if *rest = 0 then {
         if curr = goal then return
         fail
