@@ -12,10 +12,7 @@ end
 
 procedure recur(goal, curr, rest, p2)
     local newRest
-    if *rest = 0 then {
-        if curr = goal then return
-        fail
-    }
+    if *rest = 0 then return curr = goal
     if curr > goal then fail
     newRest := rest[2:0]
     return recur(goal, curr + rest[1], newRest, p2) | 
