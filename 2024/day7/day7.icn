@@ -19,5 +19,5 @@ procedure recur(goal, curr, rest, p2)
     newRest := rest[2:0]
     return recur(goal, curr + rest[1], newRest, p2) | 
         recur(goal, curr * rest[1], newRest, p2) | 
-        (\p2 & recur(goal, curr || rest[1], newRest, p2))
+        recur(goal, curr || rest[1], newRest, \p2)
 end
