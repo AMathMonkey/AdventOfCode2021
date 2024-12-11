@@ -15,10 +15,8 @@ procedure iter(times, counts)
         every k := key(counts) do {
             v := counts[k]
             if k = 0 then newCounts[1] +:= v
-            else if *k % 2 = 0 then {
-                newCounts[numeric(k[1 : *k / 2 + 1])] +:= v
-                newCounts[numeric(k[*k / 2 + 1 : 0])] +:= v
-            }
+            else if *k % 2 = 0 then
+                every newCounts[numeric(k[1 : *k / 2 + 1] | k[*k / 2 + 1 : 0])] +:= v
             else newCounts[k * 2024] +:= v
         }
         counts := newCounts
