@@ -1,10 +1,8 @@
 link lists
 
 procedure main()
-    local lines := file2lst("input.txt")
-    nodes := table()
-    uniq1 := set()
-    uniq2 := set()
+    local lines := file2lst("input.txt"), nodes := table(), uniq1 := set(), uniq2 := set(), i, j, type, likeNodes, node1, node2, di, dj
+
     every i := !*lines do
         every j := !*lines[i] do {
             if lines[i, j] == "." then next
