@@ -1,0 +1,26 @@
+link lists
+
+procedure main()
+    local lines := file2lst("input.txt")
+    nodes := table()
+    uniq := set()
+    every i := !*lines do {
+        every j := !*lines[i] do {
+            if lines[i, j] == "." then next
+            /nodes[lines[i, j]] := []
+            put(nodes[lines[i, j]], [i, j])
+        }
+    }
+    every type := key(nodes) do {
+        likeNodes := nodes[type]
+        every node1 := !likeNodes do {
+            every node2 := !likeNodes do {
+                if node1[1] = node2[1] & node1[2] = node2[2] then next
+                i := node1[1] -(node2[1] - node1[1])
+                j := node1[2] -(node2[2] - node1[2])
+                if (1 <= i <= *lines) & (1 <= j <= *lines[1]) then insert(uniq, i || " " || j)
+            }
+        }
+    }
+    write("Part 1: ", *uniq)
+end
