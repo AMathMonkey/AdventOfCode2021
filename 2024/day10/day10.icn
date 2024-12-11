@@ -12,11 +12,9 @@ end
 
 procedure recur(grid, i, j)
     local curr := grid[i, j] 
-    if curr = 9 then return [i || " " || j]
-    return {
+    return if curr = 9 then [i || " " || j] else 
         ((\grid[i + 1, j] = curr + 1 & recur(grid, i + 1, j)) | []) |||
         ((\grid[i - 1, j] = curr + 1 & recur(grid, i - 1, j)) | []) |||
         ((\grid[i, j + 1] = curr + 1 & recur(grid, i, j + 1)) | []) |||
         ((\grid[i, j - 1] = curr + 1 & recur(grid, i, j - 1)) | [])
-    }
 end
