@@ -6,8 +6,9 @@ proc iter {times counts} {
                 dict incr newCounts 1 $v
             } elseif {[set len [string length $k]] % 2 == 0} {
                 set midPoint [expr {$len / 2}]
-                dict incr newCounts [scan [string range $k 0 $midPoint-1] %lld] $v
-                dict incr newCounts [scan [string range $k $midPoint end] %lld] $v
+                foreach half [list [string range $k 0 $midPoint-1] [string range $k $midPoint end]] {
+                    dict incr newCounts [scan $half %lld] $v
+                }
             } else {dict incr newCounts [expr $k * 2024] $v}
         }
         set counts $newCounts
