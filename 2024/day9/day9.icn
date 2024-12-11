@@ -2,31 +2,73 @@ link str_util
 
 procedure main()
     local input := read(open("input.txt"))
-    toggle := &null
-    memory := []
-    fileNum := 0
-    valid := 0
-    sum1 := 0
-    every c := !input do {
+    write("Part 1: ", part1(input), "\nPart 2: ", part2(input))
+end
+
+procedure part1(input)
+    local toggle := &null, memory := [], fileNum := 0, valid := 0, sum1 := 0, c, rightPtr, d, pos
+    every c := !input do
         if \toggle then {
-            every put(memory, |"." \ c)
+            every !numeric(c) do put(memory, ".")
             toggle := &null
         } else {
-            every put(memory, |fileNum \ c)
+            every !numeric(c) do put(memory, fileNum)
             valid +:= c
             toggle := 1
             fileNum +:= 1
         }
-    }
     rightPtr := *memory
-    every pos := 0 to valid - 1 do {
-        d := memory[pos + 1] 
+    every pos := !valid do {
+        d := memory[pos] 
         if d == "." then {
             while memory[rightPtr] == "." do rightPtr -:= 1
             d := memory[rightPtr]
             rightPtr -:= 1
         }
-        sum1 +:= pos * d
+        sum1 +:= (pos - 1) * d
     }
-    write("Part 1: ", sum1)
+    return sum1
+end
+
+procedure part2(input)
+    local toggle := &null, memory := [], fileNum := 0, sum2 := 0, c, rightPtr, pos, pair
+    every c := !input do {
+        if \toggle then {
+            put(memory, [".", c])
+            toggle := &null
+        } else {
+            put(memory, [fileNum, c])
+            toggle := 1
+            fileNum +:= 1
+        }
+    }
+    rightPtr := *memory
+    while memory[rightPtr][1] == "." do rightPtr -:= 1 
+    while rightPtr > 0 do {
+        every i := !(rightPtr - 1) do {
+            if memory[i][1] ~== "." | memory[i][2] < memory[rightPtr][2] then next
+            if memory[i][2] = memory[rightPtr][2] then memory[i] := copy(memory[rightPtr])
+            else { 
+                memory[i][2] -:= memory[rightPtr][2]
+                insert(memory, i, copy(memory[rightPtr]))
+                rightPtr +:= 1
+            }
+            memory[rightPtr][1] := "."
+            break
+        }
+        rightPtr -:= 1
+        while rightPtr > 0 & memory[rightPtr][1] == "." do rightPtr -:= 1 
+    }
+    pos := 0
+    every pair := !memory do {
+        if pair[1] == "." then {
+            pos +:= pair[2]
+            next
+        }
+        every !numeric(pair[2]) do {
+            sum2 +:= pos * pair[1]
+            pos +:= 1
+        }
+    }
+    return sum2
 end
