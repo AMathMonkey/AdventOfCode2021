@@ -30,43 +30,45 @@ procedure part1(input)
     return sum1
 end
 
+record Pair(fileNum, size)
+
 procedure part2(input)
     local toggle := &null, memory := [], fileNum := 0, sum2 := 0, c, rightPtr, pos, pair
     every c := !input do {
         if \toggle then {
-            put(memory, [".", c])
+            put(memory, Pair(".", c))
             toggle := &null
         } else {
-            put(memory, [fileNum, c])
+            put(memory, Pair(fileNum, c))
             toggle := 1
             fileNum +:= 1
         }
     }
     rightPtr := *memory
-    while memory[rightPtr][1] == "." do rightPtr -:= 1 
+    while memory[rightPtr].fileNum == "." do rightPtr -:= 1 
     while rightPtr > 0 do {
         every i := !(rightPtr - 1) do {
-            if memory[i][1] ~== "." | memory[i][2] < memory[rightPtr][2] then next
-            if memory[i][2] = memory[rightPtr][2] then memory[i] := copy(memory[rightPtr])
+            if memory[i].fileNum ~== "." | memory[i].size < memory[rightPtr].size then next
+            if memory[i].size = memory[rightPtr].size then memory[i] := memory[rightPtr]
             else { 
-                memory[i][2] -:= memory[rightPtr][2]
-                insert(memory, i, copy(memory[rightPtr]))
+                memory[i].size -:= memory[rightPtr].size
+                insert(memory, i, memory[rightPtr])
                 rightPtr +:= 1
             }
-            memory[rightPtr][1] := "."
+            memory[rightPtr] := Pair(".", memory[rightPtr].size)
             break
         }
         rightPtr -:= 1
-        while rightPtr > 0 & memory[rightPtr][1] == "." do rightPtr -:= 1 
+        while rightPtr > 0 & memory[rightPtr].fileNum == "." do rightPtr -:= 1 
     }
     pos := 0
     every pair := !memory do {
-        if pair[1] == "." then {
-            pos +:= pair[2]
+        if pair.fileNum == "." then {
+            pos +:= pair.size
             next
         }
-        every !numeric(pair[2]) do {
-            sum2 +:= pos * pair[1]
+        every !numeric(pair.size) do {
+            sum2 +:= pos * pair.fileNum
             pos +:= 1
         }
     }
