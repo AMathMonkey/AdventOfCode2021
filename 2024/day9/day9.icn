@@ -1,0 +1,32 @@
+link str_util
+
+procedure main()
+    local input := read(open("input.txt"))
+    toggle := &null
+    memory := []
+    fileNum := 0
+    valid := 0
+    sum1 := 0
+    every c := !input do {
+        if \toggle then {
+            every put(memory, |"." \ c)
+            toggle := &null
+        } else {
+            every put(memory, |fileNum \ c)
+            valid +:= c
+            toggle := 1
+            fileNum +:= 1
+        }
+    }
+    rightPtr := *memory
+    every pos := 0 to valid - 1 do {
+        d := memory[pos + 1] 
+        if d == "." then {
+            while memory[rightPtr] == "." do rightPtr -:= 1
+            d := memory[rightPtr]
+            rightPtr -:= 1
+        }
+        sum1 +:= pos * d
+    }
+    write("Part 1: ", sum1)
+end
