@@ -1,15 +1,13 @@
 link str_util
 
 procedure main()
-    local input := read(open("input.txt")), counts := table(0), sum1 := 0, sum2 := 0
+    local input := read(open("input.txt")), counts := table(0)
     every counts[util::genFields(input, ' ')] +:= 1
-    every sum1 +:= iter(25, counts)
-    every sum2 +:= iter(75, counts)
-    write("Part 1: ", sum1, "\nPart 2: ", sum2)
+    write("Part 1: ", iter(25, counts), "\nPart 2: ", iter(75, counts))
 end
 
 procedure iter(times, counts)
-    local newCounts, k, v
+    local newCounts, k, v, result
     every !times do {
         newCounts := table(0)
         every k := key(counts) do {
@@ -21,5 +19,6 @@ procedure iter(times, counts)
         }
         counts := newCounts
     }
-    suspend !counts
+    every (result := 0) +:= !counts
+    return result
 end
