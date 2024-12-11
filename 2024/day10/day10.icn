@@ -1,0 +1,32 @@
+procedure main()
+    local input := open("input.txt"), lines := [], sum1 := 0, sum2 := 0
+    while put(lines, read(input))
+    every i := !*lines do every j := !*lines[i] do 
+        if lines[i, j] = 0 then {
+            sum1 +:= *recur(lines, i, j)
+            sum2 +:= recur2(lines, i, j)
+        }
+    write("Part 1: ", sum1, "\nPart 2: ", sum2)
+end
+
+procedure recur(grid, i, j)
+    curr := grid[i, j]
+    if curr = 9 then return set(i || " " || j)
+    return {
+        ((\grid[i + 1, j] = curr + 1 & recur(grid, i + 1, j)) | set()) ++
+        ((\grid[i - 1, j] = curr + 1 & recur(grid, i - 1, j)) | set()) ++
+        ((\grid[i, j + 1] = curr + 1 & recur(grid, i, j + 1)) | set()) ++
+        ((\grid[i, j - 1] = curr + 1 & recur(grid, i, j - 1)) | set())
+    }
+end
+
+procedure recur2(grid, i, j)
+    curr := grid[i, j]
+    if curr = 9 then return 1
+    return {
+        ((\grid[i + 1, j] = curr + 1 & recur2(grid, i + 1, j)) | 0) +
+        ((\grid[i - 1, j] = curr + 1 & recur2(grid, i - 1, j)) | 0) +
+        ((\grid[i, j + 1] = curr + 1 & recur2(grid, i, j + 1)) | 0) +
+        ((\grid[i, j - 1] = curr + 1 & recur2(grid, i, j - 1)) | 0)
+    }
+end
