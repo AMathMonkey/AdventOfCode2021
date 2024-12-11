@@ -1,0 +1,29 @@
+link str_util
+
+procedure main()
+    local input := read(open("input.txt")), counts := table(0), sum1 := 0, sum2 := 0, n
+    every n := util::genFields(input, ' ') do counts[n] +:= 1
+    counts1 := iter(25, counts)
+    counts2 := iter(75, counts)
+    every sum1 +:= !counts1
+    every sum2 +:= !counts2
+    write("Part 1: ", sum1, "\nPart 2: ", sum2)
+end
+
+procedure iter(times, counts)
+    local newCounts, k, v
+    every !times do {
+        newCounts := table(0)
+        every k := key(counts) do {
+            v := counts[k]
+            if k = 0 then newCounts[1] +:= v
+            else if *k % 2 = 0 then {
+                newCounts[numeric(k[1 : *k / 2 + 1])] +:= v
+                newCounts[numeric(k[*k / 2 + 1 : 0])] +:= v
+            }
+            else newCounts[k * 2024] +:= v
+        }
+        counts := newCounts
+    }
+    return counts
+end
