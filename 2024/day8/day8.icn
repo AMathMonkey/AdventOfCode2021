@@ -5,22 +5,21 @@ procedure main()
     nodes := table()
     uniq1 := set()
     uniq2 := set()
-    every i := !*lines do {
+    every i := !*lines do
         every j := !*lines[i] do {
             if lines[i, j] == "." then next
             /nodes[lines[i, j]] := []
             put(nodes[lines[i, j]], [i, j])
         }
-    }
     every type := key(nodes) do {
         likeNodes := nodes[type]
-        every node1 := !likeNodes do {
+        every node1 := !likeNodes do
             every node2 := !likeNodes do {
                 if node1[1] = node2[1] & node1[2] = node2[2] then next
                 i := node1[1]
                 j := node1[2]
-                di := -(node2[1] - node1[1])
-                dj := -(node2[2] - node1[2])
+                di := i - node2[1]
+                dj := j - node2[2]
                 if (1 <= (i + di) <= *lines) & (1 <= (j + dj) <= *lines[1]) then insert(uniq1, (i + di) || " " || (j + dj))
                 while (1 <= i <= *lines) & (1 <= j <= *lines[1]) do {
                     insert(uniq2, i || " " || j)
@@ -28,7 +27,6 @@ procedure main()
                     j +:= dj
                 }
             }
-        }
     }
     write("Part 1: ", *uniq1, "\nPart 2: ", *uniq2)
 end
