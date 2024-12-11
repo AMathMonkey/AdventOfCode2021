@@ -1,5 +1,5 @@
 procedure main()
-    local input := open("input.txt"), lines := [], sum1 := 0, sum2 := 0
+    local input := open("input.txt"), lines := [], sum1 := 0, sum2 := 0, i, j
     while put(lines, read(input))
     every i := !*lines do every j := !*lines[i] do 
         if lines[i, j] = 0 then {
@@ -10,7 +10,7 @@ procedure main()
 end
 
 procedure recur(grid, i, j)
-    curr := grid[i, j]
+    local curr := grid[i, j] 
     if curr = 9 then return set(i || " " || j)
     return {
         ((\grid[i + 1, j] = curr + 1 & recur(grid, i + 1, j)) | set()) ++
@@ -21,7 +21,7 @@ procedure recur(grid, i, j)
 end
 
 procedure recur2(grid, i, j)
-    curr := grid[i, j]
+    local curr := grid[i, j]
     if curr = 9 then return 1
     return {
         ((\grid[i + 1, j] = curr + 1 & recur2(grid, i + 1, j)) | 0) +
