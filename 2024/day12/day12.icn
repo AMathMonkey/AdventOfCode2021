@@ -16,9 +16,7 @@ end
 
 procedure expand(grid, shape, seen, i, j, c)
     local s := i || " " || j
-    if not \grid[i, j] then return
-    if grid[i, j] ~== c then return
-    if member(seen, s) then return
+    if not (grid[i, j] == c) | member(seen, s) then return
     insert(seen, s)
     insert(shape, s)
     expand(grid, shape, seen, i + 1, j, c)
