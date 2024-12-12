@@ -1,0 +1,44 @@
+link str_util
+
+procedure main()
+    local input := open("input.txt"), lines := [], sum1 := 0, seen := set(), i, j, c, shape
+    while put(lines, read(input))
+    seen := set()
+    every i := !*lines do every j := !*lines[i] do {
+        if member(seen, i || " " || j) then next
+        c := lines[i, j]
+        shape := set()
+        expand(lines, shape, seen, i, j, c)
+        sum1 +:= getPerimeter(shape) * *shape
+    }
+    write("Part 1: ", sum1, "\nPart 2: ", 0)
+end
+
+procedure expand(grid, shape, seen, i, j, c)
+    local s := i || " " || j
+    if not \grid[i, j] then return
+    if grid[i, j] ~== c then return
+    if member(seen, s) then return
+    insert(seen, s)
+    insert(shape, s)
+    expand(grid, shape, seen, i + 1, j, c)
+    expand(grid, shape, seen, i - 1, j, c)
+    expand(grid, shape, seen, i, j + 1, c)
+    expand(grid, shape, seen, i, j - 1, c)
+end
+
+procedure getPerimeter(shape)
+    local result := 0, point
+    every point := !shape do {
+        point ? {
+            i := tab(many(&digits))
+            tab(upto(&digits))
+            j := tab(many(&digits))
+        }
+        if not member(shape, (i + 1) || " " || j) then result +:= 1
+        if not member(shape, (i - 1) || " " || j) then result +:= 1
+        if not member(shape, i || " " || (j + 1)) then result +:= 1
+        if not member(shape, i || " " || (j - 1)) then result +:= 1
+    }
+    return result
+end
