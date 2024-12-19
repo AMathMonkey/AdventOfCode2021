@@ -1,0 +1,42 @@
+link matrix
+link numbers
+
+record Entry(a1, b1, a2, b2, c1, c2)
+record Line(a, b)
+
+procedure main()
+    local input := open("input.txt"), sum1 := 0, sum2 := 0, e, mat, mat1, mat2
+    while e := readEntry(input) do {
+        mat := [[e.a1, e.a2], [e.b1, e.b2]]
+        mat1 := mult_matrix(invert_matrix(mat), [[e.c1], [e.c2]])
+        sum1 +:= 3 * closeToInt(mat1[1, 1]) + closeToInt(mat1[2, 1])
+        mat2 := mult_matrix(invert_matrix(mat), [[e.c1 + 10000000000000], [e.c2 + 10000000000000]])
+        sum2 +:= 3 * closeToInt(mat2[1, 1]) + closeToInt(mat2[2, 1])
+    }
+    write("Part 1: ", sum1, "\nPart 2: ", sum2)
+end
+
+procedure closeToInt(n)
+    local r := round(n)
+    if abs(n - r) < 0.001 then return r
+end
+
+procedure readEntry(input)
+    local line1, line2, line3
+    line1 := readLine(read(input)) | fail
+    line2 := readLine(read(input))
+    line3 := readLine(read(input))
+    read(input)
+    return Entry(line1.a, line1.b, line2.a, line2.b, line3.a, line3.b)
+end
+
+procedure readLine(line)
+    local a, b
+    line ? {
+        tab(upto(&digits))
+        a := numeric(tab(many(&digits)))
+        tab(upto(&digits))
+        b := numeric(tab(many(&digits)))
+    }
+    return Line(a, b)
+end
