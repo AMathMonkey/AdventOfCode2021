@@ -11,10 +11,7 @@ procedure main()
             j := tab(many(&digits))
         }
         if i = coords[1] & j = coords[2] then next
-        assign := create(lines[i, j] <- "#")
-        @assign
-        /simulate(lines, coords) & sum2 +:= 1
-        @assign
+        every lines[i, j] <- "#" do /simulate(lines, coords) & sum2 +:= 1
     }
     write("Part 1: ", *visited, "\nPart 2: ", sum2)
 end
