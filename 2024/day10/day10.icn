@@ -1,6 +1,7 @@
+link io
+
 procedure main()
-    local input := open("input.txt"), lines := [], sum1 := 0, sum2 := 0, i, j, rec
-    while put(lines, read(input))
+    local lines := filetext("input.txt"), sum1 := 0, sum2 := 0, i, j, rec
     every i := !*lines do every j := !*lines[i] do 
         if lines[i, j] = 0 then {
             rec := recur(lines, i, j)

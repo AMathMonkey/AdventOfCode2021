@@ -1,8 +1,8 @@
 link str_util
+link io
 
 procedure main()
-    local input := open("input.txt"), lines := [], sum1 := 0, sum2 := 0, seen := set(), i, j, c, shape
-    while put(lines, read(input))
+    local lines := filetext("input.txt"), sum1 := 0, sum2 := 0, seen := set(), i, j, c, shape
     every i := !*lines do every j := !*lines[i] do {
         member(seen, i || " " || j) & next
         c := lines[i, j]

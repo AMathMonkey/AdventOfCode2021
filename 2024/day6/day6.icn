@@ -1,7 +1,7 @@
-link lists
+link io
 
 procedure main()
-    local lines := file2lst("input.txt"), i, j, visited, dir, coords, sum2 := 0
+    local lines := filetext("input.txt"), i, j, visited, dir, coords, sum2 := 0
     coords := findStart(lines)
     visited := simulate(lines, coords)
     every vCoord := !visited do {
