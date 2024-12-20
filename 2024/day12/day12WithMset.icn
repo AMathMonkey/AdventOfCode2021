@@ -1,0 +1,86 @@
+# Version that declares a Point record type and uses mset functions
+# to work around the fact that sets of non-primitive data types normally don't work properly.
+# Too bad mset functions are all O(n) for every operation, ruining the efficiency of using a set.
+# This took 8 minutes and 21 seconds to run on my laptop. Unreasonably bad performance.
+# My main solution runs in 190 milliseconds.
+
+link mset
+link io
+
+record Point(i, j)
+
+procedure main()
+    local lines := filetext("input.txt"), sum1 := 0, sum2 := 0, seen := set(), i, j, c, shape
+    every i := !*lines do every j := !*lines[i] do {
+        member2(seen, Point(i, j)) & next
+        c := lines[i, j]
+        shape := set()
+        expand(lines, shape, seen, i, j, c)
+        sum1 +:= getPerimeter(shape) * *shape
+        sum2 +:= countCorners(shape) * *shape
+    }
+    write("Part 1: ", sum1, "\nPart 2: ", sum2)
+end
+
+procedure expand(grid, shape, seen, i, j, c)
+    local p := Point(i, j)
+    if not (grid[i, j] == c) | member2(seen, p) then fail
+    insert2(seen, p)
+    insert2(shape, p)
+    expand(grid, shape, seen, i + 1, j, c)
+    expand(grid, shape, seen, i - 1, j, c)
+    expand(grid, shape, seen, i, j + 1, c)
+    expand(grid, shape, seen, i, j - 1, c)
+end
+
+procedure getPerimeter(shape)
+    local result := 0, point
+    every point := !shape do {
+        i := point.i
+        j := point.j
+        if not member2(shape, Point(i + 1, j)) then result +:= 1
+        if not member2(shape, Point(i - 1, j)) then result +:= 1
+        if not member2(shape, Point(i, j + 1)) then result +:= 1
+        if not member2(shape, Point(i, j - 1)) then result +:= 1
+    }
+    return result
+end
+
+procedure countCorners(shape)
+    local result := 0, point, i, j, topRight, right, bottomRight, bottom, bottomLeft, left, topLeft, top
+    
+    every point := !shape do {
+        i := point.i
+        j := point.j
+
+        topRight := isMember(shape, i - 1, j + 1)
+        right := isMember(shape, i, j + 1) 
+        bottomRight := isMember(shape, i + 1, j + 1)
+        bottom := isMember(shape, i + 1, j)
+        bottomLeft := isMember(shape, i + 1, j - 1)
+        left := isMember(shape, i, j - 1)
+        topLeft := isMember(shape, i - 1, j - 1)
+        top := isMember(shape, i - 1, j)
+
+        /top & /right & /bottom & /left & result +:= 4
+
+        \top & /bottom & /left & /right & result +:= 2
+        \right & /top & /left & /bottom & result +:= 2
+        \left & /top & /right & /bottom & result +:= 2
+        \bottom & /top & /right & /left & result +:= 2
+
+        \top & \right & /bottom & /left & result +:= 1
+        \top & \left & /bottom & /right & result +:= 1
+        \bottom & \left & /top & /right & result +:= 1
+        \bottom & \right & /top & /left & result +:= 1
+        \right & \bottom & /bottomRight & result +:= 1
+        \right & \top & /topRight & result +:= 1
+        \left & \top & /topLeft & result +:= 1
+        \left & \bottom & /bottomLeft & result +:= 1
+    }
+    return result
+end
+
+procedure isMember(shape, i, j)
+    return (member2(shape, Point(i, j)) & 1) | &null
+end

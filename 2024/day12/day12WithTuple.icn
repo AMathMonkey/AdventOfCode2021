@@ -1,12 +1,15 @@
-link mset
-link io
+# Version that uses a set of tuples of [i, j] instead of concatenating 
+# i || " " || j to make strings that can be put into a set.
+# This takes about 650 milliseconds to run, so tuples are 3x slower than building strings myself.
+# My main solution runs in 190 milliseconds.
 
-record Point(i, j)
+link tuple
+link io
 
 procedure main()
     local lines := filetext("input.txt"), sum1 := 0, sum2 := 0, seen := set(), i, j, c, shape
     every i := !*lines do every j := !*lines[i] do {
-        member2(seen, Point(i, j)) & next
+        member(seen, tuple([i, j])) & next
         c := lines[i, j]
         shape := set()
         expand(lines, shape, seen, i, j, c)
@@ -17,10 +20,10 @@ procedure main()
 end
 
 procedure expand(grid, shape, seen, i, j, c)
-    local p := Point(i, j)
-    if not (grid[i, j] == c) | member2(seen, p) then fail
-    insert2(seen, p)
-    insert2(shape, p)
+    local p := tuple([i, j])
+    if not (grid[i, j] == c) | member(seen, p) then fail
+    insert(seen, p)
+    insert(shape, p)
     expand(grid, shape, seen, i + 1, j, c)
     expand(grid, shape, seen, i - 1, j, c)
     expand(grid, shape, seen, i, j + 1, c)
@@ -30,12 +33,12 @@ end
 procedure getPerimeter(shape)
     local result := 0, point
     every point := !shape do {
-        i := point.i
-        j := point.j
-        if not member2(shape, Point(i + 1, j)) then result +:= 1
-        if not member2(shape, Point(i - 1, j)) then result +:= 1
-        if not member2(shape, Point(i, j + 1)) then result +:= 1
-        if not member2(shape, Point(i, j - 1)) then result +:= 1
+        i := point[1]
+        j := point[2]
+        if not member(shape, tuple([i + 1, j])) then result +:= 1
+        if not member(shape, tuple([i - 1, j])) then result +:= 1
+        if not member(shape, tuple([i, j + 1])) then result +:= 1
+        if not member(shape, tuple([i, j - 1])) then result +:= 1
     }
     return result
 end
@@ -44,8 +47,8 @@ procedure countCorners(shape)
     local result := 0, point, i, j, topRight, right, bottomRight, bottom, bottomLeft, left, topLeft, top
     
     every point := !shape do {
-        i := point.i
-        j := point.j
+        i := point[1]
+        j := point[2]
 
         topRight := isMember(shape, i - 1, j + 1)
         right := isMember(shape, i, j + 1) 
@@ -76,5 +79,5 @@ procedure countCorners(shape)
 end
 
 procedure isMember(shape, i, j)
-    return (member2(shape, Point(i, j)) & 1) | &null
+    return member(shape, tuple([i, j])) | &null
 end
