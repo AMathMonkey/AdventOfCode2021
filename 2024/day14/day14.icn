@@ -1,0 +1,34 @@
+procedure main()
+    local input := open("input.txt"), width := 101, height := 103, quadrants := table(0), 
+        midwidth := (width - 1) / 2, midheight := (height - 1) / 2,  sum1 := 1
+    while line := read(input) do {
+        nums := create parseLine(line)
+        every (px | py | vx | vy) := @nums
+        every !100 do {
+            px := mod(px + vx, width)
+            py := mod(py + vy, height)
+        }
+        px < midwidth & py < midheight & quadrants[1] +:= 1
+        px > midwidth & py < midheight & quadrants[2] +:= 1
+        px < midwidth & py > midheight & quadrants[3] +:= 1
+        px > midwidth & py > midheight & quadrants[4] +:= 1
+    }
+    every sum1 *:= !quadrants
+    write("Part 1: ", sum1)
+end
+
+procedure parseLine(line)
+    line ? every !2 do {
+        tab(find("=") + 1)
+        s := tab(find(","))
+        suspend s
+        move(1)
+        s := tab(find(" ") | 0)
+        suspend s
+    }
+end
+
+procedure mod(dividend, divisor)
+    local ret := dividend % divisor
+    return if ret < 0 then ret + divisor else ret
+end
