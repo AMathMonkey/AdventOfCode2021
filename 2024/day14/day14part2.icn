@@ -3,7 +3,7 @@ link matrix
 global width, height
 
 procedure main()
-    local input := open("input.txt"), infoList := [], sum1 := 1
+    local input := open("input.txt"), infoList := [], sum1 := 1, i
     initial {
         width := 101
         height := 103
@@ -37,11 +37,9 @@ end
 procedure parseLine(line)
     line ? every !2 do {
         tab(find("=") + 1)
-        s := tab(find(","))
-        suspend s
+        suspend tab(find(",")) \ 1
         move(1)
-        s := tab(find(" ") | 0)
-        suspend s
+        suspend tab(find(" ") | 0) \ 1
     }
 end
 

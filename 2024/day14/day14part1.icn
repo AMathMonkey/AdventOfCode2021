@@ -20,11 +20,9 @@ end
 procedure parseLine(line)
     line ? every !2 do {
         tab(find("=") + 1)
-        s := tab(find(","))
-        suspend s
+        suspend tab(find(",")) \ 1
         move(1)
-        s := tab(find(" ") | 0)
-        suspend s
+        suspend tab(find(" ") | 0) \ 1
     }
 end
 
