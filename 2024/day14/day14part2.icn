@@ -28,9 +28,7 @@ end
 
 procedure writeGrid(infoList)
     matrix := create_matrix(height, width, " ")
-    every l := !infoList do {
-        matrix[l[2] + 1, l[1] + 1] := "*"
-    }
+    every l := !infoList do matrix[l[2] + 1, l[1] + 1] := "*"
     write_matrix(&output, matrix)
 end
 
