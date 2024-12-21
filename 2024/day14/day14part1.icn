@@ -1,6 +1,8 @@
+link reduce
+
 procedure main()
     local input := open("input.txt"), width := 101, height := 103, quadrants := table(0), 
-        midwidth := (width - 1) / 2, midheight := (height - 1) / 2,  sum1 := 1
+        midwidth := (width - 1) / 2, midheight := (height - 1) / 2
     while line := read(input) do {
         nums := create parseLine(line)
         every (px | py | vx | vy) := @nums
@@ -13,8 +15,7 @@ procedure main()
         px < midwidth & py > midheight & quadrants[3] +:= 1
         px > midwidth & py > midheight & quadrants[4] +:= 1
     }
-    every sum1 *:= !quadrants
-    write("Part 1: ", sum1)
+    write("Part 1: ", reduce ! [: "*" | !quadrants :])
 end
 
 procedure parseLine(line)
