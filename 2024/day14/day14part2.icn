@@ -1,0 +1,51 @@
+link matrix
+
+global width, height
+
+procedure main()
+    local input := open("input.txt"), infoList := [], sum1 := 1
+    initial {
+        width := 101
+        height := 103
+    }
+    while put(infoList, [: parseLine(read(input)) :])
+    every i := 0 to 10000 do {
+        # # Found something interesting in the output every 101 seconds starting at 38 and every 103 seconds starting at 88
+        # write("After ", i, " seconds")
+        # writeGrid(infoList)
+        if (i - 38) % 101 = 0 & (i - 88) % 103 = 0 then {
+            write("After ", i, " seconds")
+            writeGrid(infoList)
+        }
+        every advance(!infoList)
+    }
+end
+
+procedure advance(list)
+    list[1] := mod(list[1] + list[3], width)
+    list[2] := mod(list[2] + list[4], height)
+end
+
+procedure writeGrid(infoList)
+    matrix := create_matrix(height, width, " ")
+    every l := !infoList do {
+        matrix[l[2] + 1, l[1] + 1] := "*"
+    }
+    write_matrix(&output, matrix)
+end
+
+procedure parseLine(line)
+    line ? every !2 do {
+        tab(find("=") + 1)
+        s := tab(find(","))
+        suspend s
+        move(1)
+        s := tab(find(" ") | 0)
+        suspend s
+    }
+end
+
+procedure mod(dividend, divisor)
+    local ret := dividend % divisor
+    return if ret < 0 then ret + divisor else ret
+end
