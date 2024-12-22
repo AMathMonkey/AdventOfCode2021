@@ -1,0 +1,78 @@
+link io
+
+procedure main()
+    local input := open("input.txt"), lineNo := 0, directions := "", walls := set(), boxes := set(), sum1 := 0,
+        line, mi, mj, b, dir, col, movable, moved, box
+    while line := read(input) do {
+        if line ? find("#") then {
+            every col := 0 to *line - 1 do {
+                case line[col + 1] of {
+                    "#": insert(walls, point(lineNo, col))
+                    "O": insert(boxes, point(lineNo, col))
+                    "@": {
+                        mi := lineNo
+                        mj := col
+                    }
+                }
+            }
+        } else if line ? find("^" | ">" | "v" | "<") then directions ||:= line
+        lineNo +:= 1
+    }
+    every dir := !directions do {
+        if movable := getMovable(walls, boxes, dir, mi, mj) then {
+            moved := set()
+            every box := !movable do {
+                box := pointToList(box)
+                case dir of {
+                    "<": box[2] -:= 1
+                    ">": box[2] +:= 1
+                    "v": box[1] +:= 1
+                    "^": box[1] -:= 1
+                }
+                insert(moved, point ! box)
+            }
+            every delete(boxes, !movable)
+            every insert(boxes, !moved)
+            case dir of {
+                "<": mj -:= 1
+                ">": mj +:= 1
+                "v": mi +:= 1
+                "^": mi -:= 1
+            }
+        }
+    }
+    every b := !boxes do {
+        b := pointToList(b)
+        sum1 +:= b[1] * 100 + b[2]
+    }
+    write("Part 1: ", sum1)
+end
+
+procedure point(i, j)
+    return i || " " || j
+end
+
+procedure pointToList(point)
+    local i
+    point ? {
+        i := tab(many(&digits))
+        tab(upto(&digits))
+        return [i, tab(many(&digits))]
+    }
+end
+
+procedure getMovable(walls, boxes, direction, mi, mj)
+    local result := set(), p
+    repeat {
+        case direction of {
+            "<": mj -:= 1
+            ">": mj +:= 1
+            "v": mi +:= 1
+            "^": mi -:= 1
+        }
+        p := point(mi, mj)
+        if member(walls, p) then fail
+        if member(boxes, p) then insert(result, p)
+        else return result
+    }
+end
