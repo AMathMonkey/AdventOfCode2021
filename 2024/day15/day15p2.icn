@@ -1,6 +1,6 @@
 procedure main()
     local input := open("input.txt"), directions := "", walls := set(), boxes := set(), sum2 := 0,
-        line, mi, mj, b, direction, col, movable, moved, box
+        line, mi, mj, direction, col, movable, moved, box
     while line := read(input) & (/lineNo := 0) | (lineNo +:= 1) do {
         if line ? upto('#') then {
             every col := 0 to *line - 1 do {
@@ -37,7 +37,7 @@ procedure main()
             }
         }
     }
-    every b := pointToList(!boxes) do sum2 +:= b[1] * 100 + b[2]
+    every box := pointToList(!boxes) do sum2 +:= box[1] * 100 + box[2]
     write("Part 2: ", sum2)
 end
 
@@ -55,7 +55,7 @@ procedure pointToList(point)
 end
 
 procedure getMovable(walls, boxes, direction, mi, mj)
-    movable := set()
+    local movable := set(), j, p, box
     case direction of {
         "^": {
             if member(walls, point(mi - 1, mj - (0 to 1))) then fail
@@ -89,8 +89,8 @@ procedure getMovable(walls, boxes, direction, mi, mj)
             case direction of {
                 "^": {
                     if member(walls, point(box[1] - 1, box[2] + (-1 to 1))) then fail
-                    every i := -1 to 1 do {
-                        p := point(box[1] - 1, box[2] + i)
+                    every j := -1 to 1 do {
+                        p := point(box[1] - 1, box[2] + j)
                         if member(boxes, p) & not member(movable, p) then {
                             insert(movable, p)
                             break break next
@@ -99,8 +99,8 @@ procedure getMovable(walls, boxes, direction, mi, mj)
                 }
                 "v": {
                     if member(walls, point(box[1] + 1, box[2] + (-1 to 1))) then fail
-                    every i := -1 to 1 do {
-                        p := point(box[1] + 1, box[2] + i)
+                    every j := -1 to 1 do {
+                        p := point(box[1] + 1, box[2] + j)
                         if member(boxes, p) & not member(movable, p) then {
                             insert(movable, p)
                             break break next
@@ -109,8 +109,8 @@ procedure getMovable(walls, boxes, direction, mi, mj)
                 }
                 "<": {
                     if member(walls, point(box[1], box[2] - (1 to 2))) then fail
-                    every i := 1 to 2 do {
-                        p := point(box[1], box[2] - i)
+                    every j := 1 to 2 do {
+                        p := point(box[1], box[2] - j)
                         if member(boxes, p) & not member(movable, p) then {
                             insert(movable, p)
                             break break next
