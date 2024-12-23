@@ -3,12 +3,12 @@ procedure main()
     input := open("input.txt")
     while line := read(input) do {
         ints := [: toInts(line) :]
-        diffs := [: getDiffs(ints) :] 
+        diffs := [: getDiffs(ints) :]
         if validPos(diffs) | validNeg(diffs) then safe1 +:= 1
         every i := !*ints do {
             c := copy(ints)
             delete(c, i)
-            diffs := [: getDiffs(c) :] 
+            diffs := [: getDiffs(c) :]
             if validPos(diffs) | validNeg(diffs) then { safe2 +:= 1; break }
         }
     }

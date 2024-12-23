@@ -41,7 +41,7 @@ end
 procedure findStart(grid)
     local i, j
     every i := !*grid do
-        every j := !*grid[i] do 
+        every j := !*grid[i] do
             if grid[i, j] == "^" then return [i, j]
 end
 

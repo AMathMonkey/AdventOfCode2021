@@ -19,7 +19,7 @@ procedure part1(input)
         }
     rightPtr := *memory
     every pos := !valid do {
-        d := memory[pos] 
+        d := memory[pos]
         if d == "." then {
             while memory[rightPtr] == "." do rightPtr -:= 1
             d := memory[rightPtr]
@@ -45,12 +45,12 @@ procedure part2(input)
         }
     }
     rightPtr := *memory
-    while memory[rightPtr].fileNum == "." do rightPtr -:= 1 
+    while memory[rightPtr].fileNum == "." do rightPtr -:= 1
     while rightPtr > 0 do {
         every i := !(rightPtr - 1) do {
             if memory[i].fileNum ~== "." | memory[i].size < memory[rightPtr].size then next
             if memory[i].size = memory[rightPtr].size then memory[i] := memory[rightPtr]
-            else { 
+            else {
                 memory[i].size -:= memory[rightPtr].size
                 insert(memory, i, memory[rightPtr])
                 rightPtr +:= 1
@@ -59,7 +59,7 @@ procedure part2(input)
             break
         }
         rightPtr -:= 1
-        while rightPtr > 0 & memory[rightPtr].fileNum == "." do rightPtr -:= 1 
+        while rightPtr > 0 & memory[rightPtr].fileNum == "." do rightPtr -:= 1
     }
     pos := 0
     every pair := !memory do {

@@ -1,7 +1,7 @@
 def simulate(grid, coords)
   dir = "up"
   visited = Set.new
-  cycles = Set.new 
+  cycles = Set.new
   (i, j) = coords
   loop do
     cycleKey = "#{i} #{j} #{dir}"
@@ -45,7 +45,7 @@ def rotate(dir)
     when "down" then "left"
     when "left" then "up"
     when "right" then "down"
-  end 
+  end
 end
 
 sum2 = 0

@@ -47,7 +47,7 @@ procedure countCorners(shape)
         j := point[2]
 
         topRight := isMember(shape, i - 1, j + 1)
-        right := isMember(shape, i, j + 1) 
+        right := isMember(shape, i, j + 1)
         bottomRight := isMember(shape, i + 1, j + 1)
         bottom := isMember(shape, i + 1, j)
         bottomLeft := isMember(shape, i + 1, j - 1)

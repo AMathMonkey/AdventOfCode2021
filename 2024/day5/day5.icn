@@ -25,8 +25,8 @@ procedure main()
                 if not (badIndices := findBadIndices(line, pairs)) then break
             }
             sum2 +:= line[(*line + 1) / 2]
-        } 
-    } 
+        }
+    }
     write("Part 1: ", sum1, "\nPart 2: ", sum2)
 end
 

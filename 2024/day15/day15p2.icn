@@ -94,7 +94,7 @@ procedure getMovable(walls, boxes, direction, mi, mj)
                         if member(boxes, p) & not member(movable, p) then {
                             insert(movable, p)
                             break break next
-                        } 
+                        }
                     }
                 }
                 "v": {
@@ -104,7 +104,7 @@ procedure getMovable(walls, boxes, direction, mi, mj)
                         if member(boxes, p) & not member(movable, p) then {
                             insert(movable, p)
                             break break next
-                        } 
+                        }
                     }
                 }
                 "<": {
@@ -114,7 +114,7 @@ procedure getMovable(walls, boxes, direction, mi, mj)
                         if member(boxes, p) & not member(movable, p) then {
                             insert(movable, p)
                             break break next
-                        } 
+                        }
                     }
                 }
                 ">": {
@@ -123,7 +123,7 @@ procedure getMovable(walls, boxes, direction, mi, mj)
                     if member(boxes, p) & not member(movable, p) then {
                         insert(movable, p)
                         break next
-                    } 
+                    }
                 }
             }
         }

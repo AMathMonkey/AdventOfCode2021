@@ -16,7 +16,7 @@ procedure recur(goal, curr, rest, p2)
     if *rest = 0 then return curr = goal
     if curr > goal then fail
     newRest := rest[2:0]
-    return recur(goal, curr + rest[1], newRest, p2) | 
-        recur(goal, curr * rest[1], newRest, p2) | 
+    return recur(goal, curr + rest[1], newRest, p2) |
+        recur(goal, curr * rest[1], newRest, p2) |
         recur(goal, curr || rest[1], newRest, \p2)
 end

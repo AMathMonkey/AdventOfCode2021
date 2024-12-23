@@ -2,7 +2,7 @@ link io
 
 procedure main()
     local lines := filetext("input.txt"), sum1 := 0, sum2 := 0, i, j, rec
-    every i := !*lines do every j := !*lines[i] do 
+    every i := !*lines do every j := !*lines[i] do
         if lines[i, j] = 0 then {
             rec := recur(lines, i, j)
             sum1 +:= *set(rec)
@@ -12,8 +12,8 @@ procedure main()
 end
 
 procedure recur(grid, i, j)
-    local curr := grid[i, j] 
-    return if curr = 9 then [i || " " || j] else 
+    local curr := grid[i, j]
+    return if curr = 9 then [i || " " || j] else
         ((\grid[i + 1, j] = curr + 1 & recur(grid, i + 1, j)) | []) |||
         ((\grid[i - 1, j] = curr + 1 & recur(grid, i - 1, j)) | []) |||
         ((\grid[i, j + 1] = curr + 1 & recur(grid, i, j + 1)) | []) |||
