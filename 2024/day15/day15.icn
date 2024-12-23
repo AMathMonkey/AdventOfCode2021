@@ -1,8 +1,6 @@
-link io
-
 procedure main()
     local input := open("input.txt"), lineNo := 0, directions := "", walls := set(), boxes := set(), sum1 := 0,
-        line, mi, mj, b, dir, col, movable, moved, box
+        line, mi, mj, b, direction, col, movable, moved, box
     while line := read(input) do {
         if line ? find("#") then {
             every col := 0 to *line - 1 do {
@@ -18,12 +16,12 @@ procedure main()
         } else if line ? find("^" | ">" | "v" | "<") then directions ||:= line
         lineNo +:= 1
     }
-    every dir := !directions do {
-        if movable := getMovable(walls, boxes, dir, mi, mj) then {
+    every direction := !directions do {
+        if movable := getMovable(walls, boxes, direction, mi, mj) then {
             moved := set()
             every box := !movable do {
                 box := pointToList(box)
-                case dir of {
+                case direction of {
                     "<": box[2] -:= 1
                     ">": box[2] +:= 1
                     "v": box[1] +:= 1
@@ -33,7 +31,7 @@ procedure main()
             }
             every delete(boxes, !movable)
             every insert(boxes, !moved)
-            case dir of {
+            case direction of {
                 "<": mj -:= 1
                 ">": mj +:= 1
                 "v": mi +:= 1
