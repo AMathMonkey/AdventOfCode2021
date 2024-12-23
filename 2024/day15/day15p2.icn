@@ -1,0 +1,132 @@
+procedure main()
+    local input := open("input.txt"), directions := "", walls := set(), boxes := set(), sum2 := 0,
+        line, mi, mj, b, direction, col, movable, moved, box
+    while line := read(input) & (/lineNo := 0) | (lineNo +:= 1) do {
+        if line ? upto('#') then {
+            every col := 0 to *line - 1 do {
+                case line[col + 1] of {
+                    "#": insert(walls, point(lineNo, col * 2))
+                    "O": insert(boxes, point(lineNo, col * 2))
+                    "@": {
+                        mi := lineNo
+                        mj := col * 2
+                    }
+                }
+            }
+        } else if line ? upto('^>v<') then directions ||:= line
+    }
+    every direction := !directions do {
+        if movable := getMovable(walls, boxes, direction, mi, mj) then {
+            moved := set()
+            every box := pointToList(!movable) do {
+                case direction of {
+                    "<": box[2] -:= 1
+                    ">": box[2] +:= 1
+                    "v": box[1] +:= 1
+                    "^": box[1] -:= 1
+                }
+                insert(moved, point ! box)
+            }
+            every delete(boxes, !movable)
+            every insert(boxes, !moved)
+            case direction of {
+                "<": mj -:= 1
+                ">": mj +:= 1
+                "v": mi +:= 1
+                "^": mi -:= 1
+            }
+        }
+    }
+    every b := pointToList(!boxes) do sum2 +:= b[1] * 100 + b[2]
+    write("Part 2: ", sum2)
+end
+
+procedure point(i, j)
+    return i || " " || j
+end
+
+procedure pointToList(point)
+    local i
+    point ? {
+        i := tab(many(&digits))
+        tab(upto(&digits))
+        return [i, tab(many(&digits))]
+    }
+end
+
+procedure getMovable(walls, boxes, direction, mi, mj)
+    movable := set()
+    case direction of {
+        "^": {
+            if member(walls, point(mi - 1, mj - (0 to 1))) then fail
+            every j := 0 to 1 do {
+                p := point(mi - 1, mj - j)
+                if member(boxes, p) then insert(movable, p)
+            }
+        }
+        "v": {
+            if member(walls, point(mi + 1, mj - (0 to 1))) then fail
+            every j := 0 to 1 do {
+                p := point(mi + 1, mj - j)
+                if member(boxes, p) then insert(movable, p)
+            }
+        }
+        "<": {
+            if member(walls, point(mi, mj - (1 to 2))) then fail
+            every j := 1 to 2 do {
+                p := point(mi, mj - j)
+                if member(boxes, p) then insert(movable, p)
+            }
+        }
+        ">": {
+            if member(walls, point(mi, mj + 1)) then fail
+            p := point(mi, mj + 1)
+            if member(boxes, p) then insert(movable, p)
+        }
+    }
+    repeat {
+        every box := pointToList(!movable) do {
+            case direction of {
+                "^": {
+                    if member(walls, point(box[1] - 1, box[2] + (-1 to 1))) then fail
+                    every i := -1 to 1 do {
+                        p := point(box[1] - 1, box[2] + i)
+                        if member(boxes, p) & not member(movable, p) then {
+                            insert(movable, p)
+                            break break next
+                        } 
+                    }
+                }
+                "v": {
+                    if member(walls, point(box[1] + 1, box[2] + (-1 to 1))) then fail
+                    every i := -1 to 1 do {
+                        p := point(box[1] + 1, box[2] + i)
+                        if member(boxes, p) & not member(movable, p) then {
+                            insert(movable, p)
+                            break break next
+                        } 
+                    }
+                }
+                "<": {
+                    if member(walls, point(box[1], box[2] - (1 to 2))) then fail
+                    every i := 1 to 2 do {
+                        p := point(box[1], box[2] - i)
+                        if member(boxes, p) & not member(movable, p) then {
+                            insert(movable, p)
+                            break break next
+                        } 
+                    }
+                }
+                ">": {
+                    if member(walls, point(box[1], box[2] + 2)) then fail
+                    p := point(box[1], box[2] + 2)
+                    if member(boxes, p) & not member(movable, p) then {
+                        insert(movable, p)
+                        break next
+                    } 
+                }
+            }
+        }
+        return movable
+    }
+end
