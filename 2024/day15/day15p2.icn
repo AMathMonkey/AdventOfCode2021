@@ -27,8 +27,19 @@ procedure main()
                 }
                 insert(moved, point ! box)
             }
+
             every delete(boxes, !movable)
             every insert(boxes, !moved)
+
+            ## The above is 3x faster than the below, because this creates copies every time:
+            # boxes := boxes -- movable ++ moved
+
+            ## Also 1.1x faster than the below, because taking advantage of the varargs capabilities 
+            ## of delete and insert is more complicated than just looping; seemingly not worth it.
+            ## Is there no better way to build a list of variable arguments? I can't find one.
+            # delete ! [: boxes | !movable :]
+            # insert ! [: boxes | !moved :]
+
             case direction of {
                 "<": mj -:= 1
                 ">": mj +:= 1
@@ -58,22 +69,22 @@ procedure getMovable(walls, boxes, direction, mi, mj)
     local movable := set(), j, p, box
     case direction of {
         "^": {
-            if member(walls, point(mi - 1, mj - (0 to 1))) then fail
             every j := 0 to 1 do {
+                if member(walls, point(mi - 1, mj - j)) then fail
                 p := point(mi - 1, mj - j)
                 if member(boxes, p) then insert(movable, p)
             }
         }
         "v": {
-            if member(walls, point(mi + 1, mj - (0 to 1))) then fail
             every j := 0 to 1 do {
+                if member(walls, point(mi + 1, mj - j)) then fail
                 p := point(mi + 1, mj - j)
                 if member(boxes, p) then insert(movable, p)
             }
         }
         "<": {
-            if member(walls, point(mi, mj - (1 to 2))) then fail
             every j := 1 to 2 do {
+                if member(walls, point(mi, mj - j)) then fail
                 p := point(mi, mj - j)
                 if member(boxes, p) then insert(movable, p)
             }
@@ -88,8 +99,8 @@ procedure getMovable(walls, boxes, direction, mi, mj)
         every box := pointToList(!movable) do {
             case direction of {
                 "^": {
-                    if member(walls, point(box[1] - 1, box[2] + (-1 to 1))) then fail
                     every j := -1 to 1 do {
+                        if member(walls, point(box[1] - 1, box[2] + j)) then fail
                         p := point(box[1] - 1, box[2] + j)
                         if member(boxes, p) & not member(movable, p) then {
                             insert(movable, p)
@@ -98,8 +109,8 @@ procedure getMovable(walls, boxes, direction, mi, mj)
                     }
                 }
                 "v": {
-                    if member(walls, point(box[1] + 1, box[2] + (-1 to 1))) then fail
                     every j := -1 to 1 do {
+                        if member(walls, point(box[1] + 1, box[2] + j)) then fail
                         p := point(box[1] + 1, box[2] + j)
                         if member(boxes, p) & not member(movable, p) then {
                             insert(movable, p)
@@ -108,8 +119,8 @@ procedure getMovable(walls, boxes, direction, mi, mj)
                     }
                 }
                 "<": {
-                    if member(walls, point(box[1], box[2] - (1 to 2))) then fail
                     every j := 1 to 2 do {
+                        if member(walls, point(box[1], box[2] - j)) then fail
                         p := point(box[1], box[2] - j)
                         if member(boxes, p) & not member(movable, p) then {
                             insert(movable, p)
