@@ -18,8 +18,7 @@ procedure main()
     every direction := !directions do {
         if movable := getMovable(walls, boxes, direction, mi, mj) then {
             moved := set()
-            every box := !movable do {
-                box := pointToList(box)
+            every box := pointToList(!movable) do {
                 case direction of {
                     "<": box[2] -:= 1
                     ">": box[2] +:= 1
@@ -38,10 +37,7 @@ procedure main()
             }
         }
     }
-    every b := !boxes do {
-        b := pointToList(b)
-        sum1 +:= b[1] * 100 + b[2]
-    }
+    every b := pointToList(!boxes) do sum1 +:= b[1] * 100 + b[2]
     write("Part 1: ", sum1)
 end
 
