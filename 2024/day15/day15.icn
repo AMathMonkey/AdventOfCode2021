@@ -2,7 +2,7 @@ procedure main()
     local input := open("input.txt"), lineNo, directions := "", walls := set(), boxes := set(), sum1 := 0,
         line, mi, mj, b, direction, col, movable, moved, box
     while line := read(input) & (/lineNo := 0) | (lineNo +:= 1) do {
-        if line ? find("#") then {
+        if line ? upto('#') then {
             every col := 0 to *line - 1 do {
                 case line[col + 1] of {
                     "#": insert(walls, point(lineNo, col))
@@ -13,7 +13,7 @@ procedure main()
                     }
                 }
             }
-        } else if line ? find("^" | ">" | "v" | "<") then directions ||:= line
+        } else if line ? upto('^>v<') then directions ||:= line
     }
     every direction := !directions do {
         if movable := getMovable(walls, boxes, direction, mi, mj) then {
